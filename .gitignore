@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+# generated assets and world exports with real tokens never go in git
+worlds/*/secrets.json
+/tmp/
