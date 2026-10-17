@@ -48,7 +48,7 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
 
     const p = h.currPos;
     camera.position.set(p.x, p.y + EYE_ABOVE_CENTER, p.z);
-    if (import.meta.env.DEV) (window as unknown as { __bw: unknown }).__bw = { x: p.x, y: p.y, z: p.z, keys, moving: h.isMoving, speed: h.moveSpeed, ground: h.isOnGround };
+    if (import.meta.env.DEV) (window as unknown as { __bw: unknown }).__bw = { x: p.x, y: p.y, z: p.z, ry: euler.current.y, keys, moving: h.isMoving, speed: h.moveSpeed, ground: h.isOnGround };
     euler.current.setFromQuaternion(camera.quaternion, 'YXZ');
     const moving = h.isMoving && h.moveSpeed > 0.3;
     const anim: Anim = !moving ? 'idle' : keys?.run ? 'run' : 'walk';

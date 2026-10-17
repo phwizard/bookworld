@@ -17,7 +17,14 @@ export function ChatPanel() {
     baseUrl: ethora.apiBaseUrl,
     appId: ethora.appId ?? undefined,
     jwtLogin: ethora.chatToken ? { enabled: true, token: ethora.chatToken } : undefined,
-    initBeforeLoad: true,
+    // Without these the component has no WebSocket endpoint (it otherwise reads VITE_XMPP_HOST) and sits on "Connecting...".
+    xmppSettings: {
+      devServer: `wss://${ethora.xmppDomain}/ws`,
+      host: ethora.xmppDomain,
+      conference: `conference.${ethora.xmppDomain}`,
+    },
+    initBeforeLoad: false,
+    useStoreConsoleEnabled: import.meta.env.DEV,
     disableRooms: true,
     disableHeader: true,
     chatHeaderSettings: { hide: true },
@@ -26,7 +33,7 @@ export function ChatPanel() {
     disablePublicChatsDirectory: true,
     setRoomJidInPath: false,
     colors: { primary: '#3a2d1c', secondary: '#f3e6c4' },
-  }), [ethora.apiBaseUrl, ethora.appId, ethora.chatToken]);
+  }), [ethora.apiBaseUrl, ethora.appId, ethora.chatToken, ethora.xmppDomain]);
 
   return (
     <aside className={`chat${open ? '' : ' hidden'}`} aria-hidden={!open}>

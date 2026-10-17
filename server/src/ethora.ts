@@ -2,11 +2,13 @@
 // (B2B server token signed with the App Secret). If the credentials are missing the service runs in
 // "no chat" mode so movement can be developed and tested without them.
 import { EthoraSDKService } from '@ethora/sdk-backend';
-import { NARRATION_PREFIX, NARRATOR_NAME } from '@bookworld/shared';
+import { narrationBody, NARRATOR_NAME } from '@bookworld/shared';
 import type { WorldEthoraIds } from './world/load.ts';
 
 const apiBaseUrl = process.env.ETHORA_API_BASE_URL ?? 'https://api.chat.ethora.com/v1';
 const xmppDomain = process.env.ETHORA_XMPP_DOMAIN ?? 'xmpp.chat.ethora.com';
+// The chat component talks to `/v1`; the backend SDK builds `/v2/...` paths itself from the host root.
+const sdkApiUrl = apiBaseUrl.replace(/\/v1\/?$/, '');
 
 export class EthoraWorldService {
   readonly enabled: boolean;
@@ -15,13 +17,15 @@ export class EthoraWorldService {
   readonly xmppDomain = xmppDomain;
   private sdk: EthoraSDKService | null = null;
   private granted = new Set<string>();
+  /** Public app rooms (created over MCP) are open to every app user; users-access answers CHAT_NOT_FOUND for them. See ETHORA-GAPS #10. */
+  private membershipSupported = true;
 
   constructor(private ids: WorldEthoraIds | null) {
     const appSecret = process.env.ETHORA_CHAT_APP_SECRET;
     this.appId = ids?.appId ?? null;
     this.enabled = Boolean(ids && appSecret);
     if (this.enabled) {
-      process.env.ETHORA_CHAT_API_URL ??= apiBaseUrl;
+      process.env.ETHORA_CHAT_API_URL = sdkApiUrl;
       process.env.ETHORA_CHAT_APP_ID = this.appId!;
       this.sdk = new EthoraSDKService({ chatAppId: this.appId!, chatAppSecret: appSecret! });
     } else {
@@ -54,32 +58,47 @@ export class EthoraWorldService {
 
   async grant(roomId: string, playerId: string): Promise<void> {
     const chatId = this.chatId(roomId);
-    if (!this.sdk || !chatId) return;
+    if (!this.sdk || !chatId || !this.membershipSupported) return;
     const key = `${chatId}:${playerId}`;
     if (this.granted.has(key)) return;
-    await this.sdk.grantUserAccessToChatRoom(chatId, playerId);
+    await this.membership(() => this.sdk!.grantUserAccessToChatRoom(chatId, playerId));
     this.granted.add(key);
   }
 
   async revoke(roomId: string, playerId: string): Promise<void> {
     const chatId = this.chatId(roomId);
-    if (!this.sdk || !chatId) return;
+    if (!this.sdk || !chatId || !this.membershipSupported) return;
     this.granted.delete(`${chatId}:${playerId}`);
-    await this.sdk.removeUserAccessFromChatRoom(chatId, playerId);
+    await this.membership(() => this.sdk!.removeUserAccessFromChatRoom(chatId, playerId));
   }
 
-  /** Posts a narration line ("* Alice has joined (E)") into the room as the Narrator. */
+  private async membership(fn: () => Promise<unknown>): Promise<void> {
+    try {
+      await fn();
+    } catch (e) {
+      const err = e as { response?: { status?: number; data?: { code?: string } } };
+      if (err.response?.status === 404 && err.response.data?.code === 'CHAT_NOT_FOUND') {
+        this.membershipSupported = false;
+        console.warn('[ethora] rooms are public app chats; membership is not managed (users-access: CHAT_NOT_FOUND). Continuing without it.');
+        return;
+      }
+      throw e;
+    }
+  }
+
+  /** Posts a narration line ("Alice has joined (E)", italic) into the room through the app's broadcast sender. */
   async narrate(roomId: string, text: string): Promise<void> {
     const r = this.ids?.rooms[roomId];
     if (!this.sdk || !r || !this.appId) {
       console.log(`[narrate:${roomId}] ${text}`);
       return;
     }
+    // The sender shown is the app's broadcast sender (set once to the Narrator in the dashboard or over MCP);
+    // the broadcast endpoint rejects a per-message senderName.
     await this.sdk.broadcastToAppChats(this.appId, {
-      text: NARRATION_PREFIX + text,
+      text: narrationBody(text),
       chatNames: [r.jid],
-      senderName: NARRATOR_NAME,
-      metadata: { bookworld: { kind: 'narration' } },
+      metadata: { bookworld: { kind: 'narration', narrator: NARRATOR_NAME } },
     });
   }
 }

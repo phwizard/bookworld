@@ -79,9 +79,17 @@ export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
 
-/** Narration lines (joins, leaves) are posted by the world service as the Narrator. Body prefix marks them for clients. */
-export const NARRATION_PREFIX = '* ';
+/**
+ * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.
+ * The body is wrapped in underscores so the chat panel's markdown renders it in italics ("* " would become a list).
+ */
 export const NARRATOR_NAME = 'Narrator';
+export function narrationBody(text: string): string {
+  return `_${text}_`;
+}
 export function isNarration(body: string): boolean {
-  return body.startsWith(NARRATION_PREFIX);
+  return body.length > 2 && body.startsWith('_') && body.endsWith('_');
+}
+export function narrationText(body: string): string {
+  return isNarration(body) ? body.slice(1, -1) : body;
 }

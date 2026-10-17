@@ -38,7 +38,7 @@ function Join() {
         <h1>bookworld</h1>
         <p>A book you can walk into. Pick a name, step through the door, meet the characters and whoever else is in the room.</p>
         <p>WASD to walk, mouse to look, Shift to run, T to talk, M for the map.</p>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={24} autoFocus />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={24} autoComplete="off" data-1p-ignore data-lpignore="true" />
         <button disabled={busy || !name.trim()}>{busy ? 'Entering...' : `Enter ${WORLD}`}</button>
         {error && <div className="error">{error}</div>}
       </form>

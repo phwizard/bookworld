@@ -11,14 +11,14 @@ Steps (status as of 17 Oct 2026, evening):
 2. DONE. Ethora App "Bookworld Alice" created via MCP; 4 rooms; agent Hatter (`responseMode: mentioned`, `cooldownSec: 30`, chapter 7 uploaded as knowledge, invited to the Tea Party room, answered in character in a test). Ids in `worlds/alice/ethora.json` (gitignored; `ethora.example.json` shows the shape).
 3. DONE (movement). Colyseus `LocationRoom` per world room, filtered by `{world, location}`; player state (pos, rotY, anim, name); `move` validates the exit, grants the next Ethora room, narrates "has left (E)" / "has joined (W)", hands the client over, revokes the old room 3 s later. Chat side runs through `@ethora/sdk-backend` (B2B token from the App Secret) and is a no-op until `ETHORA_CHAT_APP_SECRET` is set.
 4. DONE (placeholder avatars). R3F box-room template with procedural wallpaper, doorways with the destination name over each door, ecctrl 2.0 capsule + pointer-lock first person, WASD/Shift, door detection by position, remote players interpolated, characters standing in their home room, mini-map from the grid. VRM + Mixamo still to do.
-5. PARTLY. Chat panel mounts `@ethora/chat-component` pinned to the current room (`roomJID` prop, `disableRooms`), guest login = client JWT from the server (`jwtLogin`). Not yet verified against Ethora (needs the App Secret). Bubbles: use the component's `CustomScrollableArea` (it receives the room's messages) rather than a store hook; not built yet.
-6. PARTLY. Narration is posted through the broadcast endpoint as "Narrator" with a `* ` body prefix; rendering as a system line in the panel still to do.
-7. DONE for the agent side (answers when mentioned). To verify from inside the 3D client once chat is live.
+5. DONE (panel), TODO (bubbles). Chat panel mounts `@ethora/chat-component` pinned to the current room (`roomJID` prop, `disableRooms`), guest login = client JWT from the server (`jwtLogin`), `xmppSettings` passed explicitly, `initBeforeLoad: false`. Verified: panel follows the room, shows archive and live messages, sends. Bubbles: use the component's `CustomScrollableArea` (it receives the room's messages); not built yet.
+6. DONE (lines), TODO (styling). Narration is posted through the broadcast endpoint from the app's system account as italic markdown ("Alice has joined (S)"); it shows in the panel with the app name as sender (ETHORA-GAPS #11). Rendering as a quieter system line via `CustomMessageComponent` still to do.
+7. DONE. From inside the 3D client: walked Rabbit Hole > Hall > Garden > Tea Party, opened the panel, mentioned @Hatter, got an in-character reply in about 5 s. Stays quiet when not mentioned.
 8. TODO. Deploy server to the droplet, client to Vercel, run the exit test with a second person.
 
 Verified locally 17 Oct: two browser tabs, both walked Rabbit Hole -> Hall of Doors, each saw the other and "2 here", server narration lines correct.
 
-Next up: App Secret into `.env` and verify chat + narration in the panel; bubbles via `CustomScrollableArea`; VRM avatars; props catalog; deploy.
+Next up: bubbles via `CustomScrollableArea`; narration styling; VRM avatars with Mixamo clips; props catalog; deploy to the droplet + Vercel and run the exit test with a second person.
 
 ## Phase 1: Playable (after Phase 0 passes)
 
