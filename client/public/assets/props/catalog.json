@@ -1,0 +1,42 @@
+{
+  "kits": {
+    "kenney-furniture": { "path": "assets/props/kenney-furniture", "license": "CC0", "credit": "Kenney (kenney.nl)", "scale": 2.3 },
+    "kenney-food": { "path": "assets/props/kenney-food", "license": "CC0", "credit": "Kenney (kenney.nl)", "scale": 0.4 }
+  },
+  "props": {
+    "table":          { "kit": "kenney-furniture", "file": "table.glb", "tags": ["table", "dining"] },
+    "table-cloth":    { "kit": "kenney-furniture", "file": "tableCloth.glb", "tags": ["table", "dining", "tea"] },
+    "table-round":    { "kit": "kenney-furniture", "file": "tableRound.glb", "tags": ["table"] },
+    "table-glass":    { "kit": "kenney-furniture", "file": "tableCoffeeGlass.glb", "tags": ["table", "glass", "small"] },
+    "chair":          { "kit": "kenney-furniture", "file": "chair.glb", "tags": ["seat"] },
+    "chair-cushion":  { "kit": "kenney-furniture", "file": "chairCushion.glb", "tags": ["seat"] },
+    "armchair":       { "kit": "kenney-furniture", "file": "loungeChair.glb", "tags": ["seat", "soft"] },
+    "bench":          { "kit": "kenney-furniture", "file": "bench.glb", "tags": ["seat", "outdoor"] },
+    "bookcase":       { "kit": "kenney-furniture", "file": "bookcaseOpen.glb", "tags": ["shelf", "books"] },
+    "bookcase-wide":  { "kit": "kenney-furniture", "file": "bookcaseClosedWide.glb", "tags": ["shelf", "books", "cupboard"] },
+    "books":          { "kit": "kenney-furniture", "file": "books.glb", "tags": ["books", "small"] },
+    "desk":           { "kit": "kenney-furniture", "file": "desk.glb", "tags": ["table", "writing"] },
+    "lamp-floor":     { "kit": "kenney-furniture", "file": "lampRoundFloor.glb", "tags": ["light"] },
+    "lamp-table":     { "kit": "kenney-furniture", "file": "lampRoundTable.glb", "tags": ["light", "small"] },
+    "door":           { "kit": "kenney-furniture", "file": "doorway.glb", "tags": ["door", "decor"] },
+    "door-open":      { "kit": "kenney-furniture", "file": "doorwayOpen.glb", "tags": ["door", "decor"] },
+    "plant":          { "kit": "kenney-furniture", "file": "pottedPlant.glb", "tags": ["plant", "garden"] },
+    "plant-small":    { "kit": "kenney-furniture", "file": "plantSmall1.glb", "tags": ["plant", "garden"] },
+    "plant-small-2":  { "kit": "kenney-furniture", "file": "plantSmall2.glb", "tags": ["plant", "garden"] },
+    "plant-small-3":  { "kit": "kenney-furniture", "file": "plantSmall3.glb", "tags": ["plant", "garden"] },
+    "rug-round":      { "kit": "kenney-furniture", "file": "rugRound.glb", "tags": ["rug", "flat"] },
+    "rug":            { "kit": "kenney-furniture", "file": "rugRectangle.glb", "tags": ["rug", "flat"] },
+    "coat-rack":      { "kit": "kenney-furniture", "file": "coatRackStanding.glb", "tags": ["decor"] },
+    "box":            { "kit": "kenney-furniture", "file": "cardboardBoxClosed.glb", "tags": ["storage"] },
+    "teacup":         { "kit": "kenney-food", "file": "cup-tea.glb", "tags": ["tea", "tabletop"] },
+    "cup":            { "kit": "kenney-food", "file": "cup-saucer.glb", "tags": ["tea", "tabletop"] },
+    "mug":            { "kit": "kenney-food", "file": "mug.glb", "tags": ["tabletop"] },
+    "teapot":         { "kit": "kenney-food", "file": "pot-stew-lid.glb", "tags": ["tea", "tabletop"] },
+    "cake":           { "kit": "kenney-food", "file": "cake.glb", "tags": ["food", "tabletop"] },
+    "cupcake":        { "kit": "kenney-food", "file": "cupcake.glb", "tags": ["food", "tabletop"] },
+    "bread":          { "kit": "kenney-food", "file": "bread.glb", "tags": ["food", "tabletop"] },
+    "honey":          { "kit": "kenney-food", "file": "honey.glb", "tags": ["food", "tabletop", "jar"] },
+    "mushroom":       { "kit": "kenney-food", "file": "mushroom.glb", "tags": ["food", "garden"] },
+    "bottle":         { "kit": "kenney-food", "file": "soda-bottle.glb", "tags": ["drink", "tabletop"] }
+  }
+}

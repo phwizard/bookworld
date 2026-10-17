@@ -7,7 +7,8 @@ import { roomSize } from '@bookworld/shared';
 import { useStore } from '../store.ts';
 import { BoxRoom } from './BoxRoom.tsx';
 import { PlayerController, type Controls } from './PlayerController.tsx';
-import { AvatarMesh, RemotePlayer, colorFor } from './Avatar.tsx';
+import { CharacterAvatar, RemotePlayer } from './Avatar.tsx';
+import { Props } from './Props.tsx';
 
 const keyboardMap: { name: Controls; keys: string[] }[] = [
   { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
@@ -42,6 +43,7 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
           <Physics gravity={[0, -9.81, 0]}>
             <group key={room.id}>
               <BoxRoom world={world} room={room} />
+              <Props room={room} />
               <PlayerController room={room} enterFrom={enterFrom} />
             </group>
           </Physics>
@@ -67,11 +69,12 @@ function Others() {
 
 function Characters() {
   const characters = useStore((s) => s.characters);
+  const world = useStore((s) => s.session!.world);
   return (
     <>
       {Object.values(characters).map((c) => (
         <group key={c.id} position={[c.x, c.y, c.z]} rotation-y={c.ry}>
-          <AvatarMesh name={c.name} color={colorFor(c.name, 45, 35)} isCharacter />
+          <CharacterAvatar id={c.id} name={c.name} avatar={world.characters.find((wc) => wc.id === c.id)?.avatar} />
         </group>
       ))}
     </>

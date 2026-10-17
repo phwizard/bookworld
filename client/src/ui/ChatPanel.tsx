@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { Chat, XmppProvider, type IConfig } from '@ethora/chat-component';
 import { useStore } from '../store.ts';
+import { ChatMessages } from './ChatMessages.tsx';
 
 export function ChatPanel() {
   const session = useStore((s) => s.session)!;
@@ -44,7 +45,7 @@ export function ChatPanel() {
       <div className="body">
         {ethora.enabled && roomJID ? (
           <XmppProvider config={config}>
-            <Chat config={config} roomJID={roomJID} MainComponentStyles={{ height: '100%' }} />
+            <Chat config={config} roomJID={roomJID} MainComponentStyles={{ height: '100%' }} CustomScrollableArea={ChatMessages} />
           </XmppProvider>
         ) : (
           <div className="disabled">

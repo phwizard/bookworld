@@ -50,3 +50,5 @@ export const useStore = create<State>((set) => ({
   setToast: (toast) => set({ toast }),
   setBubble: (name, text) => set((s) => ({ bubbles: { ...s.bubbles, [name]: { text, at: Date.now() } } })),
 }));
+
+if (import.meta.env.DEV) (window as unknown as { __store: unknown }).__store = useStore;

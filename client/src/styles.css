@@ -34,3 +34,6 @@ button, input { font: inherit; }
 /* Hidden in place (no translate): a panel slid outside the container made the browser scroll the whole scene sideways when the chat input took focus. */
 .chat.hidden { visibility: hidden; opacity: 0; pointer-events: none; }
 .chat { transition: opacity .15s ease; }
+
+.bw-messages { height: 100%; overflow-y: auto; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.bw-narration { text-align: center; font: italic 12px Georgia, serif; color: #7a6a55; margin: 6px 0; }

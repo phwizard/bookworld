@@ -15,69 +15,742 @@
       "id": "rabbit-hole",
       "name": "The Rabbit Hole",
       "description": "The bottom of a very deep well. Cupboards and bookshelves line the walls, with maps and pictures hung on pegs, and a jar labelled ORANGE MARMALADE on one shelf. The light comes from somewhere high above. A low passage leads east.",
-      "exits": { "n": null, "e": "hall-of-doors", "s": null, "w": null },
+      "exits": {
+        "n": null,
+        "e": "hall-of-doors",
+        "s": null,
+        "w": null
+      },
       "wallpaper": "assets/rabbit-hole.jpg",
       "music": null,
       "scene": {
         "template": "box",
-        "size": [10, 6, 10],
-        "palette": { "wall": "#4a3626", "floor": "#2d2118", "ceiling": "#1a130d", "trim": "#8a6a44" },
-        "props": [],
-        "spawn": [0, 0, 2],
+        "size": [
+          10,
+          6,
+          10
+        ],
+        "palette": {
+          "wall": "#4a3626",
+          "floor": "#2d2118",
+          "ceiling": "#1a130d",
+          "trim": "#8a6a44"
+        },
+        "props": [
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -3.2,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -1.2,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              0.6,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              2.2,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -4.4,
+              0,
+              -2.5
+            ],
+            "rotY": 1.5708
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -4.4,
+              0,
+              1.0
+            ],
+            "rotY": 1.5708
+          },
+          {
+            "id": "desk",
+            "pos": [
+              3.0,
+              0,
+              3.4
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.6,
+              0.76,
+              3.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "books",
+            "pos": [
+              2.4,
+              0.76,
+              3.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              1.1,
+              1.1,
+              -4.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.5,
+              0,
+              3.2
+            ],
+            "rotY": 0.4
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              4.2,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              0.5
+            ],
+            "flat": true,
+            "scale": 0.6
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
         "exitWidth": 1.6
       },
-      "owner": null, "claimable": false, "claimedAt": null
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
     },
     {
       "id": "hall-of-doors",
       "name": "The Hall of Doors",
       "description": "A long, low hall lit by a row of lamps hanging from the roof. There are doors all round it, every one of them locked. In the middle stands a little three-legged table made of solid glass. A tiny door behind a curtain opens east, towards the garden. The passage back to the well is west.",
-      "exits": { "n": null, "e": "garden", "s": null, "w": "rabbit-hole" },
+      "exits": {
+        "n": null,
+        "e": "garden",
+        "s": null,
+        "w": "rabbit-hole"
+      },
       "wallpaper": "assets/hall-of-doors.jpg",
       "music": null,
       "scene": {
         "template": "box",
-        "size": [16, 4, 8],
-        "palette": { "wall": "#6b5a3e", "floor": "#3a2f22", "ceiling": "#2a2218", "trim": "#c9a961" },
-        "props": [],
-        "spawn": [0, 0, 0],
+        "size": [
+          16,
+          4,
+          8
+        ],
+        "palette": {
+          "wall": "#6b5a3e",
+          "floor": "#3a2f22",
+          "ceiling": "#2a2218",
+          "trim": "#c9a961"
+        },
+        "props": [
+          {
+            "id": "table-glass",
+            "pos": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              -6,
+              0,
+              -3.85
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              -3,
+              0,
+              -3.85
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              -3.85
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              3,
+              0,
+              -3.85
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              6,
+              0,
+              -3.85
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              -6,
+              0,
+              3.85
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "door",
+            "pos": [
+              -3,
+              0,
+              3.85
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              3.85
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "door",
+            "pos": [
+              3,
+              0,
+              3.85
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "door",
+            "pos": [
+              6,
+              0,
+              3.85
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -7.3,
+              0,
+              -3.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.3,
+              0,
+              -3.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -7.3,
+              0,
+              3.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.3,
+              0,
+              3.3
+            ]
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              0.2,
+              0.53,
+              0.1
+            ],
+            "onTop": true
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          0
+        ],
         "exitWidth": 1.6
       },
-      "owner": null, "claimable": false, "claimedAt": null
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
     },
     {
       "id": "garden",
       "name": "The Garden",
       "description": "Beds of bright flowers and cool fountains. A large rose-tree stands near the entrance; the roses on it are white, but three gardeners are busily painting them red. A path leads north between the trees, towards the sound of cups and saucers. The little door back to the hall is west.",
-      "exits": { "n": "tea-party", "e": null, "s": null, "w": "hall-of-doors" },
+      "exits": {
+        "n": "tea-party",
+        "e": null,
+        "s": null,
+        "w": "hall-of-doors"
+      },
       "wallpaper": "assets/garden.jpg",
       "music": null,
       "scene": {
         "template": "box",
-        "size": [14, 5, 14],
-        "palette": { "wall": "#4f7a3a", "floor": "#3b6b2a", "ceiling": "#9fd0f0", "trim": "#d4a5a5" },
-        "props": [],
-        "spawn": [0, 0, 4],
+        "size": [
+          14,
+          5,
+          14
+        ],
+        "palette": {
+          "wall": "#4f7a3a",
+          "floor": "#3b6b2a",
+          "ceiling": "#9fd0f0",
+          "trim": "#d4a5a5"
+        },
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -5.5,
+              0,
+              -5.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.5,
+              0,
+              -5.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5.5,
+              0,
+              5.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.5,
+              0,
+              5.5
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -3,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3,
+              0,
+              -2.5
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -2.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.5,
+              0,
+              2.5
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -5,
+              0,
+              0.5
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              5,
+              0,
+              -0.5
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4.5,
+              0,
+              -4.5
+            ],
+            "rotY": 0.7854
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4.5,
+              0,
+              4.5
+            ],
+            "rotY": -2.3562
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              -5
+            ],
+            "scale": 22
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.5,
+              0,
+              4.5
+            ],
+            "scale": 16
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -1,
+              0,
+              2
+            ],
+            "scale": 10
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "flat": true,
+            "scale": 1.0
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          4
+        ],
         "exitWidth": 1.6
       },
-      "owner": null, "claimable": false, "claimedAt": null
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
     },
     {
       "id": "tea-party",
       "name": "The Tea Party",
       "description": "A table set out under a tree in front of a house, laid for a great many more than the three who sit at it. The March Hare and the Hatter are having tea, with a Dormouse fast asleep between them. It is always six o'clock here. The garden path is south.",
-      "exits": { "n": null, "e": null, "s": "garden", "w": null },
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "garden",
+        "w": null
+      },
       "wallpaper": "assets/tea-party.jpg",
       "music": null,
       "scene": {
         "template": "box",
-        "size": [12, 5, 12],
-        "palette": { "wall": "#5a7a4a", "floor": "#6a8a4a", "ceiling": "#a8c8e8", "trim": "#e8d8b0" },
-        "props": [],
-        "spawn": [0, 0, 4],
+        "size": [
+          12,
+          5,
+          12
+        ],
+        "palette": {
+          "wall": "#5a7a4a",
+          "floor": "#6a8a4a",
+          "ceiling": "#a8c8e8",
+          "trim": "#e8d8b0"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              -0.97,
+              0,
+              -1.0
+            ]
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              0.97,
+              0,
+              -1.0
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -1.5,
+              0,
+              -2.2
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -0.5,
+              0,
+              -2.2
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "chair",
+            "pos": [
+              0.5,
+              0,
+              -2.2
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1.5,
+              0,
+              -2.2
+            ],
+            "rotY": 3.1416
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -1.5,
+              0,
+              0.2
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -0.5,
+              0,
+              0.2
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              0.5,
+              0,
+              0.2
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1.5,
+              0,
+              0.2
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              2.9,
+              0,
+              -1.0
+            ],
+            "rotY": -1.5708
+          },
+          {
+            "id": "teapot",
+            "pos": [
+              0,
+              0.76,
+              -1.0
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              -1.2,
+              0.76,
+              -1.0
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              -1.5,
+              0.76,
+              -1.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              -0.5,
+              0.76,
+              -0.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              0.6,
+              0.76,
+              -1.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              1.4,
+              0.76,
+              -0.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              1.6,
+              0.76,
+              -1.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              1.0,
+              0.76,
+              -1.0
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              -0.6,
+              0.76,
+              -1.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              0.3,
+              0.76,
+              -0.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -5.3,
+              0,
+              -5.3
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.3,
+              0,
+              -5.3
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5.3,
+              0,
+              5.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          4
+        ],
         "exitWidth": 1.6
       },
-      "owner": null, "claimable": false, "claimedAt": null
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
     }
   ],
   "characters": [
@@ -88,9 +761,18 @@
       "persona": "The Hatter from Alice's Adventures in Wonderland, at the endless tea party. Riddles, puns about Time, cheerful rudeness. See generator prompt for the full soul.",
       "responseMode": "mentioned",
       "cooldownSec": 30,
-      "knowledgeTags": ["alice", "alice-ch7"],
-      "avatar": null,
-      "schedule": []
+      "knowledgeTags": [
+        "alice",
+        "alice-ch7"
+      ],
+      "avatar": "kaykit:Mage",
+      "schedule": [],
+      "pos": [
+        1.0,
+        0,
+        -2.6
+      ],
+      "rotY": 3.1416
     }
   ],
   "scripts": []

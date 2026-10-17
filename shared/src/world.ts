@@ -27,11 +27,17 @@ export interface Palette {
 }
 
 export interface Prop {
-  kit: string;
+  /** id from the props catalog (client/public/assets/props/catalog.json); the catalog knows the kit and file */
   id: string;
+  /** room-local metres; y is the resting height (0 = floor, table height for things on tables) */
   pos: [number, number, number];
   rotY?: number;
+  /** multiplier on the kit's base scale */
   scale?: number;
+  /** flat things (rugs) get no collider */
+  flat?: boolean;
+  /** tabletop items get no collider */
+  onTop?: boolean;
 }
 
 export interface RoomScene {
