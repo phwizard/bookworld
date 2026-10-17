@@ -37,7 +37,7 @@ export function Hud({ room }: { room: WorldRoom }) {
         {count} here · WASD walk · Shift run · T talk · Esc release mouse
       </div>
       {!locked && !chatOpen && (
-        <div className="click" id="lock">
+        <div className="click">
           <div>Click to look around</div>
         </div>
       )}

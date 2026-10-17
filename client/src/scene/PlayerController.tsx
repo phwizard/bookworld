@@ -2,7 +2,7 @@
 // WASD + Shift from drei KeyboardControls, position stream to the server, door detection.
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { PointerLockControls, useKeyboardControls } from '@react-three/drei';
+import { useKeyboardControls } from '@react-three/drei';
 import { Ecctrl, type EcctrlHandle } from 'ecctrl';
 import * as THREE from 'three';
 import { DIRECTIONS, DEFAULT_EXIT_WIDTH, entryPose, roomSize, roomSpawn, type Anim, type Direction, type WorldRoom } from '@bookworld/shared';
@@ -67,12 +67,6 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
   const bodyY = CAPSULE_HALF + CAPSULE_RADIUS + FLOAT + 0.05;
   return (
     <>
-      <PointerLockControls
-        makeDefault
-        selector="#lock"
-        onLock={() => useStore.getState().setPointerLocked(true)}
-        onUnlock={() => useStore.getState().setPointerLocked(false)}
-      />
       <Ecctrl
         ref={ecctrl}
         position={[start.x, bodyY, start.z]}

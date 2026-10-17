@@ -32,7 +32,7 @@ export function WorldView() {
   if (!room) return <div className="join"><p>Unknown room {location}</p></div>;
   return (
     <div className="world">
-      <Scene key={location} room={room} enterFrom={enterFrom} />
+      <Scene room={room} enterFrom={enterFrom} />
       <Hud room={room} />
       <ChatPanel />
     </div>

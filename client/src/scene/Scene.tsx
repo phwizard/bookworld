@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { KeyboardControls } from '@react-three/drei';
+import { KeyboardControls, PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import type { Direction, WorldRoom } from '@bookworld/shared';
 import { roomSize } from '@bookworld/shared';
@@ -17,6 +17,10 @@ const keyboardMap: { name: Controls; keys: string[] }[] = [
   { name: 'run', keys: ['ShiftLeft', 'ShiftRight'] },
 ];
 
+/**
+ * One canvas for the whole visit. Only the room contents are keyed by room id, so walking through a door
+ * keeps the WebGL context, the physics world, the canvas size and the pointer lock.
+ */
 export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Direction | null }) {
   const world = useStore((s) => s.session!.world);
   const [w, h, d] = roomSize(room);
@@ -29,10 +33,17 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
         <ambientLight intensity={0.9} />
         <hemisphereLight args={['#fff4e0', '#3a2a1a', 0.8]} />
         <pointLight position={[0, h - 0.4, 0]} intensity={Math.max(w, d) * 5} distance={Math.max(w, d) * 1.5} decay={1.6} castShadow color="#ffe6c0" />
+        <PointerLockControls
+          makeDefault
+          onLock={() => useStore.getState().setPointerLocked(true)}
+          onUnlock={() => useStore.getState().setPointerLocked(false)}
+        />
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]}>
-            <BoxRoom world={world} room={room} />
-            <PlayerController room={room} enterFrom={enterFrom} />
+            <group key={room.id}>
+              <BoxRoom world={world} room={room} />
+              <PlayerController room={room} enterFrom={enterFrom} />
+            </group>
           </Physics>
           <Others />
           <Characters />
