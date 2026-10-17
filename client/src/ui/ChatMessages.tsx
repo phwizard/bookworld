@@ -2,7 +2,7 @@
 // and narration lines ("Alice has joined (E)") render as quiet system lines instead of chat bubbles.
 import { useEffect, useRef } from 'react';
 import type { CustomScrollableAreaProps, IMessage } from '@ethora/chat-component';
-import { isNarration, narrationText } from '@bookworld/shared';
+import { isNarration, narrationText, parseCharacterLine } from '@bookworld/shared';
 import { useStore } from '../store.ts';
 
 const BUBBLE_MAX_AGE_MS = 15000;
@@ -23,25 +23,34 @@ export function speakerName(m: IMessage): string {
 }
 
 export function ChatMessages(props: CustomScrollableAreaProps) {
-  const { decoratedMessages, messages, renderMessage, roomJID, loadMoreMessages, isLoading } = props;
+  const { decoratedMessages, renderMessage, roomJID, loadMoreMessages, isLoading } = props;
   const box = useRef<HTMLDivElement>(null);
   const stickToBottom = useRef(true);
 
-  // New messages become bubbles over the speaker's avatar.
+  // New messages become bubbles over the speaker's avatar. The component mutates its message arrays in place,
+  // so this runs after every render and relies on the `seen` set to stay cheap.
   useEffect(() => {
     const now = Date.now();
     const me = useStore.getState().session?.name;
-    for (const m of messages) {
+    for (const { message: m } of decoratedMessages) {
       if (seen.has(m.id)) continue;
       seen.add(m.id);
-      if (isNarration(m.body) || m.isSystemMessage || !m.body) continue;
+      // (the app's broadcasts are flagged as system messages; narration and character lines are exactly those)
+      if (!m.body) continue;
+      const line = parseCharacterLine(narrationText(m.body));
+      if (line) {
+        if (import.meta.env.DEV) console.log('[bubbles] line', { who: line.name, age: now - messageTime(m), date: m.date, ts: m.timestamp, tsMs: m.messageTimestampMs });
+        if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) useStore.getState().setBubble(line.name, line.text);
+        continue;
+      }
+      if (isNarration(m.body)) continue;
       if (now - messageTime(m) > BUBBLE_MAX_AGE_MS) { if (import.meta.env.DEV) console.log('[bubbles] too old', now - messageTime(m), m.body.slice(0, 30)); continue; }
       const who = speakerName(m);
       if (import.meta.env.DEV) console.log('[bubbles] candidate', { who, me, age: now - messageTime(m), body: m.body.slice(0, 40) });
       if (!who || who === me) continue;
       useStore.getState().setBubble(who, m.body);
     }
-  }, [messages]);
+  });
 
   useEffect(() => {
     const el = box.current;
@@ -58,7 +67,11 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
   return (
     <div className="bw-messages" ref={box} onScroll={onScroll}>
       {decoratedMessages.map((d) =>
-        isNarration(d.message.body) ? (
+        parseCharacterLine(narrationText(d.message.body)) ? (
+          <div key={d.message.id} className="bw-line">
+            <b>{parseCharacterLine(narrationText(d.message.body))!.name}</b> {parseCharacterLine(narrationText(d.message.body))!.text}
+          </div>
+        ) : isNarration(d.message.body) ? (
           <div key={d.message.id} className="bw-narration">{narrationText(d.message.body)}</div>
         ) : (
           <div key={d.message.id}>{renderMessage(d)}</div>

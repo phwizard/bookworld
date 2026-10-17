@@ -22,6 +22,9 @@ Next up (owner's call, 17 Oct): deployment deferred; chat membership limits defe
 
 ## Phase 1: Playable (after Phase 0 passes)
 
+Status 17 Oct 2026 (late): items 3 to 6 shipped. Panorama rooms (Garden, Poly Haven HDRI), image wallpapers and floors (Poly Haven, CC0), music per room (Kevin MacLeod, CC BY, N to mute), character life (wander, face the speaker, cron schedule for moves and lines, on-enter greeting scripts). Deployment (5) and chat membership limits deferred by the owner. Open: generator (1), provisioner (2), second world (7), submissions (8), measurement (9), README + video (10).
+
+
 Generator (text -> world.json -> provisioning), panorama rooms, music, two worlds (Alice; The Tempest as an enacted play with scheduled performances), character schedules, world submissions by PR, README + 2-minute video, repo public. Measure: players/world/day, rooms per session, messages to characters vs humans, sessions with 2+ humans in a room, day-7 return.
 
 ## Later

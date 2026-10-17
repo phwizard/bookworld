@@ -17,6 +17,7 @@
     "@colyseus/ws-transport": "^0.18.4",
     "@ethora/sdk-backend": "^26.8.1",
     "cors": "^2.8.6",
+    "croner": "^10.0.1",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3"
   },

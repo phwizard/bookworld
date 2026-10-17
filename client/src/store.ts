@@ -18,6 +18,8 @@ interface State {
   pointerLocked: boolean;
   toast: string | null;
   bubbles: Record<string, { text: string; at: number }>;
+  musicOn: boolean;
+  setMusicOn(on: boolean): void;
   setSession(s: EnterResponse): void;
   setLocation(location: string, enterFrom: Direction | null): void;
   setPlayers(players: Record<string, PlayerView>): void;
@@ -40,6 +42,8 @@ export const useStore = create<State>((set) => ({
   pointerLocked: false,
   toast: null,
   bubbles: {},
+  musicOn: (() => { try { return localStorage.getItem('bookworld.music') !== 'off'; } catch { return true; } })(),
+  setMusicOn: (musicOn) => { try { localStorage.setItem('bookworld.music', musicOn ? 'on' : 'off'); } catch { /* ignore */ } set({ musicOn }); },
   setSession: (session) => set({ session, location: session.world.start, enterFrom: null }),
   setLocation: (location, enterFrom) => set({ location, enterFrom, players: {}, characters: {} }),
   setPlayers: (players) => set({ players }),

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { KeyboardControls, PointerLockControls } from '@react-three/drei';
+import { Environment, KeyboardControls, PointerLockControls } from '@react-three/drei';
+import { assetUrl } from '../assets.ts';
 import { Physics } from '@react-three/rapier';
 import type { Direction, WorldRoom } from '@bookworld/shared';
 import { roomSize } from '@bookworld/shared';
@@ -26,11 +27,20 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
   const world = useStore((s) => s.session!.world);
   const [w, h, d] = roomSize(room);
   const ceiling = room.scene?.palette?.ceiling ?? '#2a2218';
+  const panorama = room.scene?.template === 'panorama' ? assetUrl(room.scene.panorama) : null;
   return (
     <KeyboardControls map={keyboardMap}>
       <Canvas shadows camera={{ fov: 75, near: 0.05, far: 200, position: [0, 1.6, 0] }} dpr={[1, 1.5]}>
-        <color attach="background" args={[ceiling]} />
-        <fog attach="fog" args={[ceiling, Math.max(w, d), Math.max(w, d) * 3]} />
+        {panorama ? (
+          <Suspense fallback={<color attach="background" args={[ceiling]} />}>
+            <Environment key={panorama} files={panorama} background environmentIntensity={0.6} />
+          </Suspense>
+        ) : (
+          <>
+            <color attach="background" args={[ceiling]} />
+            <fog attach="fog" args={[ceiling, Math.max(w, d), Math.max(w, d) * 3]} />
+          </>
+        )}
         <ambientLight intensity={0.9} />
         <hemisphereLight args={['#fff4e0', '#3a2a1a', 0.8]} />
         <pointLight position={[0, h - 0.4, 0]} intensity={Math.max(w, d) * 5} distance={Math.max(w, d) * 1.5} decay={1.6} castShadow color="#ffe6c0" />
@@ -73,9 +83,7 @@ function Characters() {
   return (
     <>
       {Object.values(characters).map((c) => (
-        <group key={c.id} position={[c.x, c.y, c.z]} rotation-y={c.ry}>
-          <CharacterAvatar id={c.id} name={c.name} avatar={world.characters.find((wc) => wc.id === c.id)?.avatar} />
-        </group>
+        <CharacterAvatar key={c.id} id={c.id} name={c.name} avatar={world.characters.find((wc) => wc.id === c.id)?.avatar} />
       ))}
     </>
   );

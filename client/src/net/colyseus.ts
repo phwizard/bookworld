@@ -65,11 +65,17 @@ function wire(room: Room<LocationStateView>) {
     publishPlayers();
   });
   $(room.state).characters.onAdd((c, id) => {
-    characters[id] = { id: c.id, name: c.name, x: c.x, y: c.y, z: c.z, ry: c.ry };
+    characters[id] = { id: c.id, name: c.name, x: c.x, y: c.y, z: c.z, ry: c.ry, anim: c.anim };
+    poses.set(`c:${id}`, { x: c.x, y: c.y, z: c.z, ry: c.ry, anim: c.anim });
     publishCharacters();
+    $(c).onChange(() => {
+      const pose = poses.get(`c:${id}`);
+      if (pose) { pose.x = c.x; pose.y = c.y; pose.z = c.z; pose.ry = c.ry; pose.anim = c.anim; }
+    });
   });
   $(room.state).characters.onRemove((_c, id) => {
     delete characters[id];
+    poses.delete(`c:${id}`);
     publishCharacters();
   });
 
@@ -92,6 +98,11 @@ export function sendPos(msg: PosMessage) {
   if (!current || now - lastPosSent < 66) return;
   lastPosSent = now;
   current.send(MSG.pos, msg);
+}
+
+/** Tell the room a character was addressed by name (it turns to face the player). */
+export function addressCharacter(characterId: string) {
+  current?.send(MSG.address, { character: characterId });
 }
 
 let moveLock = 0;

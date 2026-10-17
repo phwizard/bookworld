@@ -1,7 +1,7 @@
 // Everything the world service asks Ethora for. Ethora is used only through its public backend SDK
 // (B2B server token signed with the App Secret). If the credentials are missing the service runs in
 // "no chat" mode so movement can be developed and tested without them.
-import { EthoraSDKService } from '@ethora/sdk-backend';
+import { EthoraSDKService, createServerToken } from '@ethora/sdk-backend';
 import { narrationBody, NARRATOR_NAME } from '@bookworld/shared';
 import type { WorldEthoraIds } from './world/load.ts';
 
@@ -86,19 +86,41 @@ export class EthoraWorldService {
     }
   }
 
+  /** Moves a character's agent from one room's chat to another (invite-to-chat / leave-chat). */
+  async moveAgent(characterId: string, fromRoomId: string, toRoomId: string): Promise<void> {
+    const agent = this.ids?.agents?.[characterId];
+    const from = this.ids?.rooms[fromRoomId];
+    const to = this.ids?.rooms[toRoomId];
+    if (!this.sdk || !agent || !to || !this.appId) return;
+    const token = createServerToken({ chatApiUrl: sdkApiUrl, chatAppId: this.appId, chatAppSecret: process.env.ETHORA_CHAT_APP_SECRET! });
+    const headers = { 'content-type': 'application/json', authorization: `Bearer ${token}`, 'x-custom-token': token };
+    const post = async (url: string, body: unknown) => {
+      const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+      if (!res.ok) throw Object.assign(new Error(`${res.status} ${url}`), { response: { status: res.status, data: await res.text() } });
+    };
+    await post(`${sdkApiUrl}/v2/apps/${this.appId}/agents/${agent.agentId}/invite-to-chat`, { chatJid: to.jid });
+    if (agent.botInstanceId && from) {
+      await post(`${sdkApiUrl}/v2/agents/${agent.agentId}/bot-instances/${agent.botInstanceId}/leave-chat`, { chatJid: from.jid });
+    }
+  }
+
   /** Posts a narration line ("Alice has joined (E)", italic) into the room through the app's broadcast sender. */
-  async narrate(roomId: string, text: string): Promise<void> {
+  narrate(roomId: string, text: string): Promise<void> {
+    return this.post(roomId, narrationBody(text), 'narration');
+  }
+
+  /** Posts a raw body (a character's scripted line, already formatted) into the room. */
+  async post(roomId: string, body: string, kind: 'narration' | 'line' = 'line'): Promise<void> {
     const r = this.ids?.rooms[roomId];
     if (!this.sdk || !r || !this.appId) {
-      console.log(`[narrate:${roomId}] ${text}`);
+      console.log(`[${kind}:${roomId}] ${body}`);
       return;
     }
-    // The sender shown is the app's broadcast sender (set once to the Narrator in the dashboard or over MCP);
-    // the broadcast endpoint rejects a per-message senderName.
+    // The sender shown is the app's broadcast sender; the broadcast endpoint rejects a per-message senderName.
     await this.sdk.broadcastToAppChats(this.appId, {
-      text: narrationBody(text),
+      text: body,
       chatNames: [r.jid],
-      metadata: { bookworld: { kind: 'narration', narrator: NARRATOR_NAME } },
+      metadata: { bookworld: { kind, narrator: NARRATOR_NAME } },
     });
   }
 }

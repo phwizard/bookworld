@@ -3,13 +3,14 @@
 import { Room, type Client } from '@colyseus/core';
 import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
-  MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, characterPose, entryPose, roomById, roomSize, roomSpawn, clamp,
-  type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
+  MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp,
+  type AddressMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
 import { tryEthora, type EthoraWorldService } from '../ethora.ts';
-import { ethoraFor } from '../services.ts';
+import { ethoraFor, simFor } from '../services.ts';
+import type { CharState, WorldSim } from '../world/sim.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -29,6 +30,7 @@ export const Character = schema({
   y: t.number(),
   z: t.number(),
   ry: t.number(),
+  anim: t.string(),
 }, 'Character');
 export type Character = SchemaType<typeof Character>;
 
@@ -51,6 +53,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private world!: World;
   private room!: WorldRoom;
   private ethora!: EthoraWorldService;
+  private sim!: WorldSim;
+  private unsubscribe: (() => void) | null = null;
 
   onCreate(options: CreateOptions) {
     const loaded = getWorld(options.world);
@@ -67,14 +71,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     state.location = options.location;
     this.setState(state);
 
-    this.world.characters
-      .filter((c) => c.home === room.id)
-      .forEach((c, i) => {
-        const pose = characterPose(room, c, i);
-        const ch = new Character();
-        ch.id = c.id; ch.name = c.name; ch.x = pose.x; ch.y = pose.y; ch.z = pose.z; ch.ry = pose.rotY;
-        state.characters.set(c.id, ch);
-      });
+    this.sim = simFor(options.world);
+    this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
 
     const [w, , d] = roomSize(room);
     this.onMessage(MSG.pos, (client, msg: PosMessage) => {
@@ -88,6 +86,10 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     });
 
     this.onMessage(MSG.move, (client, msg: MoveMessage) => void this.handleMove(client, msg));
+    this.onMessage(MSG.address, (client, msg: AddressMessage) => {
+      const p = this.state.players.get(client.sessionId);
+      if (p && msg?.character) this.sim.address(msg.character, p.x, p.z);
+    });
     console.log(`[room] created ${options.world}/${options.location}`);
   }
 
@@ -109,6 +111,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
+    setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
     console.log(`[room ${this.room.id}] + ${session.name} (${client.sessionId})${enterFrom ? ' from ' + enterFrom : ''}`);
   }
 
@@ -121,6 +124,25 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.pid));
     }
     console.log(`[room ${this.room.id}] - ${data.session.name}`);
+  }
+
+  onDispose() {
+    this.unsubscribe?.();
+  }
+
+  private syncCharacters(chars: CharState[]) {
+    const seen = new Set<string>();
+    for (const c of chars) {
+      seen.add(c.id);
+      let ch = this.state.characters.get(c.id);
+      if (!ch) {
+        ch = new Character();
+        ch.id = c.id; ch.name = c.name;
+        this.state.characters.set(c.id, ch);
+      }
+      ch.x = c.x; ch.y = c.y; ch.z = c.z; ch.ry = c.ry; ch.anim = c.anim;
+    }
+    for (const id of [...this.state.characters.keys()]) if (!seen.has(id)) this.state.characters.delete(id);
   }
 
   private async handleMove(client: Client, msg: MoveMessage) {
@@ -139,7 +161,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, `${name} has left (${DIRECTION_LABEL[dir]})`));
     client.send(MSG.moved, { to: target, enterFrom } satisfies MovedMessage);
     // The old room's access is revoked after the client has had time to disconnect from it.
-    this.clock.setTimeout(() => void tryEthora('revoke old room', () => this.ethora.revoke(this.room.id, pid)), 3000);
+    setTimeout(() => void tryEthora('revoke old room', () => this.ethora.revoke(this.room.id, pid)), 3000);
   }
 }
 

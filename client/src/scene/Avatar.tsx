@@ -107,12 +107,32 @@ export function RemotePlayer({ sessionId, name }: { sessionId: string; name: str
   );
 }
 
-/** A book character standing in its home room. */
+/** A book character; the server moves it (wander, turning to face a speaker, walking out of the room). */
 export function CharacterAvatar({ id, name, avatar }: { id: string; name: string; avatar?: string | null }) {
+  const key = `c:${id}`;
+  const group = useRef<THREE.Group>(null);
+  const initial = poses.get(key);
+  const [anim, setAnim] = useState<Anim>('idle');
+  useFrame((_, dt) => {
+    const g = group.current;
+    const target = poses.get(key);
+    if (!g || !target) return;
+    const k = 1 - Math.exp(-dt * 10);
+    g.position.x += (target.x - g.position.x) * k;
+    g.position.y += (target.y - g.position.y) * k;
+    g.position.z += (target.z - g.position.z) * k;
+    let dy = target.ry - g.rotation.y;
+    dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    g.rotation.y += dy * k;
+    const a = (target.anim === 'walk' || target.anim === 'run' ? target.anim : 'idle') as Anim;
+    if (a !== anim) setAnim(a);
+  });
   return (
-    <Suspense fallback={<AvatarMesh name={name} color={colorFor(name, 45, 35)} isCharacter />}>
-      <CharacterModel file={avatarFile(avatar, id)} anim="idle" />
-      <AvatarLabels name={name} />
-    </Suspense>
+    <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
+      <Suspense fallback={<AvatarMesh name={name} color={colorFor(name, 45, 35)} isCharacter />}>
+        <CharacterModel file={avatarFile(avatar, id)} anim={anim} />
+        <AvatarLabels name={name} />
+      </Suspense>
+    </group>
   );
 }

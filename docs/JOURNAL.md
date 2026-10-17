@@ -40,3 +40,25 @@ Speech bubbles: the chat component's `CustomScrollableArea` prop hands over the 
 Two things to remember: after a Vite hot reload the physics world and the animation mixer can be left stale (the Hatter stood in a T-pose once), so test after a full reload; and the Hatter's bot instance went silent after about twenty minutes while the agent itself still answers in a direct test (ETHORA-GAPS #13).
 
 ![T-pose after a hot reload](journal/261017-09-hatter-tpose-after-hot-reload.jpg)
+
+## 17 Oct 2026, late evening: Phase 1 items 3 to 6
+
+**Rooms that look like places.** The owner picked panorama rooms, wallpaper images, music and character life from the Phase 1 list. With no image generator in the loop, the sources are Poly Haven (CC0 HDRIs and PBR textures with a public API and direct file links) and Kevin MacLeod's CC BY music. The Garden is now a panorama room: a 2k HDRI of the Borghese gardens as sky and light, a grass floor three rooms wide so the horizon meets the picture, invisible walls, free-standing door frames. The closed rooms got real textures: planks and leaf litter in the well, patterned plaster and a checkered floor in the Hall, a leafy hedge and grass at the Tea Party. The Poly Haven tonemapped JPGs are 50 MB each, so the 2k `.hdr` (7 MB) goes straight into drei's `Environment`.
+
+![the Rabbit Hole with textures](journal/261017-12-rabbit-hole-textures.jpg)
+![the Hall of Doors with textures](journal/261017-13-hall-of-doors-textures.jpg)
+![the Garden as a panorama room](journal/261017-14-garden-panorama.jpg)
+![the Garden, looking at the house](journal/261017-15-garden-house-view.jpg)
+
+**Music.** One looping track per room from the world file, with title and credit in the HUD, N to mute. Browsers refuse autoplay, so the track starts on the first click (the same click that captures the mouse) and crossfades on room change. The MP3s were 3 to 9 MB each; `afconvert` on the Mac re-encodes them to 1 to 2 MB AAC.
+
+**Character life.** The world service now runs one simulation per world. The Hatter strolls within a metre of his spot, turns to face anyone who names him in chat (the client reports the mention, the server rotates him and holds him still for 30 s), walks to the Garden every 20 minutes and back five minutes later on a cron schedule, and greets whoever walks into the Tea Party ("No room! No room!" then "Oh, very well, Alice...") with a 3-minute cooldown. Scripted lines are posted as `**Hatter:** text` and the client shows them as the character speaking, with a bubble.
+
+Three things bit on the way. Character lines first went out wrapped as narration, so the client filed them as system text. The bubble scanner then ignored them because the chat component flags every app broadcast as a system message. And the component mutates its message arrays in place, so an effect keyed on the array never re-ran; the scanner now runs after every render and keeps a set of seen ids. Worth saying again: after a hot reload the chat panel kept running the old message list code, so each of these took a full reload to confirm.
+
+![the Hatter greets a newcomer](journal/261017-16-hatter-greets-bubble.jpg)
+![the Hatter turns to face Alice and answers](journal/261017-17-hatter-turns-and-answers.jpg)
+
+The last picture is the whole idea in one frame: the player wrote "Hatter, your watch is two days wrong", the character turned round, and the agent answered from chapter 7.
+
+On the chat side the move between rooms is half done: with the agent set to "unlisted" the server token can invite it into the next room, but `leave-chat` answers 403, so the agent stays a member of every room it has visited (ETHORA-GAPS #14). Since it only answers when named, that is tolerable for now.

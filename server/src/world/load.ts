@@ -6,7 +6,7 @@ import { validateWorld, type World } from '@bookworld/shared';
 export interface WorldEthoraIds {
   appId: string;
   rooms: Record<string, { chatId: string; jid: string }>;
-  agents?: Record<string, { agentId: string; home?: string }>;
+  agents?: Record<string, { agentId: string; botInstanceId?: string; home?: string }>;
 }
 
 export interface LoadedWorld {

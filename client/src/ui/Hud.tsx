@@ -9,6 +9,7 @@ export function Hud({ room }: { room: WorldRoom }) {
   const toast = useStore((s) => s.toast);
   const setToast = useStore((s) => s.setToast);
   const players = useStore((s) => s.players);
+  const musicOn = useStore((s) => s.musicOn);
   const [faded, setFaded] = useState(false);
 
   useEffect(() => {
@@ -34,8 +35,13 @@ export function Hud({ room }: { room: WorldRoom }) {
       {toast && <div className="toast">{toast}</div>}
       {locked && !chatOpen && <div className="crosshair" />}
       <div className="hint">
-        {count} here · WASD walk · Shift run · T talk · Esc release mouse
+        {count} here · WASD walk · Shift run · T talk · N music · Esc release mouse
       </div>
+      {room.music && (
+        <div className="music">
+          {musicOn ? '\u266a' : '\u266a off'} {room.music.title}{room.music.credit ? `, ${room.music.credit}` : ''}
+        </div>
+      )}
       {!locked && !chatOpen && (
         <div className="click">
           <div>Click to look around</div>

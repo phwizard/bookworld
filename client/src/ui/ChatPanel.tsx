@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { Chat, XmppProvider, type IConfig } from '@ethora/chat-component';
 import { useStore } from '../store.ts';
 import { ChatMessages } from './ChatMessages.tsx';
+import { addressCharacter } from '../net/colyseus.ts';
 
 export function ChatPanel() {
   const session = useStore((s) => s.session)!;
@@ -34,6 +35,15 @@ export function ChatPanel() {
     disablePublicChatsDirectory: true,
     setRoomJidInPath: false,
     colors: { primary: '#3a2d1c', secondary: '#f3e6c4' },
+    eventHandlers: {
+      onMessageSent: ({ message }) => {
+        // A character named in the message turns to face the speaker.
+        const text = message.toLowerCase();
+        for (const c of Object.values(useStore.getState().characters)) {
+          if (text.includes(c.name.toLowerCase())) addressCharacter(c.id);
+        }
+      },
+    },
   }), [ethora.apiBaseUrl, ethora.appId, ethora.chatToken, ethora.xmppDomain]);
 
   return (

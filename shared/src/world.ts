@@ -56,8 +56,11 @@ export interface WorldRoom {
   name: string;
   description: string;
   exits: Record<Direction, string | null>;
+  /** wall texture image (relative to the world's asset base) or null for the procedural pattern */
   wallpaper?: string | null;
-  music?: string | null;
+  /** floor texture image or null for the procedural pattern */
+  floor?: string | null;
+  music?: MusicTrack | null;
   scene?: RoomScene;
   owner?: string | null;
   claimable?: boolean;
@@ -65,10 +68,18 @@ export interface WorldRoom {
 }
 
 export interface ScheduleEntry {
+  /** cron expression (5 fields) */
   at: string;
   do: 'move' | 'say';
   to?: string;
   text?: string;
+}
+
+export interface MusicTrack {
+  file: string;
+  title?: string;
+  credit?: string;
+  volume?: number;
 }
 
 export interface WorldCharacter {
@@ -83,6 +94,8 @@ export interface WorldCharacter {
   /** position inside the home room (room-local metres), default near the north wall */
   pos?: [number, number, number];
   rotY?: number;
+  /** how far (metres) the character wanders from its spot while idle; 0 keeps it still */
+  wander?: number;
   schedule?: ScheduleEntry[];
 }
 
@@ -96,6 +109,8 @@ export interface WorldScript {
   id: string;
   room: string;
   trigger: { cron?: string; onEnter?: boolean };
+  /** seconds before the same script may run again (default 120) */
+  cooldownSec?: number;
   lines: ScriptLine[];
   onInterrupt?: 'improvise-then-resume' | 'stop' | 'ignore';
 }
@@ -159,10 +174,20 @@ export function validateWorld(input: unknown): string[] {
       }
     }
   }
+  const charIds = new Set<string>();
   for (const c of w.characters ?? []) {
     if (!c.id || !SLUG.test(c.id)) errors.push(`character id ${JSON.stringify(c.id)} must be a slug`);
+    charIds.add(c.id);
     if (!byId.has(c.home)) errors.push(`character ${c.id}: home ${c.home} is not a room id`);
     if (c.responseMode === 'always') errors.push(`character ${c.id}: responseMode "always" is not allowed (cost rule)`);
+    for (const e of c.schedule ?? []) {
+      if (e.do === 'move' && (!e.to || !byId.has(e.to))) errors.push(`character ${c.id}: schedule move to unknown room ${e.to}`);
+      if (e.do === 'say' && !e.text) errors.push(`character ${c.id}: schedule say without text`);
+    }
+  }
+  for (const sc of w.scripts ?? []) {
+    if (!byId.has(sc.room)) errors.push(`script ${sc.id}: room ${sc.room} is not a room id`);
+    for (const l of sc.lines ?? []) if (!charIds.has(l.who)) errors.push(`script ${sc.id}: unknown character ${l.who}`);
   }
   const grid = layoutGrid(w as World);
   const seen = new Map<string, string>();

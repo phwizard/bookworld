@@ -54,6 +54,7 @@ export interface CharacterView {
   y: number;
   z: number;
   ry: number;
+  anim: string;
 }
 
 export interface LocationStateView {
@@ -72,12 +73,15 @@ export const MSG = {
   moved: 'moved',
   /** server -> client */
   denied: 'denied',
+  /** client -> server: the player addressed a character by name in chat; it turns to face them */
+  address: 'address',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
 export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
+export interface AddressMessage { character: string }
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.
@@ -92,4 +96,16 @@ export function isNarration(body: string): boolean {
 }
 export function narrationText(body: string): string {
   return isNarration(body) ? body.slice(1, -1) : body;
+}
+
+/**
+ * Scripted character lines are posted by the world service as `**Name:** text` (bold name in markdown).
+ * Clients show them as the character speaking: a bubble over the character and a normal line in the panel.
+ */
+export function characterLine(name: string, text: string): string {
+  return `**${name}:** ${text}`;
+}
+export function parseCharacterLine(body: string): { name: string; text: string } | null {
+  const m = /^\*\*([^*\n]{1,40}):\*\* ([\s\S]+)$/.exec(body);
+  return m ? { name: m[1]!, text: m[2]! } : null;
 }

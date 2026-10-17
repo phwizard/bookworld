@@ -21,8 +21,13 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/rabbit-hole.jpg",
-      "music": null,
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.35
+      },
       "scene": {
         "template": "box",
         "size": [
@@ -160,7 +165,8 @@
       },
       "owner": null,
       "claimable": false,
-      "claimedAt": null
+      "claimedAt": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg"
     },
     {
       "id": "hall-of-doors",
@@ -172,8 +178,13 @@
         "s": null,
         "w": "rabbit-hole"
       },
-      "wallpaper": "assets/hall-of-doors.jpg",
-      "music": null,
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
       "scene": {
         "template": "box",
         "size": [
@@ -332,7 +343,8 @@
       },
       "owner": null,
       "claimable": false,
-      "claimedAt": null
+      "claimedAt": null,
+      "floor": "assets/textures/checkered_pavement_tiles.jpg"
     },
     {
       "id": "garden",
@@ -344,10 +356,15 @@
         "s": null,
         "w": "hall-of-doors"
       },
-      "wallpaper": "assets/garden.jpg",
-      "music": null,
+      "wallpaper": null,
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
       "scene": {
-        "template": "box",
+        "template": "panorama",
         "size": [
           14,
           5,
@@ -484,16 +501,6 @@
               2
             ],
             "scale": 10
-          },
-          {
-            "id": "rug-round",
-            "pos": [
-              0,
-              0.01,
-              0
-            ],
-            "flat": true,
-            "scale": 1.0
           }
         ],
         "spawn": [
@@ -501,11 +508,13 @@
           0,
           4
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr"
       },
       "owner": null,
       "claimable": false,
-      "claimedAt": null
+      "claimedAt": null,
+      "floor": "assets/textures/leafy_grass.jpg"
     },
     {
       "id": "tea-party",
@@ -517,8 +526,13 @@
         "s": "garden",
         "w": null
       },
-      "wallpaper": "assets/tea-party.jpg",
-      "music": null,
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
       "scene": {
         "template": "box",
         "size": [
@@ -750,7 +764,8 @@
       },
       "owner": null,
       "claimable": false,
-      "claimedAt": null
+      "claimedAt": null,
+      "floor": "assets/textures/grass_ground.jpg"
     }
   ],
   "characters": [
@@ -766,14 +781,52 @@
         "alice-ch7"
       ],
       "avatar": "kaykit:Mage",
-      "schedule": [],
+      "schedule": [
+        {
+          "at": "*/20 * * * *",
+          "do": "move",
+          "to": "garden"
+        },
+        {
+          "at": "5,25,45 * * * *",
+          "do": "move",
+          "to": "tea-party"
+        },
+        {
+          "at": "12,32,52 * * * *",
+          "do": "say",
+          "text": "Have some more tea. You have had none yet, so you cannot take less."
+        }
+      ],
       "pos": [
         1.0,
         0,
         -2.6
       ],
-      "rotY": 3.1416
+      "rotY": 3.1416,
+      "wander": 1.0
     }
   ],
-  "scripts": []
+  "scripts": [
+    {
+      "id": "hatter-greets",
+      "room": "tea-party",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "hatter",
+          "text": "No room! No room!",
+          "waitMs": 3500
+        },
+        {
+          "who": "hatter",
+          "text": "Oh, very well, {player}. There is plenty of room. Your hair wants cutting.",
+          "waitMs": 4000
+        }
+      ]
+    }
+  ]
 }

@@ -24,6 +24,11 @@ function Join() {
     try {
       const res = await enterWorld(WORLD, name.trim());
       localStorage.setItem('bookworld.name', res.name);
+      // Every visit is a fresh guest; drop the chat component's persisted session from the previous one,
+      // otherwise it reconnects with stale credentials and the live XMPP link fails.
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith('@ethora/chat-component') || key.startsWith('persist:')) localStorage.removeItem(key);
+      }
       setSession(res);
     } catch (err) {
       setError((err as Error).message);

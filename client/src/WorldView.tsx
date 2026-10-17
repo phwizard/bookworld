@@ -5,6 +5,7 @@ import { joinLocation } from './net/colyseus.ts';
 import { Scene } from './scene/Scene.tsx';
 import { Hud } from './ui/Hud.tsx';
 import { ChatPanel } from './ui/ChatPanel.tsx';
+import { Music } from './ui/Music.tsx';
 
 export function WorldView() {
   const session = useStore((s) => s.session)!;
@@ -35,6 +36,7 @@ export function WorldView() {
       <Scene room={room} enterFrom={enterFrom} />
       <Hud room={room} />
       <ChatPanel />
+      <Music />
     </div>
   );
 }
