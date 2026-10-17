@@ -1,0 +1,13 @@
+packages:
+  - client
+  - server
+  - generator
+  - shared
+
+# Build scripts (pnpm 12 "allowBuilds"): esbuild needs its postinstall; the rest ship with the chat component and are not needed here.
+allowBuilds:
+  esbuild: true
+  '@firebase/util': false
+  core-js: false
+  msgpackr-extract: false
+  protobufjs: false

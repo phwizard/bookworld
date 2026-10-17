@@ -9,3 +9,5 @@ build/
 # generated assets and world exports with real tokens never go in git
 worlds/*/secrets.json
 /tmp/
+# per-world Ethora ids and tokens (filled by provisioning)
+worlds/*/ethora.json

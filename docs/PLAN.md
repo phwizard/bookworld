@@ -6,15 +6,19 @@ Scope: one world (`worlds/alice`, 4 rooms: Rabbit Hole, Hall of Doors, Garden, T
 
 Exit test: a second person on another machine enters from a link, walks to the Tea Party, talks to the Hatter and to the first person, and leaves; both see the correct join/leave lines in both clients.
 
-Steps:
-1. Repo scaffold (pnpm workspaces: client, server, worlds). Gitleaks hook.
-2. Ethora App for the Alice world created via MCP or admin; 4 rooms; 1 agent (Hatter: persona, `responseMode: mentioned`, `cooldownSec: 30`, Alice text chapters 7 as knowledge). Ids into `worlds/alice/ethora.json` (gitignored).
-3. Server: Colyseus with a `LocationRoom` per world room; player state (pos, rotY, name); `move(direction)` handler that validates the exit, calls Ethora remove/add, posts system messages, hands the client to the next Colyseus room.
-4. Client: R3F scene from the box template; ecctrl controller; VRM avatar with Mixamo idle/walk/run; remote players interpolated; doors as trigger volumes.
-5. Chat panel: chat component in single-room mode; guest login through the server (`customLogin`); bubbles (resolve ETHORA-GAPS #1).
-6. Narrator user + `customSystemMessage` for movement lines.
-7. Hatter: agent invited to the Tea Party room; verify it answers when mentioned and stays quiet otherwise.
-8. Deploy server to the droplet, client to Vercel, run the exit test with a second person.
+Steps (status as of 17 Oct 2026, evening):
+1. DONE. Repo scaffold (pnpm workspaces: client, server, shared, worlds). Gitleaks pre-commit hook (`pnpm hooks:install`).
+2. DONE. Ethora App "Bookworld Alice" created via MCP; 4 rooms; agent Hatter (`responseMode: mentioned`, `cooldownSec: 30`, chapter 7 uploaded as knowledge, invited to the Tea Party room, answered in character in a test). Ids in `worlds/alice/ethora.json` (gitignored; `ethora.example.json` shows the shape).
+3. DONE (movement). Colyseus `LocationRoom` per world room, filtered by `{world, location}`; player state (pos, rotY, anim, name); `move` validates the exit, grants the next Ethora room, narrates "has left (E)" / "has joined (W)", hands the client over, revokes the old room 3 s later. Chat side runs through `@ethora/sdk-backend` (B2B token from the App Secret) and is a no-op until `ETHORA_CHAT_APP_SECRET` is set.
+4. DONE (placeholder avatars). R3F box-room template with procedural wallpaper, doorways with the destination name over each door, ecctrl 2.0 capsule + pointer-lock first person, WASD/Shift, door detection by position, remote players interpolated, characters standing in their home room, mini-map from the grid. VRM + Mixamo still to do.
+5. PARTLY. Chat panel mounts `@ethora/chat-component` pinned to the current room (`roomJID` prop, `disableRooms`), guest login = client JWT from the server (`jwtLogin`). Not yet verified against Ethora (needs the App Secret). Bubbles: use the component's `CustomScrollableArea` (it receives the room's messages) rather than a store hook; not built yet.
+6. PARTLY. Narration is posted through the broadcast endpoint as "Narrator" with a `* ` body prefix; rendering as a system line in the panel still to do.
+7. DONE for the agent side (answers when mentioned). To verify from inside the 3D client once chat is live.
+8. TODO. Deploy server to the droplet, client to Vercel, run the exit test with a second person.
+
+Verified locally 17 Oct: two browser tabs, both walked Rabbit Hole -> Hall of Doors, each saw the other and "2 here", server narration lines correct.
+
+Next up: App Secret into `.env` and verify chat + narration in the panel; bubbles via `CustomScrollableArea`; VRM avatars; props catalog; deploy.
 
 ## Phase 1: Playable (after Phase 0 passes)
 

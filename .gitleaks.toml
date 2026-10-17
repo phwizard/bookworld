@@ -1,0 +1,14 @@
+# Extends the default gitleaks rules with the shapes used by Ethora.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "ethora-app-token-jwt"
+description = "Ethora app token / user JWT"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+
+[allowlist]
+paths = [
+  '''\.env\.example$''',
+  '''pnpm-lock\.yaml$'''
+]

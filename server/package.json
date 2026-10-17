@@ -1,0 +1,31 @@
+{
+  "name": "@bookworld/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=../.env --import tsx --watch src/index.ts",
+    "start": "node --env-file=../.env dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "validate:worlds": "tsx src/world/validate-cli.ts ../worlds"
+  },
+  "dependencies": {
+    "@bookworld/shared": "workspace:*",
+    "@colyseus/core": "^0.18.19",
+    "@colyseus/schema": "^5.0.40",
+    "@colyseus/ws-transport": "^0.18.4",
+    "@ethora/sdk-backend": "^26.8.1",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

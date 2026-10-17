@@ -1,0 +1,242 @@
+// World file types and helpers shared by the server, the clients and the generator.
+// Schema reference: docs/WORLD-FILE.md
+
+export type Direction = 'n' | 'e' | 's' | 'w';
+export const DIRECTIONS: Direction[] = ['n', 'e', 's', 'w'];
+export const OPPOSITE: Record<Direction, Direction> = { n: 's', s: 'n', e: 'w', w: 'e' };
+export const DIRECTION_LABEL: Record<Direction, string> = { n: 'N', e: 'E', s: 'S', w: 'W' };
+export const DIRECTION_NAME: Record<Direction, string> = { n: 'north', e: 'east', s: 'south', w: 'west' };
+/** Grid step per direction on the 2D map (x to the right, y downwards; north is up). */
+export const GRID_STEP: Record<Direction, [number, number]> = { n: [0, -1], s: [0, 1], e: [1, 0], w: [-1, 0] };
+
+export type License = 'public-domain' | 'original' | 'cc-by' | 'cc-by-sa' | 'private-attested';
+
+export interface WorldSource {
+  title: string;
+  author: string;
+  year?: number;
+  text?: string;
+  license: License;
+}
+
+export interface Palette {
+  wall: string;
+  floor: string;
+  ceiling?: string;
+  trim?: string;
+}
+
+export interface Prop {
+  kit: string;
+  id: string;
+  pos: [number, number, number];
+  rotY?: number;
+  scale?: number;
+}
+
+export interface RoomScene {
+  template: 'box' | 'panorama' | 'custom-gltf';
+  /** metres: width (x), height (y), depth (z) */
+  size: [number, number, number];
+  palette?: Palette;
+  panorama?: string | null;
+  props?: Prop[];
+  spawn?: [number, number, number];
+  exitWidth?: number;
+}
+
+export interface WorldRoom {
+  id: string;
+  name: string;
+  description: string;
+  exits: Record<Direction, string | null>;
+  wallpaper?: string | null;
+  music?: string | null;
+  scene?: RoomScene;
+  owner?: string | null;
+  claimable?: boolean;
+  claimedAt?: string | null;
+}
+
+export interface ScheduleEntry {
+  at: string;
+  do: 'move' | 'say';
+  to?: string;
+  text?: string;
+}
+
+export interface WorldCharacter {
+  id: string;
+  name: string;
+  home: string;
+  persona: string;
+  responseMode: 'mentioned' | 'smart' | 'probability' | 'always';
+  cooldownSec: number;
+  knowledgeTags?: string[];
+  avatar?: string | null;
+  /** position inside the home room (room-local metres), default near the north wall */
+  pos?: [number, number, number];
+  rotY?: number;
+  schedule?: ScheduleEntry[];
+}
+
+export interface ScriptLine {
+  who: string;
+  text: string;
+  waitMs?: number;
+}
+
+export interface WorldScript {
+  id: string;
+  room: string;
+  trigger: { cron?: string; onEnter?: boolean };
+  lines: ScriptLine[];
+  onInterrupt?: 'improvise-then-resume' | 'stop' | 'ignore';
+}
+
+export interface World {
+  schema: 'bookworld/0';
+  slug: string;
+  title: string;
+  source: WorldSource;
+  start: string;
+  rooms: WorldRoom[];
+  characters: WorldCharacter[];
+  scripts?: WorldScript[];
+}
+
+export const DEFAULT_ROOM_SIZE: [number, number, number] = [12, 4, 12];
+export const DEFAULT_EXIT_WIDTH = 1.6;
+export const WALL_THICKNESS = 0.3;
+export const DOOR_HEIGHT = 2.4;
+
+const SLUG = /^[a-z0-9][a-z0-9-]*$/;
+
+/** Returns a list of problems; an empty list means the world is valid. */
+export function validateWorld(input: unknown): string[] {
+  const errors: string[] = [];
+  const w = input as Partial<World> | null;
+  if (!w || typeof w !== 'object') return ['world is not an object'];
+  if (w.schema !== 'bookworld/0') errors.push(`schema must be "bookworld/0", got ${JSON.stringify(w.schema)}`);
+  if (!w.slug || !SLUG.test(w.slug)) errors.push('slug must be a lowercase slug');
+  if (!w.title) errors.push('title is required');
+  if (!w.source || !w.source.license) errors.push('source.license is required');
+  if (!Array.isArray(w.rooms) || w.rooms.length === 0) {
+    errors.push('rooms must be a non-empty array');
+    return errors;
+  }
+  const byId = new Map<string, WorldRoom>();
+  for (const r of w.rooms) {
+    if (!r.id || !SLUG.test(r.id)) errors.push(`room id ${JSON.stringify(r.id)} must be a slug`);
+    if (byId.has(r.id)) errors.push(`duplicate room id ${r.id}`);
+    byId.set(r.id, r);
+    if (!r.name) errors.push(`room ${r.id}: name is required`);
+    if (!r.exits) errors.push(`room ${r.id}: exits is required`);
+    if (r.scene) {
+      if (!['box', 'panorama', 'custom-gltf'].includes(r.scene.template)) errors.push(`room ${r.id}: unknown scene.template`);
+      if (!Array.isArray(r.scene.size) || r.scene.size.length !== 3) errors.push(`room ${r.id}: scene.size must be [w,h,d]`);
+    }
+  }
+  if (!w.start || !byId.has(w.start)) errors.push(`start ${JSON.stringify(w.start)} is not a room id`);
+  for (const r of w.rooms) {
+    if (!r.exits) continue;
+    for (const d of DIRECTIONS) {
+      const target = r.exits[d];
+      if (target == null) continue;
+      const t = byId.get(target);
+      if (!t) {
+        errors.push(`room ${r.id}: exit ${d} points to unknown room ${target}`);
+        continue;
+      }
+      if (t.exits?.[OPPOSITE[d]] !== r.id) {
+        errors.push(`room ${r.id}: exit ${d} -> ${target} is not mirrored (${target}.${OPPOSITE[d]} should be ${r.id})`);
+      }
+    }
+  }
+  for (const c of w.characters ?? []) {
+    if (!c.id || !SLUG.test(c.id)) errors.push(`character id ${JSON.stringify(c.id)} must be a slug`);
+    if (!byId.has(c.home)) errors.push(`character ${c.id}: home ${c.home} is not a room id`);
+    if (c.responseMode === 'always') errors.push(`character ${c.id}: responseMode "always" is not allowed (cost rule)`);
+  }
+  const grid = layoutGrid(w as World);
+  const seen = new Map<string, string>();
+  for (const [id, cell] of grid) {
+    const key = `${cell.x},${cell.y}`;
+    const other = seen.get(key);
+    if (other) errors.push(`rooms ${other} and ${id} occupy the same grid cell ${key}`);
+    seen.set(key, id);
+  }
+  for (const r of w.rooms) if (!grid.has(r.id)) errors.push(`room ${r.id} is not reachable from ${w.start}`);
+  return errors;
+}
+
+export function roomById(world: World, id: string): WorldRoom | undefined {
+  return world.rooms.find((r) => r.id === id);
+}
+
+/** Grid coordinates for every room reachable from the start room (BFS). Gives the mini-map for free. */
+export function layoutGrid(world: World): Map<string, { x: number; y: number }> {
+  const grid = new Map<string, { x: number; y: number }>();
+  const start = roomById(world, world.start);
+  if (!start) return grid;
+  grid.set(start.id, { x: 0, y: 0 });
+  const queue = [start];
+  while (queue.length) {
+    const r = queue.shift()!;
+    const here = grid.get(r.id)!;
+    for (const d of DIRECTIONS) {
+      const target = r.exits?.[d];
+      if (!target || grid.has(target)) continue;
+      const t = roomById(world, target);
+      if (!t) continue;
+      const [dx, dy] = GRID_STEP[d];
+      grid.set(t.id, { x: here.x + dx, y: here.y + dy });
+      queue.push(t);
+    }
+  }
+  return grid;
+}
+
+export function roomSize(room: WorldRoom): [number, number, number] {
+  return room.scene?.size ?? DEFAULT_ROOM_SIZE;
+}
+
+export function roomSpawn(room: WorldRoom): [number, number, number] {
+  return room.scene?.spawn ?? [0, 0, 0];
+}
+
+/**
+ * 3D convention: the room is centred on the origin, floor at y = 0.
+ * North wall at z = -d/2, south at +d/2, east at x = +w/2, west at x = -w/2.
+ * Returns the centre of the doorway on the given wall and the yaw a body has when facing INTO the room from that door.
+ */
+export function doorPose(room: WorldRoom, dir: Direction): { x: number; z: number; rotY: number } {
+  const [w, , d] = roomSize(room);
+  switch (dir) {
+    case 'n': return { x: 0, z: -d / 2, rotY: Math.PI };       // facing +z (south) into the room
+    case 's': return { x: 0, z: d / 2, rotY: 0 };              // facing -z (north)
+    case 'e': return { x: w / 2, z: 0, rotY: Math.PI / 2 };    // facing -x (west)
+    case 'w': return { x: -w / 2, z: 0, rotY: -Math.PI / 2 };  // facing +x (east)
+  }
+}
+
+/** Where a player stands right after walking in through the door on side `enterFrom`. */
+export function entryPose(room: WorldRoom, enterFrom: Direction, inset = 1.8, sideways = 0): { x: number; y: number; z: number; rotY: number } {
+  const door = doorPose(room, enterFrom);
+  const [w, , d] = roomSize(room);
+  // `sideways` shifts along the wall so two people arriving together do not stand inside each other.
+  const x = door.x === 0 ? sideways : door.x - Math.sign(door.x) * inset;
+  const z = door.z === 0 ? sideways : door.z - Math.sign(door.z) * inset;
+  return { x: clamp(x, -w / 2 + 1, w / 2 - 1), y: 0, z: clamp(z, -d / 2 + 1, d / 2 - 1), rotY: door.rotY };
+}
+
+export function clamp(v: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+/** Default standing spot for a character in its home room: by the north wall, a little to the left. */
+export function characterPose(room: WorldRoom, c: WorldCharacter, index = 0): { x: number; y: number; z: number; rotY: number } {
+  if (c.pos) return { x: c.pos[0], y: c.pos[1], z: c.pos[2], rotY: c.rotY ?? 0 };
+  const [w, , d] = roomSize(room);
+  return { x: -w / 4 + index * 1.2, y: 0, z: -d / 2 + 2, rotY: Math.PI };
+}

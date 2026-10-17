@@ -1,0 +1,9 @@
+{
+  "appId": "<24-hex appId of the Ethora App for this world>",
+  "rooms": {
+    "<room id from world.json>": { "chatId": "<24-hex chatId>", "jid": "<appId>_<chatId>" }
+  },
+  "agents": {
+    "<character id from world.json>": { "agentId": "<24-hex agentId>" }
+  }
+}
