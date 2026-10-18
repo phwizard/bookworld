@@ -45,7 +45,7 @@ export function Hud({ room }: { room: WorldRoom }) {
       {ai && !ai.asleep && ai.limited && <div className="notice">You have had your share of the characters' attention for today. They are back for you after {resetLabel(ai.resetAt)}.</div>}
       {locked && !typing && <div className="crosshair" />}
       <div className="hint">
-        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · T talk · N music · F effects · V voices · Esc release mouse ·{' '}
+        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · Space jump · T talk · N music · F effects · V voices · Esc release mouse ·{' '}
         <button className="leave" onClick={() => void leaveWorld()}>Leave</button>
       </div>
       {room.music && (

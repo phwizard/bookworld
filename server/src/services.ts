@@ -39,7 +39,7 @@ export function ethoraFor(slug: string): EthoraWorldService {
   if (!s) {
     const loaded = getWorld(slug);
     if (!loaded) throw new Error(`unknown world ${slug}`);
-    s = new EthoraWorldService(loaded.ethora);
+    s = new EthoraWorldService(loaded.ethora, slug);
     services.set(slug, s);
   }
   return s;

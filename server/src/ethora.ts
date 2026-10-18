@@ -16,12 +16,14 @@ export class EthoraWorldService {
   readonly apiBaseUrl = apiBaseUrl;
   readonly xmppDomain = xmppDomain;
   private sdk: EthoraSDKService | null = null;
+  private slug: string | undefined;
   private granted = new Set<string>();
   /** Public app rooms (created over MCP) are open to every app user; users-access answers CHAT_NOT_FOUND for them. See ETHORA-GAPS #10. */
   private membershipSupported = true;
 
-  constructor(private ids: WorldEthoraIds | null) {
-    const appSecret = process.env.ETHORA_CHAT_APP_SECRET;
+  constructor(private ids: WorldEthoraIds | null, slug?: string) {
+    const appSecret = appSecretFor(slug);
+    this.slug = slug;
     this.appId = ids?.appId ?? null;
     this.enabled = Boolean(ids && appSecret);
     if (this.enabled) {
@@ -29,7 +31,7 @@ export class EthoraWorldService {
       process.env.ETHORA_CHAT_APP_ID = this.appId!;
       this.sdk = new EthoraSDKService({ chatAppId: this.appId!, chatAppSecret: appSecret! });
     } else {
-      console.warn(`[ethora] disabled for app ${this.appId ?? '(none)'}: ${ids ? 'ETHORA_CHAT_APP_SECRET not set' : 'no ethora.json for this world'}`);
+      console.warn(`[ethora] disabled for app ${this.appId ?? '(none)'}: ${ids ? `no App Secret (${secretVar(slug)} or ETHORA_CHAT_APP_SECRET)` : 'no ethora.json for this world'}`);
     }
   }
 
@@ -92,7 +94,7 @@ export class EthoraWorldService {
     const from = this.ids?.rooms[fromRoomId];
     const to = this.ids?.rooms[toRoomId];
     if (!this.sdk || !agent || !to || !this.appId) return;
-    const token = createServerToken({ chatApiUrl: sdkApiUrl, chatAppId: this.appId, chatAppSecret: process.env.ETHORA_CHAT_APP_SECRET! });
+    const token = createServerToken({ chatApiUrl: sdkApiUrl, chatAppId: this.appId, chatAppSecret: appSecretFor(this.slug)! });
     const headers = { 'content-type': 'application/json', authorization: `Bearer ${token}`, 'x-custom-token': token };
     const post = async (url: string, body: unknown) => {
       const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
@@ -123,6 +125,14 @@ export class EthoraWorldService {
       metadata: { bookworld: { kind, narrator: NARRATOR_NAME } },
     });
   }
+}
+
+/** `ETHORA_CHAT_APP_SECRET_ALICE` for the world "alice"; worlds without their own variable share ETHORA_CHAT_APP_SECRET. */
+function secretVar(slug?: string): string {
+  return `ETHORA_CHAT_APP_SECRET_${(slug ?? '').toUpperCase().replace(/-/g, '_')}`;
+}
+function appSecretFor(slug?: string): string | undefined {
+  return (slug && process.env[secretVar(slug)]) || process.env.ETHORA_CHAT_APP_SECRET || undefined;
 }
 
 /** Wraps an Ethora call so a chat outage never breaks movement. */

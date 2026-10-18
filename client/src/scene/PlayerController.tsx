@@ -10,7 +10,7 @@ import { rememberPosition, requestMove, sendPos } from '../net/colyseus.ts';
 import { useStore } from '../store.ts';
 import { Stepper, surfaceFor } from '../audio/footsteps.ts';
 
-export type Controls = 'forward' | 'backward' | 'leftward' | 'rightward' | 'run';
+export type Controls = 'forward' | 'backward' | 'leftward' | 'rightward' | 'run' | 'jump';
 
 const CAPSULE_HALF = 0.5;
 const CAPSULE_RADIUS = 0.3;
@@ -46,7 +46,7 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
       leftward: !!keys?.leftward,
       rightward: !!keys?.rightward,
       run: !!keys?.run,
-      jump: false,
+      jump: !!keys?.jump,
     });
 
     const p = h.currPos;
@@ -80,6 +80,8 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
         floatHeight={FLOAT}
         maxWalkVel={3}
         maxRunVel={6}
+        jumpVel={4.5}
+        jumpDuration={0.3}
         enableToggleRun={false}
         groundDetection="rayCast"
         followPlatform={false}

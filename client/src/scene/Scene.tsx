@@ -19,6 +19,7 @@ const keyboardMap: { name: Controls; keys: string[] }[] = [
   { name: 'leftward', keys: ['ArrowLeft', 'KeyA'] },
   { name: 'rightward', keys: ['ArrowRight', 'KeyD'] },
   { name: 'run', keys: ['ShiftLeft', 'ShiftRight'] },
+  { name: 'jump', keys: ['Space'] },
 ];
 
 /**
