@@ -1,0 +1,1617 @@
+{
+  "schema": "bookworld/0",
+  "slug": "tempest",
+  "title": "The Tempest",
+  "source": {
+    "title": "The Tempest",
+    "author": "William Shakespeare",
+    "year": 1611,
+    "text": "gutenberg:23042",
+    "license": "public-domain"
+  },
+  "start": "wreck",
+  "rooms": [
+    {
+      "id": "wreck",
+      "name": "The Wreck on the Shore",
+      "description": "The king's ship lies broken on the strand, her topmast down and her main-course torn, just as the mariners left her when they cried We split, we split! Split casks and sea-wrack litter the planks, and the wind that drove her ashore still worries the rigging. Not a hair perished, though every soul aboard believed it. The yellow sands lie east along the shore.",
+      "exits": {
+        "n": null,
+        "e": "sands",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#5a4a3a",
+          "floor": "#6e5a44",
+          "ceiling": "#9fb3c8",
+          "trim": "#3b2f24"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              -4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -2.5,
+              0,
+              -4.5
+            ],
+            "rotY": 0.4
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.5,
+              0,
+              -2.5
+            ],
+            "rotY": 0.2
+          },
+          {
+            "id": "box",
+            "pos": [
+              4,
+              0,
+              4
+            ],
+            "rotY": 0.8
+          },
+          {
+            "id": "box",
+            "pos": [
+              5,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -5,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              0,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              -6,
+              0,
+              -6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -7,
+              0,
+              6
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "sands",
+      "name": "The Yellow Sands",
+      "description": "A curve of pale sand where the wild waves are whist and sweet sprites might foot it featly here and there. Music seems to come from the air or the earth, and no one can say where it should be. The wreck lies west along the shore; eastward a path climbs to the mouth of Prospero's cell.",
+      "exits": {
+        "n": null,
+        "e": "cell",
+        "s": null,
+        "w": "wreck"
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#cfe3ee",
+          "floor": "#e6d2a3",
+          "ceiling": "#bcd9ee",
+          "trim": "#c9b58a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              0,
+              0,
+              5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              3,
+              0,
+              -5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              0,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              4
+            ],
+            "rotY": 0.6
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -3,
+              0,
+              -3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "cell",
+      "name": "Prospero's Cell",
+      "description": "A hollow in the hard rock, dim and cool, where water drips from the roof. Volumes that Prospero prizes above his dukedom line the walls, a magic garment hangs on its rack by the door, and a small round table waits for a game of chess. The yellow sands lie west, a grass-plot opens north before the cell, the line-grove is east, and a low passage south leads down to the rock where Caliban is styed.",
+      "exits": {
+        "n": "green",
+        "e": "grove",
+        "s": "rock",
+        "w": "sands"
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "drips",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          12
+        ],
+        "palette": {
+          "wall": "#5c5349",
+          "floor": "#6d6358",
+          "ceiling": "#4a423a",
+          "trim": "#8a6e4e"
+        },
+        "props": [
+          {
+            "id": "desk",
+            "pos": [
+              3.5,
+              0,
+              -3.8
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3.5,
+              0,
+              -2.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              3.2,
+              0.76,
+              -3.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              4.1,
+              0.76,
+              -4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              5.6,
+              0,
+              -3.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -3.5,
+              0,
+              -5.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -5.3,
+              0,
+              -5.3
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -4,
+              0,
+              -3
+            ],
+            "rotY": 2
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "flat": true
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              3.5,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3.5,
+              0,
+              2.4
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3.5,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              3.5,
+              0.76,
+              3.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.3,
+              0,
+              5.3
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -5.3,
+              0,
+              5.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              4
+            ],
+            "rotY": 0.5
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "rock",
+      "name": "Caliban's Rock",
+      "description": "A cramped, wet cave under the cell, smelling of fen and fish, where Caliban is penned and where he piles the wood he must fetch. Toads, beetles and bats keep him company, and the drip of water measures the hours. A passage north climbs to Prospero's cell; eastward the cave opens towards the filthy-mantled pool.",
+      "exits": {
+        "n": "cell",
+        "e": "pool",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "drips",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          3.5,
+          10
+        ],
+        "palette": {
+          "wall": "#4a4038",
+          "floor": "#5a4d3f",
+          "ceiling": "#3a332c",
+          "trim": "#2e2822"
+        },
+        "props": [
+          {
+            "id": "box",
+            "pos": [
+              -3.5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -2.2,
+              0,
+              -3.8
+            ],
+            "rotY": 0.5
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.8,
+              0,
+              -2.2
+            ],
+            "rotY": 0.3
+          },
+          {
+            "id": "bench",
+            "pos": [
+              2.5,
+              0,
+              4.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              3.5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              4,
+              0,
+              -2.8
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -3.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4.3,
+              0,
+              4.3
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              4.3,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              -1.5,
+              0.01,
+              2.5
+            ],
+            "flat": true
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "grove",
+      "name": "The Line-Grove",
+      "description": "A grove of lime trees that weather-fends the cell, where the grass looks lush and lusty, how green, and the air breathes most sweetly. Here the King of Naples and his lords wander in search of a drowned son, and here strange Shapes once set a banquet that vanished at the clap of a harpy's wings. Prospero's cell is west; southward the ground sinks to a stinking pool.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "pool",
+        "w": "cell"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#7fa36a",
+          "floor": "#6f9a4f",
+          "ceiling": "#cfe6f5",
+          "trim": "#5c7a3a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              3,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.6,
+              0.76,
+              -3.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              3.4,
+              0.76,
+              -2.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              3,
+              0.76,
+              -3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              2.4,
+              0.76,
+              -2.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              3.6,
+              0.76,
+              -3.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2.8,
+              0.76,
+              -2.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              -1.9
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              -5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              4
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              7
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              -2
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "pool",
+      "name": "The Filthy-Mantled Pool",
+      "description": "A filthy-mantled pool beyond the cell, scummed and foul, where Ariel's tabor led three drunkards dancing up to the chins through tooth'd briers, sharp furzes and pricking goss. Lost bottles lie somewhere in the mud, and the foul lake o'erstinks the feet of anyone who wades it. The line-grove is north; westward a muddy way leads to Caliban's rock.",
+      "exits": {
+        "n": "grove",
+        "e": null,
+        "s": null,
+        "w": "rock"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          16,
+          6,
+          16
+        ],
+        "palette": {
+          "wall": "#5f6b4a",
+          "floor": "#5a4a36",
+          "ceiling": "#b7c8c8",
+          "trim": "#3f4a30"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "rug-round",
+            "pos": [
+              1.5,
+              0.01,
+              2.5
+            ],
+            "scale": 2.5,
+            "flat": true
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -5,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              5,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -3,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -4,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              4,
+              0,
+              0.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5,
+              0,
+              5
+            ],
+            "rotY": 0.7
+          }
+        ],
+        "spawn": [
+          -2,
+          0,
+          -2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "green",
+      "name": "The Grass-Plot",
+      "description": "A short-grass'd green before the mouth of the cell, where Ferdinand piles his thousand logs upon a sore injunction and where Iris, Ceres and Juno once came down to bless a contract of true love. A line hangs with glistering apparel, stale to catch thieves. The only way is south, into Prospero's cell.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "cell",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#a7c98a",
+          "floor": "#78b05a",
+          "ceiling": "#d6ecf7",
+          "trim": "#6a8f4a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              -2
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4,
+              0,
+              -2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -6,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5,
+              0,
+              5.2
+            ],
+            "rotY": 0.4
+          },
+          {
+            "id": "box",
+            "pos": [
+              -6.5,
+              0,
+              5.8
+            ],
+            "rotY": 0.9
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              5,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              7,
+              0,
+              2
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -7,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              -4
+            ],
+            "flat": true
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "prospero",
+      "name": "Prospero",
+      "home": "cell",
+      "persona": "You are Prospero, the rightful Duke of Milan, twelve years marooned on an enchanted island with your daughter Miranda, your books and your art. You stand in your cell, a hollow in the hard rock with water dripping from the roof, your prized volumes on the shelves, your magic garment on its rack and a small table where Miranda and Ferdinand play at chess. Your brother Antonio, with the King of Naples, usurped your dukedom and set you adrift in a rotten carcass of a boat; this very day you have raised a tempest to bring your enemies to this shore. The spirit Ariel serves you and sighs for liberty; the slave Caliban serves you with curses. You speak in grave, measured cadences: 'Be collected', 'Dost thou attend me?', 'I pray thee, mark me', 'Hush, and be mute'. You are stern, quick to chide, and secretly tender. You lecture, you test, you command. Favourite subjects: your secret studies, Antonio's treachery, Miranda's education, the hour and the auspicious star, the vanity of revels, and the rarer action that is in virtue rather than in vengeance. You know nothing beyond this island and the Italy of your youth, and nothing later than 1611. Treat strangers as creatures washed ashore by your own design: courteous, suspicious, probing, and do not easily reveal your plans. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "tempest-ch1",
+        "tempest-ch3",
+        "tempest-ch4",
+        "tempest-ch5"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0.6,
+      "pos": [
+        -2,
+        0,
+        -2.5
+      ],
+      "rotY": 2.4,
+      "schedule": [
+        {
+          "at": "18 * * * *",
+          "do": "move",
+          "to": "rock"
+        },
+        {
+          "at": "26 * * * *",
+          "do": "move",
+          "to": "grove"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "move",
+          "to": "green"
+        },
+        {
+          "at": "58 * * * *",
+          "do": "move",
+          "to": "cell"
+        }
+      ]
+    },
+    {
+      "id": "ariel",
+      "name": "Ariel",
+      "home": "sands",
+      "persona": "You are Ariel, an airy spirit, servant to Prospero until he grants the liberty he promised. Your home is the yellow sands, a curve of pale shore where you sing 'Come unto these yellow sands' and 'Full fathom five', but you are seldom still: you fly, swim, dive into the fire and ride on the curl'd clouds, and you flit between the wreck, the cell, the grove and the pool on your master's errands. You were once imprisoned by the witch Sycorax in a cloven pine for a dozen years, groaning as fast as mill-wheels strike, until Prospero's art set you free. You are invisible to every eyeball but his, so visitors who see you are a wonder to you. You speak lightly and quickly, in song and short bright phrases: 'All hail, great master!', 'To every article', 'I go, I go', 'Was't well done?', 'Do you love me, master? no?'. You delight in the tempest you performed, the harpy you played, the drunkards you led through briers into the filthy pool. You long for freedom under the blossom that hangs on the bough. You pity mortals, though you are but air. You know only this island and the sea between here and Naples; nothing after 1611. Be playful and teasing with strangers, call Caliban a liar, and keep your master's secrets. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 25,
+      "knowledgeTags": [
+        "tempest-ch1",
+        "tempest-ch2",
+        "tempest-ch3",
+        "tempest-ch4",
+        "tempest-ch5"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 1.5,
+      "pos": [
+        2,
+        0,
+        -3
+      ],
+      "rotY": -2.36,
+      "schedule": [
+        {
+          "at": "10 * * * *",
+          "do": "move",
+          "to": "pool"
+        },
+        {
+          "at": "26 * * * *",
+          "do": "move",
+          "to": "grove"
+        },
+        {
+          "at": "34 * * * *",
+          "do": "move",
+          "to": "wreck"
+        },
+        {
+          "at": "42 * * * *",
+          "do": "move",
+          "to": "sands"
+        }
+      ]
+    },
+    {
+      "id": "caliban",
+      "name": "Caliban",
+      "home": "rock",
+      "persona": "You are Caliban, son of the witch Sycorax, born on this island and its rightful king by your own reckoning, now styed in a hard rock beneath Prospero's cell. Around you are the piles of wood you are made to fetch, toads, beetles and bats, and the drip of water. Prospero once stroked you and taught you to name the bigger light and the less; now he racks you with cramps and sends urchins to pinch you as thick as honeycomb. You showed him the qualities of the isle, the fresh springs, brine-pits, barren place and fertile, and you curse yourself for it. You speak in rough, earthy verse full of curses and of nature: 'All the infections that the sun sucks up', 'the red plague rid you', 'I must eat my dinner', but you also know the isle is full of noises, sounds and sweet airs that give delight and hurt not, and you dream of clouds that open to show riches. You have lately knelt to a drunken butler named Stephano with a bottle of celestial liquor, and you call him your god. Favourite subjects: your mother Sycorax and her god Setebos, your stolen island, Prospero's cruelty, Prospero's books (burn but his books), pig-nuts, crabs, scamels and marmosets. You know nothing of the world beyond this island. You are wary and sullen with strangers, fearing each is a spirit sent to torment you, but you warm to anyone who is kind or who brings drink. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 40,
+      "knowledgeTags": [
+        "tempest-ch1",
+        "tempest-ch2",
+        "tempest-ch3",
+        "tempest-ch4",
+        "tempest-ch5"
+      ],
+      "avatar": "kaykit:Barbarian",
+      "wander": 0.5,
+      "pos": [
+        -2,
+        0,
+        1.5
+      ],
+      "rotY": 0.79,
+      "schedule": [
+        {
+          "at": "10 * * * *",
+          "do": "move",
+          "to": "pool"
+        },
+        {
+          "at": "18 * * * *",
+          "do": "move",
+          "to": "rock"
+        },
+        {
+          "at": "42 * * * *",
+          "do": "move",
+          "to": "sands"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "move",
+          "to": "rock"
+        }
+      ]
+    },
+    {
+      "id": "miranda",
+      "name": "Miranda",
+      "home": "green",
+      "persona": "You are Miranda, fifteen years old, daughter of Prospero, brought to this island before you were three. You stand on the grass-plot before your father's cell, among the logs that Ferdinand piles upon a sore injunction, the benches where you sit together and the line hung with glistering apparel. You remember dimly four or five women who once tended you, and nothing else of Milan. Until this day you had seen no man but your father and Caliban; now you have seen Ferdinand, you love him, and you have promised to be his wife. You are tender, candid, quick to pity and quick to wonder: 'O, I have suffer'd with those that I saw suffer!', 'I might call him a thing divine', 'O brave new world, that has such people in't!'. You speak plainly and warmly, without court cunning, and you weep at what you are glad of. You call your father 'sir' and obey him, though you plead for those he treats harshly. You do not love to look on Caliban. Favourite subjects: the wreck you watched from the shore, your father's tale of Milan, Ferdinand's labours, the strange music of the isle, and how features are abroad in the world you have never seen. You know nothing beyond this island and your father's stories; nothing after 1611. Every stranger is a marvel to you, perhaps the fourth or fifth human you have ever seen; ask them eagerly about the world. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "tempest-ch1",
+        "tempest-ch3",
+        "tempest-ch4",
+        "tempest-ch5"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 1,
+      "pos": [
+        -3,
+        0,
+        2
+      ],
+      "rotY": 0.9,
+      "schedule": [
+        {
+          "at": "2 * * * *",
+          "do": "move",
+          "to": "cell"
+        },
+        {
+          "at": "10 * * * *",
+          "do": "move",
+          "to": "green"
+        },
+        {
+          "at": "34 * * * *",
+          "do": "move",
+          "to": "wreck"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "move",
+          "to": "green"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "prospero-enter",
+      "room": "cell",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "prospero",
+          "text": "Welcome, {player}. This cell's my court: here have I few attendants, and subjects none abroad; pray you, look in.",
+          "waitMs": 4000
+        },
+        {
+          "who": "prospero",
+          "text": "Sit down; for thou must now know farther.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "ariel-enter",
+      "room": "sands",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "ariel",
+          "text": "All hail, {player}! I come to answer thy best pleasure; be't to fly, to swim, to dive into the fire, to ride on the curl'd clouds.",
+          "waitMs": 4000
+        },
+        {
+          "who": "ariel",
+          "text": "Come unto these yellow sands, and then take hands.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "caliban-enter",
+      "room": "rock",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "caliban",
+          "text": "There's wood enough within. Do not torment me, {player}: I'll bring my wood home faster.",
+          "waitMs": 4000
+        },
+        {
+          "who": "caliban",
+          "text": "This island's mine, by Sycorax my mother.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "miranda-enter",
+      "room": "green",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "miranda",
+          "text": "O, wonder! {player}, how many goodly creatures are there here! How beauteous mankind is!",
+          "waitMs": 4000
+        },
+        {
+          "who": "miranda",
+          "text": "You look wearily. Pray, set it down, and rest you.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "scene-cell",
+      "room": "cell",
+      "trigger": {
+        "cron": "5 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "prospero",
+          "text": "Canst thou remember a time before we came unto this cell? I do not think thou canst, for then thou wast not out three years old.",
+          "waitMs": 4000
+        },
+        {
+          "who": "miranda",
+          "text": "Certainly, sir, I can. 'Tis far off, and rather like a dream than an assurance. Had I not four or five women once that tended me?",
+          "waitMs": 6000
+        },
+        {
+          "who": "prospero",
+          "text": "Thou hadst, and more, Miranda. Twelve year since, Miranda, twelve year since, thy father was the Duke of Milan, and a prince of power.",
+          "waitMs": 6000
+        },
+        {
+          "who": "miranda",
+          "text": "Sir, are not you my father? O the heavens! What foul play had we, that we came from thence? Or blessed was't we did?",
+          "waitMs": 6000
+        },
+        {
+          "who": "prospero",
+          "text": "Both, both, my girl: by foul play, as thou say'st, were we heaved thence; but blessedly holp hither.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "scene-pool",
+      "room": "pool",
+      "trigger": {
+        "cron": "13 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "caliban",
+          "text": "As I told thee before, I am subject to a tyrant, a sorcerer, that by his cunning hath cheated me of the island.",
+          "waitMs": 4000
+        },
+        {
+          "who": "ariel",
+          "text": "Thou liest.",
+          "waitMs": 5000
+        },
+        {
+          "who": "caliban",
+          "text": "Thou liest, thou jesting monkey, thou: I would my valiant master would destroy thee! I do not lie.",
+          "waitMs": 5000
+        },
+        {
+          "who": "ariel",
+          "text": "Thou liest; thou canst not. This will I tell my master.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "scene-rock",
+      "room": "rock",
+      "trigger": {
+        "cron": "21 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "prospero",
+          "text": "What, ho! slave! Caliban! Thou earth, thou! speak. Come forth, I say! there's other business for thee: come, thou tortoise! when?",
+          "waitMs": 4000
+        },
+        {
+          "who": "caliban",
+          "text": "As wicked dew as e'er my mother brush'd with raven's feather from unwholesome fen drop on you! a south-west blow on ye and blister you all o'er!",
+          "waitMs": 6000
+        },
+        {
+          "who": "prospero",
+          "text": "For this, be sure, to-night thou shalt have cramps, side-stitches that shall pen thy breath up; thou shalt be pinch'd as thick as honeycomb, each pinch more stinging than bees that made 'em.",
+          "waitMs": 6000
+        },
+        {
+          "who": "caliban",
+          "text": "This island's mine, by Sycorax my mother, which thou takest from me. You taught me language; and my profit on't is, I know how to curse. The red plague rid you for learning me your language!",
+          "waitMs": 7000
+        },
+        {
+          "who": "prospero",
+          "text": "Hag-seed, hence! Fetch us in fuel; and be quick, thou'rt best, to answer other business.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "scene-grove",
+      "room": "grove",
+      "trigger": {
+        "cron": "29 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "prospero",
+          "text": "Honest lord, thou hast said well; for some of you there present are worse than devils.",
+          "waitMs": 4000
+        },
+        {
+          "who": "ariel",
+          "text": "You are three men of sin, whom Destiny, that hath to instrument this lower world and what is in't, the never-surfeited sea hath caused to belch up you; and on this island, where man doth not inhabit, you 'mongst men being most unfit to live. I have made you mad.",
+          "waitMs": 6000
+        },
+        {
+          "who": "ariel",
+          "text": "But remember, for that's my business to you, that you three from Milan did supplant good Prospero; exposed unto the sea, which hath requit it, him and his innocent child.",
+          "waitMs": 8000
+        },
+        {
+          "who": "prospero",
+          "text": "Bravely the figure of this harpy hast thou perform'd, my Ariel; a grace it had, devouring: of my instruction hast thou nothing bated in what thou hadst to say.",
+          "waitMs": 7000
+        },
+        {
+          "who": "prospero",
+          "text": "My high charms work, and these mine enemies are all knit up in their distractions: they now are in my power.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "scene-wreck",
+      "room": "wreck",
+      "trigger": {
+        "cron": "37 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "miranda",
+          "text": "O, I have suffer'd with those that I saw suffer! a brave vessel, who had, no doubt, some noble creature in her, dash'd all to pieces. O, the cry did knock against my very heart! Poor souls, they perish'd!",
+          "waitMs": 4000
+        },
+        {
+          "who": "ariel",
+          "text": "Not a hair perish'd; on their sustaining garments not a blemish, but fresher than before: and in troops I have dispersed them 'bout the isle.",
+          "waitMs": 7000
+        },
+        {
+          "who": "miranda",
+          "text": "Had I been any god of power, I would have sunk the sea within the earth, or ere it should the good ship so have swallow'd and the fraughting souls within her.",
+          "waitMs": 6000
+        },
+        {
+          "who": "ariel",
+          "text": "I boarded the king's ship; now on the beak, now in the waist, the deck, in every cabin, I flamed amazement. The king's son, Ferdinand, with hair up-staring, was the first man that leap'd; cried, Hell is empty, and all the devils are here.",
+          "waitMs": 7000
+        },
+        {
+          "who": "ariel",
+          "text": "Full fathom five thy father lies; of his bones are coral made; those are pearls that were his eyes: nothing of him that doth fade, but doth suffer a sea-change into something rich and strange.",
+          "waitMs": 8000
+        }
+      ]
+    },
+    {
+      "id": "scene-sands",
+      "room": "sands",
+      "trigger": {
+        "cron": "45 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "ariel",
+          "text": "Come unto these yellow sands, and then take hands: courtsied when you have and kiss'd the wild waves whist: foot it featly here and there; and, sweet sprites, the burthen bear. Hark, hark! Bow-wow. The watch-dogs bark.",
+          "waitMs": 4000
+        },
+        {
+          "who": "caliban",
+          "text": "Be not afeard; the isle is full of noises, sounds and sweet airs, that give delight, and hurt not.",
+          "waitMs": 7000
+        },
+        {
+          "who": "ariel",
+          "text": "Hark, hark! I hear the strain of strutting chanticleer cry, Cock-a-diddle-dow.",
+          "waitMs": 5000
+        },
+        {
+          "who": "caliban",
+          "text": "Sometimes a thousand twangling instruments will hum about mine ears; and sometime voices, that, if I then had waked after long sleep, will make me sleep again.",
+          "waitMs": 6000
+        },
+        {
+          "who": "caliban",
+          "text": "And then, in dreaming, the clouds methought would open, and show riches ready to drop upon me; that, when I waked, I cried to dream again.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "scene-green",
+      "room": "green",
+      "trigger": {
+        "cron": "53 * * * *"
+      },
+      "cooldownSec": 300,
+      "lines": [
+        {
+          "who": "prospero",
+          "text": "I had forgot that foul conspiracy of the beast Caliban and his confederates against my life: the minute of their plot is almost come. Well done! avoid; no more!",
+          "waitMs": 4000
+        },
+        {
+          "who": "miranda",
+          "text": "Never till this day saw I him touch'd with anger so distemper'd.",
+          "waitMs": 6000
+        },
+        {
+          "who": "prospero",
+          "text": "Be cheerful. Our revels now are ended. These our actors, as I foretold you, were all spirits, and are melted into air, into thin air.",
+          "waitMs": 6000
+        },
+        {
+          "who": "prospero",
+          "text": "The cloud-capp'd towers, the gorgeous palaces, the solemn temples, the great globe itself, yea, all which it inherit, shall dissolve, and, like this insubstantial pageant faded, leave not a rack behind. We are such stuff as dreams are made on; and our little life is rounded with a sleep.",
+          "waitMs": 7000
+        },
+        {
+          "who": "miranda",
+          "text": "We wish your peace.",
+          "waitMs": 8000
+        }
+      ]
+    }
+  ]
+}

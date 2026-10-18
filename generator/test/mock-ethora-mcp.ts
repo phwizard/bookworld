@@ -53,6 +53,10 @@ function buildServer(calls: MockCall[], expectKey: string | undefined, authHeade
     appId: z.string().optional(), agentId: z.string().optional(),
     files: z.array(z.object({ name: z.string(), mimeType: z.string(), base64: z.string() })),
   }, (a) => ({ result: (a.files as { name: string }[]).map((f) => ({ id: hex24(), url: f.name })) }));
+  tool('ethora-source-site-crawl', { appId: z.string().optional(), agentId: z.string().optional(), url: z.string(), followLink: z.boolean().optional(), force: z.boolean().optional() }, (a) => ({
+    status: 'queued', jobId: hex24(), url: a.url, agentId: a.agentId, followLink: true, watchId: hex24(),
+  }));
+  tool('ethora-source-site-watch-update', { appId: z.string().optional(), watchId: z.string(), schedule: z.string() }, (a) => ({ ok: true, watchId: a.watchId, schedule: a.schedule }));
   tool('ethora-message-send', { roomJid: z.string().optional(), text: z.string(), waitForReplySec: z.number().optional() }, (a) => ({
     posted: true, replies: [{ from: 'agent', text: `(mock reply to "${String(a.text).slice(0, 30)}")` }],
   }));

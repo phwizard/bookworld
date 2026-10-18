@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-10-18T07:09:32.497Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 7,
+    "characters": 4,
+    "notes": "This is a play. Rooms are the island's places (the ship can be the wreck on the shore), plus Prospero's cell and the yellow sands. Characters: Prospero, Ariel, Caliban and one more of your choice; single-word names. Make it an enacted play: besides the on-enter greetings, give each room one script with a cron trigger (spread over the hour, e.g. at minutes 0, 15, 30, 45) in which two characters present in that room exchange 3 to 5 short lines taken from the text; use schedule moves so the pairs are in the same room when the scene runs. Ariel wanders a lot, Caliban little. Sound: the shore rooms have wind, the cell has drips."
+  },
+  "source": {
+    "title": "The Tempest",
+    "author": "William Shakespeare",
+    "year": 1611,
+    "text": "gutenberg:23042",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "ACT I. SCENE I. _On a ship at sea: a tempestuous noise of thunder",
+      "chars": 40766
+    },
+    {
+      "index": 2,
+      "title": "ACT II. SCENE I. _Another part of the island._",
+      "chars": 32042
+    },
+    {
+      "index": 3,
+      "title": "ACT III. SCENE I. _Before PROSPERO’S cell._",
+      "chars": 23632
+    },
+    {
+      "index": 4,
+      "title": "ACT IV. SCENE I. _Before PROSPERO’S cell._",
+      "chars": 17626
+    },
+    {
+      "index": 5,
+      "title": "ACT V. SCENE I. _Before the cell of Prospero._",
+      "chars": 31827
+    }
+  ],
+  "warnings": []
+}

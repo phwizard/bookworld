@@ -15,6 +15,8 @@ pnpm dev                    # world service on :2567, client on :5173
 
 Open http://localhost:5173, pick a name, click to look around, WASD to walk, Shift to run, Space to jump, T to talk (Esc leaves the message box so you can walk while the panel stays open; Esc again closes it), N to mute the music, F to mute the sound effects, V to let the characters speak their lines aloud, Esc to release the mouse. Walk through a doorway to change rooms. A reload brings you back to the same room and spot with the same name; a dropped connection has a minute to come back; after five idle minutes you show as away, after twenty you wander off and a key press brings you back. "Leave" in the bottom line ends the visit. `pnpm validate:worlds` checks every `worlds/*/world.json`.
 
+Worlds: `?world=alice` (default) and `?world=tempest`.
+
 ## Make a world from a book
 
 ```

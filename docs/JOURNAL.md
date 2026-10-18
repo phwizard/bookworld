@@ -117,3 +117,17 @@ One side effect found on the way: React's StrictMode runs effects twice in devel
 Also from the owner, the same evening: the chat panel is translucent now and you can keep walking while it is open. T puts the cursor in the message box, Esc takes it out again (keys walk, the panel stays for reading), a second Esc closes the panel.
 
 ![wandered off, with the translucent panel](journal/261018-05-wandered-off-translucent-chat.jpg)
+
+## 18 Oct 2026, late: The Tempest, and a jump
+
+**Jump.** Space. The controller already knew how; what it needed was a longer jump phase so its floating spring did not pull the body back down after a hand's width. About 1.3 m now, enough to get onto the tea table.
+
+**The second world.** `pnpm generate -- --gutenberg 23042 --slug tempest --rooms 7 --characters 4` with a note asking for an enacted play. Five acts became five knowledge chapters. The model laid out the island as seven places: the wreck on the shore, the yellow sands, Prospero's cell in the middle with four doors, Caliban's rock, the line-grove, the filthy-mantled pool, the grass-plot. Prospero, Ariel, Caliban and Miranda have hourly schedules that put the right pair in the right room a few minutes before each of seven scripted scenes, lines taken from the text: Prospero and Miranda on the twelve years since Milan at five past, Ariel and Caliban calling each other liars at the pool at thirteen past, "Our revels now are ended" on the grass-plot at seven minutes to. $3.55, one attempt, no warnings. The Yellow Sands and the wreck are Borghese gardens with a sand or plank floor, because the only panorama we have is a Roman garden; a shore HDRI is the next asset to fetch.
+
+**Standing it up.** No Ethora API key yet, so the provisioner's plan was run by hand over the MCP in the same session, the way the docs say a Claude Code session can: app, seven rooms, four agents with the generated personas plus the house rules, visibility unlisted, each invited home. The knowledge went in differently: instead of uploading five files per agent through the conversation, one call per agent crawled the play from its Gutenberg URL, 170 KB each, done in seconds. The provisioner now does the same for any Gutenberg source. Prospero's first answer, to "whose island is this": "This island is mine by right, though long unheld ... I, by art and command of spirits, raised a tempest to bring my usurpers here."
+
+**A finding on the way.** For a few minutes the world service ran the Tempest with the Alice app's secret, and Ethora accepted it: the guest user was created in the wrong app with the wrong secret. Both apps belong to the same owner, so the check is probably per tenant, but an App Secret should open one app only. Logged as gap 18, security. The service now refuses to use the shared secret when more than one world has Ethora ids; each world gets `ETHORA_CHAT_APP_SECRET_<SLUG>`.
+
+![the wreck on the shore](journal/261018-06-tempest-wreck.jpg)
+![Ariel on the yellow sands](journal/261018-07-tempest-sands-ariel.jpg)
+![Prospero's cell](journal/261018-08-tempest-cell-prospero.jpg)

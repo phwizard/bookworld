@@ -3,7 +3,7 @@
 // "no chat" mode so movement can be developed and tested without them.
 import { EthoraSDKService, createServerToken } from '@ethora/sdk-backend';
 import { narrationBody, NARRATOR_NAME } from '@bookworld/shared';
-import type { WorldEthoraIds } from './world/load.ts';
+import { listWorlds, type WorldEthoraIds } from './world/load.ts';
 
 const apiBaseUrl = process.env.ETHORA_API_BASE_URL ?? 'https://api.chat.ethora.com/v1';
 const xmppDomain = process.env.ETHORA_XMPP_DOMAIN ?? 'xmpp.chat.ethora.com';
@@ -132,7 +132,12 @@ function secretVar(slug?: string): string {
   return `ETHORA_CHAT_APP_SECRET_${(slug ?? '').toUpperCase().replace(/-/g, '_')}`;
 }
 function appSecretFor(slug?: string): string | undefined {
-  return (slug && process.env[secretVar(slug)]) || process.env.ETHORA_CHAT_APP_SECRET || undefined;
+  if (slug && process.env[secretVar(slug)]) return process.env[secretVar(slug)];
+  // The shared variable is only safe when one world has Ethora ids; with several, each needs its own.
+  const withIds = listWorlds().filter((w) => w.ethora).length;
+  if (withIds <= 1) return process.env.ETHORA_CHAT_APP_SECRET || undefined;
+  if (process.env.ETHORA_CHAT_APP_SECRET && slug) console.warn(`[ethora] ${withIds} worlds have Ethora ids; set ${secretVar(slug)} (the shared ETHORA_CHAT_APP_SECRET is ignored)`);
+  return undefined;
 }
 
 /** Wraps an Ethora call so a chat outage never breaks movement. */

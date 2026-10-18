@@ -39,7 +39,7 @@ Steps, each recorded in `worlds/<slug>/ethora.json` (gitignored) as soon as it s
 1. `ethora-app-create` "Bookworld <title>" (or `--app <appId>` to reuse one), `ethora-app-select`.
 2. `ethora-chat-create` per room, titled like the room. Rooms created this way are public app chats (every app user may read them; see ETHORA-GAPS #10).
 3. `ethora-agent-create` per character: name, the persona from the world file plus the room's setting and the shared house rules (stay in character, under 80 words, plain hyphens), `responseMode` and `cooldownSec` from the file (`always` is downgraded to `smart`), RAG on when the character has knowledge tags, categories persona and entertainment.
-4. `ethora-source-doc-upload` of each knowledge chapter into the agent's own knowledge base (five files per call). Missing chapter files are fetched again from the `gutenberg:` source.
+4. Knowledge. A Project Gutenberg source is crawled straight from its URL into each agent's knowledge base (`ethora-source-site-crawl`, one call per agent, the weekly re-crawl switched off); nothing is uploaded. Other sources upload the chapter files with `ethora-source-doc-upload` (five per call); `--knowledge files` forces that path for Gutenberg too.
 5. `ethora-agent-visibility-set` to `unlisted`, which is what lets the world service move the agent between rooms with its server token (ETHORA-GAPS #14).
 6. `ethora-agent-invite` into the character's home room; the bot instance id is kept for `leave-chat`.
 

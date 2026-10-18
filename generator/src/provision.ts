@@ -36,6 +36,8 @@ export interface ProvisionOptions {
   appId?: string;
   dryRun?: boolean;
   skipKnowledge?: boolean;
+  /** `crawl` (default for Project Gutenberg sources): the agent's knowledge base crawls the book's URL, no files pass through here; `files`: upload the chapter files */
+  knowledge?: 'crawl' | 'files';
   smoke?: boolean;
   log?: (s: string) => void;
 }
@@ -51,10 +53,13 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
   if (opts.appId) ids.appId = opts.appId;
   const save = () => { if (!opts.dryRun) writeFileSync(idsFile, JSON.stringify(ids, null, 2) + '\n'); };
 
-  // knowledge files: regenerate from the source when the generator's output is not on this machine
+  // Knowledge: a Project Gutenberg book is crawled straight from its URL (one call per agent, nothing uploaded);
+  // other sources upload the chapter files, regenerated from the source when the generator's output is not here.
+  const gutenberg = /^gutenberg:(\d+)$/.exec(world.source.text ?? '')?.[1];
+  const crawlUrl = gutenberg && opts.knowledge !== 'files' ? `https://www.gutenberg.org/cache/epub/${gutenberg}/pg${gutenberg}.txt` : null;
   let knowledge = listKnowledge(opts.dir);
   const wanted = new Set(world.characters.flatMap((c) => c.knowledgeTags ?? []));
-  if (!opts.skipKnowledge && [...wanted].some((t) => !knowledge.has(t))) {
+  if (!opts.skipKnowledge && !crawlUrl && [...wanted].some((t) => !knowledge.has(t))) {
     const m = /^gutenberg:(\d+)$/.exec(world.source.text ?? '');
     if (m) {
       log(`knowledge files missing; fetching Project Gutenberg #${m[1]} again`);
@@ -71,10 +76,14 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
   for (const c of world.characters) {
     const a = ids.agents[c.id];
     if (!a) need(`create agent "${c.name}" (${c.responseMode}, cooldown ${c.cooldownSec}s)`);
-    const missing = (c.knowledgeTags ?? []).filter((t) => !a?.knowledge?.includes(t));
-    for (const t of missing.filter((t) => !knowledge.has(t))) log(`warning: knowledge file for ${t} not found, skipped`);
-    const uploadable = missing.filter((t) => knowledge.has(t));
-    if (!opts.skipKnowledge && uploadable.length) need(`upload ${uploadable.length} knowledge file(s) to "${c.name}": ${uploadable.join(', ')}`);
+    if (crawlUrl) {
+      if (!opts.skipKnowledge && (c.knowledgeTags ?? []).length && !a?.knowledge?.includes(`gutenberg:${gutenberg}`)) need(`crawl ${crawlUrl} into "${c.name}" (the whole book)`);
+    } else {
+      const missing = (c.knowledgeTags ?? []).filter((t) => !a?.knowledge?.includes(t));
+      for (const t of missing.filter((t) => !knowledge.has(t))) log(`warning: knowledge file for ${t} not found, skipped`);
+      const uploadable = missing.filter((t) => knowledge.has(t));
+      if (!opts.skipKnowledge && uploadable.length) need(`upload ${uploadable.length} knowledge file(s) to "${c.name}": ${uploadable.join(', ')}`);
+    }
     if (a?.visibility !== 'unlisted') need(`set "${c.name}" visibility to unlisted (so the world service can move it between rooms)`);
     if (!a?.invited) need(`invite "${c.name}" into "${c.home}"`);
   }
@@ -132,7 +141,18 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
         save();
         log(`agent ${c.id} -> ${agentId}`);
       }
-      if (!opts.skipKnowledge) {
+      if (!opts.skipKnowledge && crawlUrl) {
+        const mark = `gutenberg:${gutenberg}`;
+        if ((c.knowledgeTags ?? []).length && !a.knowledge?.includes(mark)) {
+          const data = await mcp.call('ethora-source-site-crawl', { appId: ids.appId, agentId: a.agentId, url: crawlUrl });
+          // the crawl registers a weekly re-crawl; a book does not change
+          const watchId = dig(data, ['watchId']);
+          if (watchId) await mcp.call('ethora-source-site-watch-update', { appId: ids.appId, watchId, schedule: 'off' }).catch((e: Error) => log(`warning: could not switch the re-crawl off: ${e.message}`));
+          a.knowledge = [...(a.knowledge ?? []), mark];
+          save();
+          log(`knowledge for ${c.id}: crawled ${crawlUrl}`);
+        }
+      } else if (!opts.skipKnowledge) {
         const missing = (c.knowledgeTags ?? []).filter((t) => !a!.knowledge?.includes(t));
         const files = missing.map((tag) => ({ tag, path: knowledge.get(tag) })).filter((f) => f.path);
         for (let i = 0; i < files.length; i += 5) {
@@ -204,7 +224,7 @@ if (isMain) {
   const args = parseArgs(process.argv.slice(2));
   const world = str(args, 'world') ?? args.rest[0];
   if (!world) {
-    console.error('usage: pnpm provision -- --world <slug|dir> [--app <appId>] [--dry-run] [--skip-knowledge] [--smoke] [--mcp-url url]');
+    console.error('usage: pnpm provision -- --world <slug|dir> [--app <appId>] [--dry-run] [--skip-knowledge] [--knowledge crawl|files] [--smoke] [--mcp-url url]');
     process.exit(2);
   }
   provisionWorld({
@@ -214,6 +234,7 @@ if (isMain) {
     appId: str(args, 'app'),
     dryRun: bool(args, 'dry-run'),
     skipKnowledge: bool(args, 'skip-knowledge'),
+    knowledge: str(args, 'knowledge') === 'files' ? 'files' : 'crawl',
     smoke: bool(args, 'smoke'),
   }).catch((e) => {
     console.error(`[provision] ${(e as Error).message}`);

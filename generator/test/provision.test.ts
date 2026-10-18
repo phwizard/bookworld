@@ -23,7 +23,7 @@ test('provision: creates app, rooms, agent, knowledge and invite; writes ethora.
   const dir = aliceCopy();
   const logs: string[] = [];
   try {
-    const ids = await provisionWorld({ dir, mcpUrl: mock.url, apiKey: 'test-key', log: (s) => logs.push(s) });
+    const ids = await provisionWorld({ dir, mcpUrl: mock.url, apiKey: 'test-key', knowledge: 'files', log: (s) => logs.push(s) });
     assert.match(ids.appId!, /^[0-9a-f]{24}$/);
     assert.equal(Object.keys(ids.rooms).length, 4);
     for (const r of Object.values(ids.rooms)) assert.equal(r.jid, `${ids.appId}_${r.chatId}`);
@@ -55,10 +55,32 @@ test('provision: creates app, rooms, agent, knowledge and invite; writes ethora.
 
     // second run: nothing left to do, no calls
     const before = mock.calls.length;
-    const again = await provisionWorld({ dir, mcpUrl: mock.url, apiKey: 'test-key', log: (s) => logs.push(s) });
+    const again = await provisionWorld({ dir, mcpUrl: mock.url, apiKey: 'test-key', knowledge: 'files', log: (s) => logs.push(s) });
     assert.equal(again.appId, ids.appId);
     assert.equal(mock.calls.length, before);
     assert.ok(logs.some((l) => /nothing to do/.test(l)));
+  } finally {
+    await mock.close();
+  }
+});
+
+test('provision: a Gutenberg source is crawled from its URL, once per agent, with the re-crawl switched off', async () => {
+  const mock = await startMockEthora();
+  const dir = aliceCopy();
+  const logs: string[] = [];
+  try {
+    const ids = await provisionWorld({ dir, mcpUrl: mock.url, log: (s) => logs.push(s) });
+    assert.deepEqual(ids.agents['hatter']!.knowledge, ['gutenberg:11']);
+    const crawl = mock.calls.filter((c) => c.name === 'ethora-source-site-crawl');
+    assert.equal(crawl.length, 1);
+    assert.equal(crawl[0]!.args.url, 'https://www.gutenberg.org/cache/epub/11/pg11.txt');
+    assert.equal(crawl[0]!.args.agentId, ids.agents['hatter']!.agentId);
+    assert.equal(mock.calls.filter((c) => c.name === 'ethora-source-doc-upload').length, 0);
+    const watch = mock.calls.find((c) => c.name === 'ethora-source-site-watch-update')!;
+    assert.equal(watch.args.schedule, 'off');
+    const before = mock.calls.length;
+    await provisionWorld({ dir, mcpUrl: mock.url, log: (s) => logs.push(s) });
+    assert.equal(mock.calls.length, before);
   } finally {
     await mock.close();
   }
