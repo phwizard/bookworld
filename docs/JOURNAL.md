@@ -131,3 +131,12 @@ Also from the owner, the same evening: the chat panel is translucent now and you
 ![the wreck on the shore](journal/261018-06-tempest-wreck.jpg)
 ![Ariel on the yellow sands](journal/261018-07-tempest-sands-ariel.jpg)
 ![Prospero's cell](journal/261018-08-tempest-cell-prospero.jpg)
+
+## 18 Oct 2026, later: a shore, and a front door
+
+**Two panoramas.** Poly Haven has a cove with a rusting wreck in the surf (Aristea Wreck) and a long beach at sunset (Fish Hoek Beach), both CC0, 6 MB each at 2k. The wreck room and the yellow sands use them now; the grove, the pool and the grass-plot keep the garden. The manifest lists them, so the next generated world can pick a shore.
+
+**The front door.** With two worlds live the join screen became a picker. The world service now keeps presence per world (who is in which room, away or not, when a human last did anything, messages all time and today, visits) and `GET /api/worlds` returns a card per world: title, author, a one-line summary the generator writes, the rooms with a count beside those that have people in them, the characters, "2 people here now", "14 messages, 6 today", last activity, and whether chat is on and the characters are awake. The cards refresh every fifteen seconds while you choose. A dashed card says how to make your own world from a book; the form that would run the generator behind the budget is the obvious next step.
+
+![the world picker](journal/261018-09-world-picker.jpg)
+![the wreck with the shore panorama](journal/261018-10-tempest-wreck-shore.jpg)

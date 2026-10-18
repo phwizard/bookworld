@@ -21,6 +21,30 @@ export interface EthoraPublicInfo {
   chatToken: string | null;
 }
 
+/** One entry of GET /api/worlds: enough for a visitor to pick a world. */
+export interface WorldCard {
+  slug: string;
+  title: string;
+  summary: string | null;
+  author: string;
+  year: number | null;
+  license: string;
+  rooms: { id: string; name: string; here: number }[];
+  characters: { id: string; name: string; home: string }[];
+  /** humans in the world right now (not counting the away) */
+  online: number;
+  /** ISO time of the last human action, null if never visited */
+  lastActivity: string | null;
+  /** human chat messages, all time and today */
+  messages: { total: number; today: number };
+  /** entries, all time */
+  visits: number;
+  /** chat and characters are live (the world service has the app's secret) */
+  chat: boolean;
+  /** the daily AI budget is spent; characters rest until the reset */
+  resting: boolean;
+}
+
 /** Daily cap on paid AI use (character replies), see server/src/budget.ts. */
 export interface AiState {
   /** replies per world per day, 0 = unlimited */

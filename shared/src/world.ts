@@ -137,6 +137,8 @@ export interface World {
   schema: 'bookworld/0';
   slug: string;
   title: string;
+  /** one or two sentences for the world picker */
+  summary?: string;
   source: WorldSource;
   start: string;
   rooms: WorldRoom[];

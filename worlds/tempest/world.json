@@ -2,6 +2,7 @@
   "schema": "bookworld/0",
   "slug": "tempest",
   "title": "The Tempest",
+  "summary": "Prospero's enchanted island, from the wreck on the shore to the yellow sands and the cell in the rock, where Prospero, Ariel, Caliban and Miranda play their scenes every hour.",
   "source": {
     "title": "The Tempest",
     "author": "William Shakespeare",
@@ -49,7 +50,7 @@
           "ceiling": "#9fb3c8",
           "trim": "#3b2f24"
         },
-        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "panorama": "assets/panoramas/aristea_wreck_2k.hdr",
         "props": [
           {
             "id": "box",
@@ -190,7 +191,7 @@
           "ceiling": "#bcd9ee",
           "trim": "#c9b58a"
         },
-        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "panorama": "assets/panoramas/fish_hoek_beach_2k.hdr",
         "props": [
           {
             "id": "bench",

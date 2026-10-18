@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; height: 100%; background: #0d0b09; color: #efe6d2; overflow: hidden; }
 button, input { font: inherit; }
-.join { height: 100%; display: grid; place-items: center; background: radial-gradient(ellipse at top, #2a2118 0%, #0d0b09 70%); }
+.join { min-height: 100%; display: grid; place-items: center; overflow: auto; background: radial-gradient(ellipse at top, #2a2118 0%, #0d0b09 70%); }
 .join form { display: grid; gap: 12px; width: min(420px, 90vw); padding: 28px; background: rgba(0,0,0,.35); border: 1px solid #5a4630; border-radius: 10px; }
 .join h1 { margin: 0 0 4px; font-weight: normal; letter-spacing: .04em; }
 .join p { margin: 0; opacity: .75; line-height: 1.4; }
@@ -51,3 +51,22 @@ button, input { font: inherit; }
 .gone { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10, 8, 5, .75); color: #f3e6c4; text-align: center; font-family: Georgia, serif; z-index: 30; }
 .gone h2 { margin: 0 0 8px; font-weight: normal; font-size: 28px; }
 .gone p { margin: 0; opacity: .8; }
+
+/* world picker */
+.join .picker { width: min(960px, 94vw); padding: 28px 0 40px; display: grid; gap: 12px; }
+.join .picker form { width: min(420px, 100%); padding: 0; background: none; border: none; }
+.join .picker input { width: 100%; box-sizing: border-box; }
+.join .picker .keys { font-size: 13px; opacity: .6; }
+.join .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-top: 8px; }
+.join .card { display: grid; gap: 8px; align-content: start; padding: 18px; background: rgba(0,0,0,.35); border: 1px solid #5a4630; border-radius: 10px; }
+.join .card h2 { margin: 0; font-weight: normal; font-size: 20px; }
+.join .card .by { font-size: 13px; opacity: .65; margin-top: -6px; }
+.join .card p { font-size: 14px; }
+.join .card .stats { display: grid; gap: 2px; font-size: 13px; opacity: .8; }
+.join .card .stats .hot { color: #ffd98a; opacity: 1; }
+.join .card .rooms { display: flex; flex-wrap: wrap; gap: 6px; }
+.join .card .rooms span { font-size: 12px; padding: 2px 8px; border: 1px solid #5a4630; border-radius: 12px; opacity: .75; }
+.join .card .rooms span.here { border-color: #c9a961; color: #ffd98a; opacity: 1; }
+.join .card .people { font-size: 13px; opacity: .7; font-style: italic; }
+.join .card button { margin-top: 4px; }
+.join .card.make { border-style: dashed; opacity: .8; }

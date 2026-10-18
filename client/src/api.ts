@@ -1,4 +1,4 @@
-import type { EnterRequest, EnterResponse, ResumeRequest } from '@bookworld/shared';
+import type { EnterRequest, EnterResponse, ResumeRequest, WorldCard } from '@bookworld/shared';
 
 export const SERVER_URL = (import.meta.env.VITE_WORLD_SERVER_URL as string | undefined) ?? 'http://localhost:2567';
 
@@ -14,6 +14,13 @@ export async function enterWorld(slug: string, name: string): Promise<EnterRespo
     throw new Error(err.error ?? `enter failed (${res.status})`);
   }
   return (await res.json()) as EnterResponse;
+}
+
+/** The worlds this service hosts, with who is in them right now. */
+export async function listWorlds(): Promise<WorldCard[]> {
+  const res = await fetch(`${SERVER_URL}/api/worlds`);
+  if (!res.ok) throw new Error(`cannot list worlds (${res.status})`);
+  return (await res.json()) as WorldCard[];
 }
 
 /** Picks a visit up again after a reload: same identity, fresh tokens. Throws when the session has expired. */

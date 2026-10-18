@@ -9,12 +9,13 @@ export interface SavedSession {
 
 const KEY = 'bookworld.session';
 
-export function loadSession(world: string): SavedSession | null {
+/** The saved visit, for `world` or (when omitted) whichever world it was in. */
+export function loadSession(world?: string): SavedSession | null {
   try {
     const raw = sessionStorage.getItem(KEY);
     if (!raw) return null;
     const s = JSON.parse(raw) as SavedSession;
-    return s && s.world === world && typeof s.token === 'string' ? s : null;
+    return s && typeof s.token === 'string' && (!world || s.world === world) ? s : null;
   } catch {
     return null;
   }

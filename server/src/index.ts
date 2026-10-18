@@ -2,7 +2,8 @@ import { Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import express from 'express';
 import cors from 'cors';
-import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo } from '@bookworld/shared';
+import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo, type WorldCard } from '@bookworld/shared';
+import { stats as presenceStats, visited } from './presence.ts';
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
 import { cleanName, ethoraUserId, newPlayerId, signSession, verifySession } from './auth.ts';
@@ -62,8 +63,28 @@ const server = new Server({
       res.json({ ...out, _generator: generator });
     });
 
+    // The world picker: what each world is, who is in it now, when it was last alive.
     app.get('/api/worlds', (_req, res) => {
-      res.json(listWorlds().map(({ world }) => ({ slug: world.slug, title: world.title, rooms: world.rooms.length, license: world.source.license })));
+      const cards: WorldCard[] = listWorlds().map(({ world }) => {
+        const p = presenceStats(world.slug);
+        return {
+          slug: world.slug,
+          title: world.title,
+          summary: world.summary ?? null,
+          author: world.source.author,
+          year: world.source.year ?? null,
+          license: world.source.license,
+          rooms: world.rooms.map((r) => ({ id: r.id, name: r.name, here: p.byRoom[r.id] ?? 0 })),
+          characters: world.characters.map((c) => ({ id: c.id, name: c.name, home: c.home })),
+          online: p.online,
+          lastActivity: p.lastActivity,
+          messages: p.messages,
+          visits: p.visits,
+          chat: ethoraFor(world.slug).enabled,
+          resting: budgetFor(world.slug).snapshot().asleep,
+        };
+      });
+      res.json(cards);
     });
 
     app.get('/api/worlds/:slug', (req, res) => {
@@ -90,6 +111,7 @@ const server = new Server({
       }
       const token = signSession({ pid: playerId, uid, name, world: loaded.world.slug, ...(visitor ? { visitor } : {}) });
       record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor });
+      visited(loaded.world.slug);
       const body: EnterResponse = {
         token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, uid),
         ai: budgetFor(loaded.world.slug).snapshot(visitor),

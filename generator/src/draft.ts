@@ -393,6 +393,7 @@ export function draftToWorld(draft: Draft, ctx: BuildContext): BuildResult {
     schema: 'bookworld/0',
     slug,
     title: fixDashes(draft.title),
+    ...(draft.summary ? { summary: fixDashes(draft.summary.trim()) } : {}),
     source: ctx.source,
     start,
     rooms,

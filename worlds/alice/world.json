@@ -2,6 +2,7 @@
   "schema": "bookworld/0",
   "slug": "alice",
   "title": "Alice's Adventures in Wonderland",
+  "summary": "Four rooms of Wonderland: down the rabbit hole, through the hall of doors, into the garden and on to the tea party, where the Hatter answers anyone who names him.",
   "source": {
     "title": "Alice's Adventures in Wonderland",
     "author": "Lewis Carroll",

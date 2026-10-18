@@ -12,6 +12,7 @@ import { tryEthora, type EthoraWorldService } from '../ethora.ts';
 import { budgetFor, ethoraFor, simFor } from '../services.ts';
 import type { AiBudget } from '../budget.ts';
 import { record } from '../metrics.ts';
+import * as presence from '../presence.ts';
 import type { CharState, WorldSim } from '../world/sim.ts';
 
 export const Player = schema({
@@ -103,6 +104,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       const data = client.userData as UserData | undefined;
       if (!p || !data) return;
       p.away = Boolean(msg?.away);
+      presence.setAway(this.world.slug, client.sessionId, p.away);
       if (msg?.gone) data.gone = true;
     });
     this.onMessage(MSG.said, (client, msg: SaidMessage) => {
@@ -115,6 +117,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       if (named.length && !verdict.allowed) client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
       else if (verdict.allowed && verdict.limited) client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
       if (verdict.allowed) for (const id of named) this.sim.address(id, p.x, p.z);
+      presence.message(this.world.slug);
       // Only the fact of a message and whether it named a character is kept; never the text.
       record({ ev: 'message', world: this.world.slug, pid: data.session.pid, location: this.room.id, mentions: named.length });
     });
@@ -145,6 +148,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.state.players.set(client.sessionId, p);
 
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
+    presence.joined(this.world.slug, client.sessionId, this.room.id);
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
@@ -159,11 +163,13 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     // A dropped connection (not a door, not a deliberate leave) may come back for a while; the avatar waits, marked away.
     if (!consented && data && !data.moving && p) {
       p.away = true;
+      presence.setAway(this.world.slug, client.sessionId, true);
       try {
         const back = await this.allowReconnection(client, RECONNECT_SECONDS);
         back.userData = data;
         const again = this.state.players.get(client.sessionId);
         if (again) again.away = false;
+        presence.setAway(this.world.slug, client.sessionId, false);
         console.log(`[room ${this.room.id}] ${data.session.name} reconnected`);
         return;
       } catch {
@@ -171,6 +177,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       }
     }
     this.state.players.delete(client.sessionId);
+    presence.left(this.world.slug, client.sessionId);
     if (!data) return;
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     if (!data.moving) {

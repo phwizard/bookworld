@@ -48,6 +48,14 @@
     "borghese_gardens_2k": {
       "file": "assets/panoramas/borghese_gardens_2k.hdr",
       "look": "sunlit formal garden with trees and a villa: parks, gardens, estates, island groves"
+    },
+    "aristea_wreck_2k": {
+      "file": "assets/panoramas/aristea_wreck_2k.hdr",
+      "look": "a rocky cove with a rusting shipwreck in the surf, bright sun: wrecks, shores, pirate coves, islands"
+    },
+    "fish_hoek_beach_2k": {
+      "file": "assets/panoramas/fish_hoek_beach_2k.hdr",
+      "look": "a long sandy beach at sunset under soft cloud, hills behind: beaches, sands, calm shores, evenings by the sea"
     }
   },
   "music": {
