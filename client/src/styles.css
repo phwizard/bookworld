@@ -46,6 +46,9 @@ button, input { font: inherit; }
 /* the chat panel lets the room show through so you can keep walking while you read */
 .chat header { background: rgba(58, 45, 28, .85); }
 .chat .body, .chat .body > div { background: transparent !important; }
+/* the chat component paints an opaque gradient behind the message list and a white composer row; the room shows through both */
+.chat .body div { background-image: none !important; }
+.chat .body div[class*="sc-"][style*="background"] { background-color: transparent !important; }
 .label.away { opacity: .55; font-style: italic; }
 .hud .hint .leave { background: none; border: none; color: inherit; font: inherit; opacity: .9; text-decoration: underline; cursor: pointer; padding: 0; pointer-events: auto; }
 .gone { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10, 8, 5, .75); color: #f3e6c4; text-align: center; font-family: Georgia, serif; z-index: 30; }
@@ -79,3 +82,19 @@ button, input { font: inherit; }
 .join .makeform textarea { padding: 8px 10px; border-radius: 6px; border: 1px solid #5a4630; background: #1a140f; color: inherit; font: inherit; resize: vertical; }
 .join .joblog { display: grid; gap: 4px; font-size: 12px; font-family: ui-monospace, monospace; opacity: .9; }
 .join .joblog a { color: #ffd98a; font-family: Georgia, serif; font-size: 15px; }
+
+/* in-world menu */
+.hud .menubtn { position: absolute; right: 16px; top: 14px; pointer-events: auto; padding: 6px 12px; border-radius: 6px; border: 1px solid #c9a961; background: rgba(40, 28, 14, .75); color: #f3e6c4; font: 13px Georgia, serif; cursor: pointer; }
+.hud .menubtn:hover { background: rgba(58, 45, 28, .95); }
+.menu { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, .45); z-index: 30; }
+.menu .panel { width: min(520px, 92vw); max-height: 90vh; overflow: auto; padding: 22px 26px; border-radius: 10px; border: 1px solid #c9a961; background: rgba(40, 28, 14, .94); color: #f3e6c4; font-family: Georgia, serif; }
+.menu h2 { margin: 0 0 8px; font-weight: normal; font-size: 24px; }
+.menu .where { margin: 0 0 14px; font-size: 14px; opacity: .9; line-height: 1.45; }
+.menu .buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.menu .buttons button { padding: 9px 14px; border-radius: 6px; border: 1px solid #c9a961; background: #3a2d1c; color: #f3e6c4; font: 14px Georgia, serif; cursor: pointer; }
+.menu .buttons button:hover { background: #5a4630; }
+.menu .toggles { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; font-size: 14px; }
+.menu .keys { border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+.menu .keys td { padding: 3px 10px 3px 0; vertical-align: top; }
+.menu .keys td:first-child { white-space: nowrap; opacity: .8; }
+.menu .muted { margin: 0; font-size: 13px; opacity: .75; line-height: 1.4; }

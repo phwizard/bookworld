@@ -1,7 +1,8 @@
 // Placeholder avatars (capsule + head) with a name label and a speech bubble. VRM avatars replace the mesh later.
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState, type RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
+import { CapsuleCollider, RigidBody, type RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 import { poses, useStore } from '../store.ts';
 import { CharacterModel, avatarFile } from './CharacterModel.tsx';
@@ -9,6 +10,19 @@ import { Stepper, surfaceFor } from '../audio/footsteps.ts';
 import { roomById, type Anim } from '@bookworld/shared';
 
 const BUBBLE_MS = 8000;
+
+/** A body for someone else's avatar: you cannot walk through them. Kinematic, moved to the drawn position every frame. */
+function Body({ body }: { body: RefObject<RapierRigidBody | null> }) {
+  return (
+    <RigidBody ref={body} type="kinematicPosition" colliders={false}>
+      <CapsuleCollider args={[0.45, 0.3]} position={[0, 0.9, 0]} />
+    </RigidBody>
+  );
+}
+
+function follow(body: RapierRigidBody | null, g: THREE.Group) {
+  body?.setNextKinematicTranslation({ x: g.position.x, y: g.position.y, z: g.position.z });
+}
 
 export function colorFor(name: string, s = 55, l = 55): string {
   let h = 0;
@@ -89,6 +103,7 @@ function useCurrentSurface() {
 /** Another player; follows the server pose with a short lerp and plays the animation the server reports. */
 export function RemotePlayer({ sessionId, name, away = false }: { sessionId: string; name: string; away?: boolean }) {
   const group = useRef<THREE.Group>(null);
+  const body = useRef<RapierRigidBody>(null);
   const initial = poses.get(sessionId);
   const [anim, setAnim] = useState<Anim>('idle');
   const steps = useRef(new Stepper(0.6, true));
@@ -105,16 +120,20 @@ export function RemotePlayer({ sessionId, name, away = false }: { sessionId: str
     let dy = target.ry - g.rotation.y;
     dy = Math.atan2(Math.sin(dy), Math.cos(dy));
     g.rotation.y += dy * k;
+    follow(body.current, g);
     const a = (target.anim === 'walk' || target.anim === 'run' ? target.anim : 'idle') as Anim;
     if (a !== anim) setAnim(a);
   });
   return (
-    <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
-      <Suspense fallback={<AvatarMesh name={name} color={colorFor(name)} />}>
-        <CharacterModel file={avatarFile(null, name)} anim={anim} />
-        <AvatarLabels name={name} away={away} />
-      </Suspense>
-    </group>
+    <>
+      <Body body={body} />
+      <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
+        <Suspense fallback={<AvatarMesh name={name} color={colorFor(name)} />}>
+          <CharacterModel file={avatarFile(null, name)} anim={anim} />
+          <AvatarLabels name={name} away={away} />
+        </Suspense>
+      </group>
+    </>
   );
 }
 
@@ -122,6 +141,7 @@ export function RemotePlayer({ sessionId, name, away = false }: { sessionId: str
 export function CharacterAvatar({ id, name, avatar }: { id: string; name: string; avatar?: string | null }) {
   const key = `c:${id}`;
   const group = useRef<THREE.Group>(null);
+  const body = useRef<RapierRigidBody>(null);
   const initial = poses.get(key);
   const [anim, setAnim] = useState<Anim>('idle');
   const steps = useRef(new Stepper(0.5, true));
@@ -138,15 +158,19 @@ export function CharacterAvatar({ id, name, avatar }: { id: string; name: string
     let dy = target.ry - g.rotation.y;
     dy = Math.atan2(Math.sin(dy), Math.cos(dy));
     g.rotation.y += dy * k;
+    follow(body.current, g);
     const a = (target.anim === 'walk' || target.anim === 'run' ? target.anim : 'idle') as Anim;
     if (a !== anim) setAnim(a);
   });
   return (
-    <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
-      <Suspense fallback={<AvatarMesh name={name} color={colorFor(name, 45, 35)} isCharacter />}>
-        <CharacterModel file={avatarFile(avatar, id)} anim={anim} />
-        <AvatarLabels name={name} />
-      </Suspense>
-    </group>
+    <>
+      <Body body={body} />
+      <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
+        <Suspense fallback={<AvatarMesh name={name} color={colorFor(name, 45, 35)} isCharacter />}>
+          <CharacterModel file={avatarFile(avatar, id)} anim={anim} />
+          <AvatarLabels name={name} />
+        </Suspense>
+      </group>
+    </>
   );
 }

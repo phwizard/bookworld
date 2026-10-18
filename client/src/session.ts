@@ -5,6 +5,8 @@ export interface SavedSession {
   token: string;
   location: string;
   at?: { x: number; z: number; ry: number };
+  /** Colyseus reconnection token of the current seat: a reload gets the same avatar back instead of a second one */
+  reconnect?: string;
 }
 
 const KEY = 'bookworld.session';

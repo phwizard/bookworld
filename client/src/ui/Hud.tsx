@@ -18,6 +18,8 @@ export function Hud({ room }: { room: WorldRoom }) {
   const players = useStore((s) => s.players);
   const musicOn = useStore((s) => s.musicOn);
   const ai = useStore((s) => s.ai);
+  const menuOpen = useStore((s) => s.menuOpen);
+  const setMenuOpen = useStore((s) => s.setMenuOpen);
   const [faded, setFaded] = useState(false);
 
   useEffect(() => {
@@ -40,12 +42,13 @@ export function Hud({ room }: { room: WorldRoom }) {
         <p className={faded ? 'faded' : ''}>{room.description}</p>
       </div>
       <MiniMap />
+      <button className="menubtn" onClick={() => { document.exitPointerLock?.(); setMenuOpen(true); }} title="Menu (M)">Menu</button>
       {toast && <div className="toast">{toast}</div>}
       {ai?.asleep && <div className="notice">The characters are resting until {resetLabel(ai.resetAt)}. Visitors can still talk to each other.</div>}
       {ai && !ai.asleep && ai.limited && <div className="notice">You have had your share of the characters' attention for today. They are back for you after {resetLabel(ai.resetAt)}.</div>}
       {locked && !typing && <div className="crosshair" />}
       <div className="hint">
-        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · Space jump · T talk · N music · F effects · V voices · Esc release mouse ·{' '}
+        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · Space jump · T talk · M menu · Esc release mouse ·{' '}
         <button className="leave" onClick={() => void leaveWorld()}>Leave</button>
       </div>
       {room.music && (
@@ -53,7 +56,7 @@ export function Hud({ room }: { room: WorldRoom }) {
           {musicOn ? '\u266a' : '\u266a off'} {room.music.title}{room.music.credit ? `, ${room.music.credit}` : ''}
         </div>
       )}
-      {!locked && !typing && away !== 'gone' && (
+      {!locked && !typing && !menuOpen && away !== 'gone' && (
         <div className="click">
           <div>Click to look around</div>
         </div>

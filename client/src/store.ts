@@ -45,6 +45,9 @@ interface State {
   setMySessionId(id: string | null): void;
   setChatOpen(open: boolean): void;
   setPointerLocked(locked: boolean): void;
+  /** the in-world menu (M, or the button top right) */
+  menuOpen: boolean;
+  setMenuOpen(open: boolean): void;
   setToast(t: string | null): void;
   setBubble(name: string, text: string): void;
 }
@@ -81,6 +84,8 @@ export const useStore = create<State>((set) => ({
   setMySessionId: (mySessionId) => set({ mySessionId }),
   setChatOpen: (chatOpen) => set({ chatOpen }),
   setPointerLocked: (pointerLocked) => set({ pointerLocked }),
+  menuOpen: false,
+  setMenuOpen: (menuOpen) => set({ menuOpen }),
   setToast: (toast) => set({ toast }),
   setBubble: (name, text) => set((s) => ({ bubbles: { ...s.bubbles, [name]: { text, at: Date.now() } } })),
 }));

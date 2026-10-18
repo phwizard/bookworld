@@ -1,3 +1,7 @@
+// The Ethora backend SDK prints every request payload (guest passwords, server tokens) at debug level unless
+// NODE_ENV is production. Nothing here depends on NODE_ENV otherwise. (ETHORA-GAPS #19)
+if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
+
 import { Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import express from 'express';

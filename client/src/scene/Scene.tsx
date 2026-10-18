@@ -62,9 +62,10 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
               <Props room={room} />
               <PlayerController room={room} enterFrom={enterFrom} at={at} />
             </group>
+            {/* inside Physics: other people and characters have bodies you cannot walk through */}
+            <Others />
+            <Characters />
           </Physics>
-          <Others />
-          <Characters />
         </Suspense>
       </Canvas>
     </KeyboardControls>

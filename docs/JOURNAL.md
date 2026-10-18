@@ -156,3 +156,21 @@ The first world made through the form, while writing this: "A Christmas Carol", 
 The owner sent the Tempest app's App Secret. One line in `.env`, a restart, and the island's chat came on: Ariel, asked on the Yellow Sands what became of the ship, answered with the harbour and the sleeping mariners, straight from the play. The visit was made from the machine's network address rather than localhost, which is how a second person on the same Wi-Fi gets in. Until now the client had the world service pinned to localhost, which works only on the machine running it; it now defaults to whichever host served the page, port 2567, so `http://192.168.x.x:5173` works for a phone or a laptop across the room with nothing to configure. The README says how.
 
 ![Ariel answering on the sands, visited over the LAN](journal/261018-12-tempest-chat-lan.jpg)
+
+## 18 Oct 2026, night: feedback from the first family test
+
+Two boys ran around the island for half an hour on the Wi-Fi, and the owner came back with a list. Each item, what was behind it and what changed:
+
+**Your old avatar stays after a reload.** A reload made a new seat while the old seat waited a minute for its connection to come back; "Ferdinand is back" and, a minute later, "Ferdinand has left" appeared in the chat with every reload. Worse, when that old seat expired the service revoked the person's chat membership in the room, which cut the live seat's chat too. That is almost certainly what "chat wasn't working in the Tempest" was: a reload or two in the Tempest, and a minute later the messages stopped. Now a reload reconnects into the same seat (the client keeps the seat's reconnection token for the tab), and if that window has closed the service drops any older seat of the same player when the new one arrives, quietly: no "has left", no revoke while the person is still in the room.
+
+**Walking through people.** Other players and the characters now have a body: a kinematic capsule that follows the drawn avatar. You bump into Caliban and slide round him; walking straight at him stops at 0.6 m.
+
+**No way out.** The "Leave" link in the bottom line was too small to find with the mouse captured. There is a Menu button top right and the M key: where you are and who is here, back to the world, leave to the list of worlds, the three sound toggles, and the controls.
+
+**Chat background not see-through.** The panel itself was translucent, but the chat component paints an opaque gradient behind the message list. Removed; the room shows through now, the bubbles stay solid.
+
+**The App Secret.** The owner asked why the secret still has to be pasted by hand for every new world. The Ethora docs make it policy: the secret is "never returned over MCP", dashboard only. Gap 8 now carries the exact wording and a proposal (return it once at app creation, or let the credentials reveal tool include it for the owner's own apps).
+
+Also found tonight: the Ethora backend SDK logs every request payload at debug level, guest passwords and server tokens included, unless NODE_ENV is production. The world service sets that now; gap 19.
+
+![the chat with the room showing through, and the ghost lines from before the fix](journal/261018-13-chat-see-through.jpg)

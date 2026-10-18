@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 // Everything the world service asks Ethora for. Ethora is used only through its public backend SDK
 // (B2B server token signed with the App Secret). If the credentials are missing the service runs in
 // "no chat" mode so movement can be developed and tested without them.
@@ -50,7 +51,10 @@ export class EthoraWorldService {
   async createGuest(playerId: string, name: string): Promise<void> {
     if (!this.sdk) return;
     // The API wants a last name of at least two characters; the chat UI shows "First Last".
-    await this.sdk.createUser(playerId, { firstName: name, lastName: '(guest)', email: `${playerId}@guest.bookworld.invalid` });
+    // A random password: the SDK would otherwise set "password_<id>", guessable from the id (ETHORA-GAPS #19). Guests
+    // never use it; they sign in with the chat token.
+    const password = randomBytes(18).toString('base64url');
+    await this.sdk.createUser(playerId, { firstName: name, lastName: '(guest)', email: `${playerId}@guest.bookworld.invalid`, password });
   }
 
   /** Client JWT the chat component exchanges for a user session (config.jwtLogin.token). */

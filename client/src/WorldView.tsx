@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { roomById } from '@bookworld/shared';
 import { useStore } from './store.ts';
 import { joinLocation } from './net/colyseus.ts';
+import { loadSession } from './session.ts';
+import { Menu } from './ui/Menu.tsx';
 import { Scene } from './scene/Scene.tsx';
 import { Hud } from './ui/Hud.tsx';
 import { ChatPanel } from './ui/ChatPanel.tsx';
@@ -19,7 +21,7 @@ export function WorldView() {
 
   useEffect(() => {
     const resume = useStore.getState().resume;
-    void joinLocation(resume?.location ?? session.world.start, undefined, resume?.at ?? null);
+    void joinLocation(resume?.location ?? session.world.start, undefined, resume?.at ?? null, resume ? loadSession(session.world.slug)?.reconnect : undefined);
   }, [session]);
 
   useEffect(() => {
@@ -28,7 +30,9 @@ export function WorldView() {
       const typing = (e.target as HTMLElement)?.tagName === 'INPUT' || (e.target as HTMLElement)?.tagName === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable;
       // Esc: first out of the composer (the panel stays, walking works), then the panel closes.
       if (e.code === 'Escape' && s.chatOpen) { if (s.chatTyping) blurComposer(); else s.setChatOpen(false); return; }
+      if (e.code === 'Escape' && s.menuOpen) { s.setMenuOpen(false); return; }
       if (typing) return;
+      if (e.code === 'KeyM') { e.preventDefault(); s.setMenuOpen(!s.menuOpen); if (!s.menuOpen) document.exitPointerLock?.(); return; }
       if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
     };
     window.addEventListener('keydown', onKey);
@@ -44,6 +48,7 @@ export function WorldView() {
       <Music />
       <SoundFx room={room} />
       <Presence />
+      <Menu />
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function currentRoom() {
 
 if (import.meta.env.DEV) (window as unknown as { __net: unknown }).__net = { room: () => current, lastAt: () => lastAt };
 
-export async function joinLocation(location: string, enterFrom?: Direction, at?: { x: number; z: number; ry: number } | null): Promise<void> {
+export async function joinLocation(location: string, enterFrom?: Direction, at?: { x: number; z: number; ry: number } | null, reconnectToken?: string): Promise<void> {
   const session = useStore.getState().session;
   if (!session) throw new Error('no session');
   if (joining) await joining;
@@ -33,11 +33,24 @@ export async function joinLocation(location: string, enterFrom?: Direction, at?:
     poses.clear();
     const store = useStore.getState();
     store.setLocation(location, enterFrom ?? null);
+    // After a reload the old seat is still waiting for us (a minute): take it back rather than arrive twice.
+    if (reconnectToken) {
+      try {
+        const again = await client.reconnect<LocationStateView>(reconnectToken);
+        current = again;
+        store.setMySessionId(again.sessionId);
+        updateSession({ location, at: at ?? undefined, reconnect: again.reconnectionToken });
+        wire(again);
+        return;
+      } catch {
+        // the window has closed; arrive as usual (the server drops any leftover seat of ours)
+      }
+    }
     const options: JoinOptions = { world: session.world.slug, location, token: session.token, enterFrom, ...(at ? { at } : {}) };
     const room = await client.joinOrCreate<LocationStateView>(COLYSEUS_ROOM_NAME, options);
     current = room;
     store.setMySessionId(room.sessionId);
-    updateSession({ location, at: at ?? undefined });
+    updateSession({ location, at: at ?? undefined, reconnect: room.reconnectionToken });
     wire(room);
   })();
   try {
@@ -116,6 +129,7 @@ async function recover(room: Room<LocationStateView>, code: number) {
       const again = await client.reconnect<LocationStateView>(room.reconnectionToken);
       current = again;
       useStore.getState().setMySessionId(again.sessionId);
+      updateSession({ reconnect: again.reconnectionToken });
       wire(again);
       useStore.getState().setToast('Reconnected');
       return;

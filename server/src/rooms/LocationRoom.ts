@@ -47,7 +47,16 @@ export const LocationState = schema({
 export type LocationState = SchemaType<typeof LocationState>;
 
 interface CreateOptions { world: string; location: string }
-interface UserData { session: Session; moving: boolean; gone: boolean }
+interface UserData {
+  session: Session;
+  moving: boolean;
+  gone: boolean;
+  /** the open reconnection window of a dropped seat, so a newer seat of the same player can close it */
+  reconnection?: { reject: Function } | null;
+}
+
+/** close code for a seat a newer seat of the same player took over (a reload, a second tab) */
+const CLOSE_REPLACED = 4001;
 
 /** seconds a dropped connection may come back before the player counts as gone */
 const RECONNECT_SECONDS = 60;
@@ -62,6 +71,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private ethora!: EthoraWorldService;
   private sim!: WorldSim;
   private budget!: AiBudget;
+  /** reconnection windows of dropped seats, by session id */
+  private ghosts = new Map<string, { reject: Function }>();
   private unsubscribe: (() => void) | null = null;
   private unsubscribeBudget: (() => void) | null = null;
 
@@ -142,6 +153,15 @@ export class LocationRoom extends Room<{ state: LocationState }> {
         ? { x: clamp(at.x, -w / 2 + 0.5, w / 2 - 0.5), y: 0, z: clamp(at.z, -d / 2 + 0.5, d / 2 - 0.5), rotY: Number.isFinite(at.ry) ? at.ry : 0 }
         : { ...spawnPose(this.room) };
 
+    // One seat per player: a reload or a second tab makes a new seat while the old one waits to reconnect (or is
+    // still connected). The newer seat takes over; the old one goes without "has left" and without revoking the chat.
+    for (const [sid, other] of this.state.players.entries()) {
+      if (other.id !== session.pid || sid === client.sessionId) continue;
+      const stale = this.clients.find((c) => c.sessionId === sid);
+      if (stale) stale.leave(CLOSE_REPLACED);
+      else this.ghosts.get(sid)?.reject(new Error('replaced by a newer seat'));
+    }
+
     const others = [...this.state.players.values()].map((o) => o.id);
     const p = new Player();
     p.id = session.pid; p.name = session.name; p.x = pose.x; p.y = pose.y; p.z = pose.z; p.ry = pose.rotY; p.anim = 'idle'; p.away = false;
@@ -158,14 +178,17 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   async onLeave(client: Client, code?: number) {
     const data = client.userData as UserData | undefined;
-    const consented = code === 4000;
+    const consented = code === 4000 || code === CLOSE_REPLACED;
     const p = this.state.players.get(client.sessionId);
     // A dropped connection (not a door, not a deliberate leave) may come back for a while; the avatar waits, marked away.
     if (!consented && data && !data.moving && p) {
       p.away = true;
       presence.setAway(this.world.slug, client.sessionId, true);
       try {
-        const back = await this.allowReconnection(client, RECONNECT_SECONDS);
+        const window = this.allowReconnection(client, RECONNECT_SECONDS);
+        this.ghosts.set(client.sessionId, window);
+        const back = await window;
+        this.ghosts.delete(client.sessionId);
         back.userData = data;
         const again = this.state.players.get(client.sessionId);
         if (again) again.away = false;
@@ -173,19 +196,23 @@ export class LocationRoom extends Room<{ state: LocationState }> {
         console.log(`[room ${this.room.id}] ${data.session.name} reconnected`);
         return;
       } catch {
-        // the window expired
+        this.ghosts.delete(client.sessionId);
+        // the window expired, or a newer seat of the same player closed it
       }
     }
     this.state.players.delete(client.sessionId);
     presence.left(this.world.slug, client.sessionId);
     if (!data) return;
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
-    if (!data.moving) {
+    // The same person on another seat in this room (a reload, a second tab) keeps the chat membership and the narration quiet;
+    // revoking here used to cut the chat of the live seat a minute after every reload.
+    const stillHere = this.clients.some((c) => c !== client && (c.userData as UserData | undefined)?.session.uid === data.session.uid);
+    if (!data.moving && !stillHere) {
       const line = data.gone ? `${data.session.name} has wandered off` : `${data.session.name} has left`;
       void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, line));
       void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.uid));
     }
-    console.log(`[room ${this.room.id}] - ${data.session.name}${data.gone ? ' (wandered off)' : consented ? '' : ' (connection lost)'}`);
+    console.log(`[room ${this.room.id}] - ${data.session.name}${data.gone ? ' (wandered off)' : code === CLOSE_REPLACED ? ' (replaced)' : stillHere ? ' (still here on another seat)' : consented ? '' : ' (connection lost)'}`);
   }
 
   onDispose() {
