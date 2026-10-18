@@ -1,6 +1,8 @@
 import type { EnterRequest, EnterResponse, ResumeRequest, WorldCard } from '@bookworld/shared';
 
-export const SERVER_URL = (import.meta.env.VITE_WORLD_SERVER_URL as string | undefined) ?? 'http://localhost:2567';
+/** The world service. Unset, it is the host that served this page on port 2567, so another device on the same
+ *  network (http://192.168.x.x:5173) reaches the right server without configuration. */
+export const SERVER_URL = (import.meta.env.VITE_WORLD_SERVER_URL as string | undefined) || `http://${location.hostname}:2567`;
 
 export async function enterWorld(slug: string, name: string): Promise<EnterResponse> {
   const body: EnterRequest = { name, visitor: visitorId() };

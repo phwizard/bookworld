@@ -150,3 +150,9 @@ Then the form. The generator became a function the world service can call, and t
 The first world made through the form, while writing this: "A Christmas Carol", Gutenberg #46, five rooms and three characters, $3.33, four minutes. Scrooge's counting-house, his chambers, Fezziwig's warehouse, the Cratchits' kitchen and the churchyard; Scrooge, Marley's Ghost and the Ghost of Christmas Present, who make their rounds on the hour: Marley into the counting-house at the top of the hour ("Expect the first Spirit when the bell tolls One!"), Present into the chambers at half past. The card appeared at the top of the list before the log had finished scrolling. It is in the repo as the third world.
 
 ![the form after making a world](journal/261018-11-make-your-own.jpg)
+
+## 18 Oct 2026, later: the Tempest speaks, and a second player on the Wi-Fi
+
+The owner sent the Tempest app's App Secret. One line in `.env`, a restart, and the island's chat came on: Ariel, asked on the Yellow Sands what became of the ship, answered with the harbour and the sleeping mariners, straight from the play. The visit was made from the machine's network address rather than localhost, which is how a second person on the same Wi-Fi gets in. Until now the client had the world service pinned to localhost, which works only on the machine running it; it now defaults to whichever host served the page, port 2567, so `http://192.168.x.x:5173` works for a phone or a laptop across the room with nothing to configure. The README says how.
+
+![Ariel answering on the sands, visited over the LAN](journal/261018-12-tempest-chat-lan.jpg)
