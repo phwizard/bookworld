@@ -8,7 +8,9 @@
     "start": "node --env-file=../.env dist/index.js",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "validate:worlds": "tsx src/world/validate-cli.ts ../worlds"
+    "validate:worlds": "tsx src/world/validate-cli.ts ../worlds",
+    "metrics": "tsx src/metrics-cli.ts",
+    "test": "node --import tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@bookworld/shared": "workspace:*",

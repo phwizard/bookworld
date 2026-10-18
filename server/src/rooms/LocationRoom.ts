@@ -4,12 +4,13 @@ import { Room, type Client } from '@colyseus/core';
 import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp,
-  type AddressMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
+  type SaidMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
 import { tryEthora, type EthoraWorldService } from '../ethora.ts';
 import { ethoraFor, simFor } from '../services.ts';
+import { record } from '../metrics.ts';
 import type { CharState, WorldSim } from '../world/sim.ts';
 
 export const Player = schema({
@@ -86,9 +87,14 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     });
 
     this.onMessage(MSG.move, (client, msg: MoveMessage) => void this.handleMove(client, msg));
-    this.onMessage(MSG.address, (client, msg: AddressMessage) => {
+    this.onMessage(MSG.said, (client, msg: SaidMessage) => {
       const p = this.state.players.get(client.sessionId);
-      if (p && msg?.character) this.sim.address(msg.character, p.x, p.z);
+      const data = client.userData as UserData | undefined;
+      if (!p || !data || !Array.isArray(msg?.characters)) return;
+      const named = msg.characters.filter((id) => typeof id === 'string' && this.state.characters.has(id)).slice(0, 8);
+      for (const id of named) this.sim.address(id, p.x, p.z);
+      // Only the fact of a message and whether it named a character is kept; never the text.
+      record({ ev: 'message', world: this.world.slug, pid: data.session.pid, location: this.room.id, mentions: named.length });
     });
     console.log(`[room] created ${options.world}/${options.location}`);
   }
@@ -105,10 +111,12 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const enterFrom = options.enterFrom && DIRECTIONS.includes(options.enterFrom) ? options.enterFrom : undefined;
     const pose = enterFrom ? entryPose(this.room, enterFrom, 1.8, (Math.random() - 0.5) * 1.2) : { ...spawnPose(this.room) };
 
+    const others = [...this.state.players.values()].map((o) => o.id);
     const p = new Player();
     p.id = session.pid; p.name = session.name; p.x = pose.x; p.y = pose.y; p.z = pose.z; p.ry = pose.rotY; p.anim = 'idle';
     this.state.players.set(client.sessionId, p);
 
+    record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
@@ -119,6 +127,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const data = client.userData as UserData | undefined;
     this.state.players.delete(client.sessionId);
     if (!data) return;
+    record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     if (!data.moving) {
       void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, `${data.session.name} has left`));
       void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.pid));

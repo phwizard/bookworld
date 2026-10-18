@@ -3,7 +3,7 @@
 import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
   COLYSEUS_ROOM_NAME, MSG, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
-  type PosMessage, type PlayerView, type CharacterView, type LocationStateView,
+  type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type LocationStateView,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
@@ -100,9 +100,9 @@ export function sendPos(msg: PosMessage) {
   current.send(MSG.pos, msg);
 }
 
-/** Tell the room a character was addressed by name (it turns to face the player). */
-export function addressCharacter(characterId: string) {
-  current?.send(MSG.address, { character: characterId });
+/** The player sent a chat message; `characterIds` are the characters named in it (they turn to face the player). */
+export function reportSaid(characterIds: string[]) {
+  current?.send(MSG.said, { characters: characterIds } satisfies SaidMessage);
 }
 
 let moveLock = 0;

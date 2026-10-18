@@ -37,9 +37,9 @@
       "id": "white-rabbit",
       "name": "The White Rabbit",
       "home": "rabbit-hole",                                                        // room id
-      "persona": "You are the White Rabbit ... (soulMd)",
+      "persona": "You are the White Rabbit ... (the agent's full system prompt; the provisioner appends the room setting and the house rules)",
       "responseMode": "mentioned", "cooldownSec": 30,
-      "knowledgeTags": ["ch1", "ch2", "ch8"],                                       // RAG tags over the source text
+      "knowledgeTags": ["alice-ch1", "alice-ch2", "alice-ch8"],                     // chapter files in worlds/<slug>/knowledge/<tag>.txt, uploaded to the agent by the provisioner
       "avatar": "assets/avatars/white-rabbit.vrm",
       "pos": [-3, 0, -4], "rotY": 3.14,                                             // optional standing spot in the home room (room-local metres)
       "wander": 1.2,                                                                // metres it strolls around that spot while idle (0 = stands still)
@@ -61,3 +61,5 @@
 Character lines from scripts and schedules are posted by the world service as `**Name:** text`; clients show them as the character speaking (a bubble over the avatar). Narration ("X has joined (E)") is posted as `_italic_`. A player who names a character in chat makes it turn to face them for 30 s.
 
 Rules: exits are symmetric (if A.e = B then B.w = A); the generator must enforce it and the server validates on load. Room ids are slugs. All asset paths are relative to the world folder. Rooms form a grid by construction, which gives the mini-map for free.
+
+Generated worlds: `pnpm generate` writes this file from a book (docs/GENERATOR.md). It also writes `knowledge/<slug>-chN.txt` (one file per chapter, gitignored, rebuilt from `source.text` when missing), `draft.json` (the model's raw answer) and `generation.json` (model, options, warnings). Asset ids the generator may use are listed in `client/public/assets/manifest.json` and `client/public/assets/props/catalog.json`.

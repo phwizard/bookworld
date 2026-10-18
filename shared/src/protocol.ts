@@ -5,6 +5,8 @@ export const COLYSEUS_ROOM_NAME = 'location';
 
 export interface EnterRequest {
   name: string;
+  /** random id the client keeps in localStorage so return visits can be counted; no account, no PII */
+  visitor?: string;
 }
 
 export interface EthoraPublicInfo {
@@ -73,15 +75,15 @@ export const MSG = {
   moved: 'moved',
   /** server -> client */
   denied: 'denied',
-  /** client -> server: the player addressed a character by name in chat; it turns to face them */
-  address: 'address',
+  /** client -> server: the player sent a chat message; lists the characters named in it (they turn to face the player) */
+  said: 'said',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
 export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
-export interface AddressMessage { character: string }
+export interface SaidMessage { characters: string[] }
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.

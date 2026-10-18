@@ -11,3 +11,13 @@ worlds/*/secrets.json
 /tmp/
 # per-world Ethora ids and tokens (filled by provisioning)
 worlds/*/ethora.json
+
+# usage event log (server/data/events.jsonl) stays local
+server/data/
+
+# generator working files: the book text, the knowledge chunks and the model's raw draft are reproducible from world.json's source field
+worlds/*/source/
+worlds/*/knowledge/
+worlds/*/draft.json
+worlds/*/world.invalid.json
+generator/.cache/

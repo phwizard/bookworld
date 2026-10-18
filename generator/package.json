@@ -1,0 +1,24 @@
+{
+  "name": "@bookworld/generator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Turns a book into a world.json and provisions it on Ethora (app, rooms, agents, knowledge).",
+  "scripts": {
+    "generate": "node --env-file-if-exists=../.env --import tsx src/generate.ts",
+    "provision": "node --env-file-if-exists=../.env --import tsx src/provision.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "@bookworld/shared": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

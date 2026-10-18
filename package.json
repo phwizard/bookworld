@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "packageManager": "pnpm@12.14.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "pnpm -r --parallel --stream run dev",
     "dev:server": "pnpm --filter @bookworld/server dev",
@@ -13,6 +15,10 @@
     "typecheck": "pnpm -r run typecheck",
     "validate:worlds": "pnpm --filter @bookworld/server validate:worlds",
     "secrets:scan": "gitleaks git --pre-commit --staged --redact -v",
-    "hooks:install": "git config core.hooksPath .githooks"
+    "hooks:install": "git config core.hooksPath .githooks",
+    "metrics": "pnpm --filter @bookworld/server run metrics",
+    "test": "pnpm -r run test",
+    "generate": "pnpm --filter @bookworld/generator run generate",
+    "provision": "pnpm --filter @bookworld/generator run provision"
   }
 }

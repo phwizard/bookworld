@@ -777,7 +777,6 @@
       "responseMode": "mentioned",
       "cooldownSec": 30,
       "knowledgeTags": [
-        "alice",
         "alice-ch7"
       ],
       "avatar": "kaykit:Mage",

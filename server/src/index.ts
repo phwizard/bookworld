@@ -8,6 +8,8 @@ import { LocationRoom } from './rooms/LocationRoom.ts';
 import { cleanName, newPlayerId, signSession } from './auth.ts';
 import { ethoraFor } from './services.ts';
 import { tryEthora } from './ethora.ts';
+import { cleanVisitor, record, readEvents } from './metrics.ts';
+import { buildReport } from './metrics-report.ts';
 
 const PORT = Number(process.env.PORT ?? 2567);
 const ORIGIN = process.env.CORS_ORIGIN ?? '*';
@@ -35,6 +37,16 @@ const server = new Server({
 
     app.get('/api/health', (_req, res) => res.json({ ok: true, worlds: [...worlds.keys()] }));
 
+    // Usage report (players per day, rooms per session, messages to characters, meetings, day-7 return).
+    // Only served when METRICS_TOKEN is set; pass it as `Authorization: Bearer <token>`.
+    app.get('/api/metrics', (req, res) => {
+      const token = process.env.METRICS_TOKEN;
+      if (!token) return res.status(404).json({ error: 'metrics endpoint is off (METRICS_TOKEN not set)' });
+      if (req.headers.authorization !== `Bearer ${token}`) return res.status(401).json({ error: 'bad token' });
+      const since = typeof req.query.since === 'string' ? req.query.since : undefined;
+      res.json(buildReport(readEvents(), { since }));
+    });
+
     app.get('/api/worlds', (_req, res) => {
       res.json(listWorlds().map(({ world }) => ({ slug: world.slug, title: world.title, rooms: world.rooms.length, license: world.source.license })));
     });
@@ -60,6 +72,7 @@ const server = new Server({
         await tryEthora('grant start room', () => ethora.grant(loaded.world.start, playerId));
       }
       const token = signSession({ pid: playerId, name, world: loaded.world.slug });
+      record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor: cleanVisitor(req.body?.visitor) });
       const body: EnterResponse = { token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, playerId) };
       res.json(body);
     });
