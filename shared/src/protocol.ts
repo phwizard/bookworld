@@ -21,12 +21,28 @@ export interface EthoraPublicInfo {
   chatToken: string | null;
 }
 
+/** Daily cap on paid AI use (character replies), see server/src/budget.ts. */
+export interface AiState {
+  /** replies per world per day, 0 = unlimited */
+  limit: number;
+  /** replies per visitor per day, 0 = unlimited */
+  perPlayer: number;
+  used: number;
+  /** the world's limit is spent: characters do not answer until resetAt */
+  asleep: boolean;
+  /** ISO time of the next daily reset */
+  resetAt: string;
+  /** this visitor's own share is spent */
+  limited: boolean;
+}
+
 export interface EnterResponse {
   token: string;
   playerId: string;
   name: string;
   world: World;
   ethora: EthoraPublicInfo;
+  ai: AiState;
 }
 
 /** Colyseus join options */
@@ -77,6 +93,8 @@ export const MSG = {
   denied: 'denied',
   /** client -> server: the player sent a chat message; lists the characters named in it (they turn to face the player) */
   said: 'said',
+  /** server -> client: AI budget state (on join, when it changes, and when this player's share is spent) */
+  ai: 'ai',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -84,6 +102,7 @@ export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
 export interface SaidMessage { characters: string[] }
+export type AiMessage = AiState;
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.

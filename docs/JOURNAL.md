@@ -91,3 +91,13 @@ The owner asked for steps, world sounds and voices. Three layers, all client sid
 Verified in Chrome with the dev counters: wood steps in the well, stone in the hall, grass outside, the door on each change, chat open and close, two greeting lines and one reply spoken.
 
 ![the Tea Party with voices on](journal/261018-03-tea-party-voices-on.jpg)
+
+## 18 Oct 2026, evening: a daily budget
+
+"When we expose this to the public they will not bankrupt us." Two meters. The first counts paid character replies: every message that names a character present in the room makes its agent answer, so the world service counts those per world and per visitor per day and persists the count. At the world limit the characters rest until the daily reset: every client gets the state over the Colyseus room, the HUD says so, the rooms get a narration line, and the chat panel's outgoing text gets a zero-width space inside each character's name (it reads the same to people, but the agent's mention matcher no longer fires). The per-visitor share works the same way for one person. The app's server token is not allowed to change an agent (403), so the real off switch, setting the agents to answer with probability zero, runs over the hosted MCP with a user API key when one is configured; without it the client-side gate is the only guard, which is enough against ordinary use and not against someone scripting the XMPP connection. Ethora's own plan limits sit in front of all this.
+
+The second meter is the generator: runs and dollars per day in the same budget file. The CLI backend reports real cost, the API backend estimates it from tokens. It only guards the owner's own runs today, but a public "turn my book into a world" button would hit the same ledger.
+
+Checked live with the limit set to two: the third question to the Hatter went out with a zero-width space inside "Hatter" and he stayed quiet; the notice appeared at the top of the screen; `/api/ai-budget` showed used 2, asleep true.
+
+![the characters resting after the daily limit](journal/261018-04-characters-resting.jpg)

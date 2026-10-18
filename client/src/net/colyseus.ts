@@ -2,7 +2,7 @@
 // leaving the current room and joining the next one at the opposite door.
 import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
-  COLYSEUS_ROOM_NAME, MSG, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
+  COLYSEUS_ROOM_NAME, MSG, type AiMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
   type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type LocationStateView,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
@@ -83,6 +83,13 @@ function wire(room: Room<LocationStateView>) {
     void joinLocation(msg.to, msg.enterFrom);
   });
   room.onMessage<DeniedMessage>(MSG.denied, (msg) => useStore.getState().setToast(msg.reason));
+  room.onMessage<AiMessage>(MSG.ai, (msg) => {
+    const before = useStore.getState().ai;
+    useStore.getState().setAi(msg);
+    if (msg.asleep && !before?.asleep) useStore.getState().setToast('The characters have gone to rest for today');
+    else if (msg.limited && !before?.limited) useStore.getState().setToast('You have had your share of the characters today');
+    else if (before?.asleep && !msg.asleep) useStore.getState().setToast('The characters are awake again');
+  });
   room.onLeave((code) => {
     if (current === room) {
       current = null;

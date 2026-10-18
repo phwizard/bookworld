@@ -21,11 +21,23 @@ export function pickBackend(requested?: string): Backend {
   return process.env.ANTHROPIC_API_KEY ? 'anthropic' : 'claude-cli';
 }
 
-export async function completeJson(req: JsonRequest, backend: Backend, log: (s: string) => void = () => {}): Promise<unknown> {
+export interface Completion {
+  value: unknown;
+  /** dollars, as reported by the CLI or estimated from tokens for the API */
+  usd: number;
+}
+
+export async function completeJson(req: JsonRequest, backend: Backend, log: (s: string) => void = () => {}): Promise<Completion> {
   return backend === 'anthropic' ? viaApi(req, log) : viaCli(req, log);
 }
 
-async function viaApi(req: JsonRequest, log: (s: string) => void): Promise<unknown> {
+/** "<usd per million input tokens>,<output>" from GENERATOR_USD_PER_MTOK; a rough figure for the budget ledger. */
+function priceEstimate(inputTokens: number, outputTokens: number): number {
+  const [i, o] = (process.env.GENERATOR_USD_PER_MTOK ?? '15,75').split(',').map(Number);
+  return (inputTokens * (i || 15) + outputTokens * (o || 75)) / 1_000_000;
+}
+
+async function viaApi(req: JsonRequest, log: (s: string) => void): Promise<Completion> {
   const client = new Anthropic();
   const model = req.model ?? DEFAULT_MODEL;
   log(`asking ${model} through the Anthropic API`);
@@ -41,10 +53,12 @@ async function viaApi(req: JsonRequest, log: (s: string) => void): Promise<unkno
   log(`tokens: ${msg.usage.input_tokens} in, ${msg.usage.output_tokens} out`);
   const block = msg.content.find((b) => b.type === 'tool_use');
   if (!block || block.type !== 'tool_use') throw new Error('the model did not call the tool');
-  return block.input;
+  const usd = priceEstimate(msg.usage.input_tokens + (msg.usage.cache_creation_input_tokens ?? 0) + (msg.usage.cache_read_input_tokens ?? 0), msg.usage.output_tokens);
+  log(`estimated cost: $${usd.toFixed(2)}`);
+  return { value: block.input, usd };
 }
 
-async function viaCli(req: JsonRequest, log: (s: string) => void): Promise<unknown> {
+async function viaCli(req: JsonRequest, log: (s: string) => void): Promise<Completion> {
   // The CLI takes one prompt; fold the conversation into it.
   const prompt = req.messages.map((m) => (m.role === 'user' ? m.content : `YOUR PREVIOUS ANSWER:\n${m.content}`)).join('\n\n');
   const args = ['-p', 'Answer with the JSON object only.', '--output-format', 'json', '--tools', '', '--system-prompt', req.system, '--json-schema', JSON.stringify(req.schema)];
@@ -69,11 +83,12 @@ async function viaCli(req: JsonRequest, log: (s: string) => void): Promise<unkno
     throw new Error(`claude output was not JSON: ${out.slice(0, 500)}`);
   }
   if (envelope.is_error) throw new Error(`claude reported an error: ${envelope.result}`);
-  if (envelope.total_cost_usd !== undefined) log(`cost: $${envelope.total_cost_usd.toFixed(2)}`);
-  if (envelope.structured_output !== undefined) return envelope.structured_output;
+  const usd = envelope.total_cost_usd ?? 0;
+  if (envelope.total_cost_usd !== undefined) log(`cost: $${usd.toFixed(2)}`);
+  if (envelope.structured_output !== undefined) return { value: envelope.structured_output, usd };
   const text = (envelope.result ?? '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
   const first = text.indexOf('{');
   const last = text.lastIndexOf('}');
   if (first < 0 || last < 0) throw new Error(`no JSON object in the answer: ${text.slice(0, 300)}`);
-  return JSON.parse(text.slice(first, last + 1));
+  return { value: JSON.parse(text.slice(first, last + 1)), usd };
 }

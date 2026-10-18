@@ -6,10 +6,12 @@ import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo } from '@
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
 import { cleanName, newPlayerId, signSession } from './auth.ts';
-import { ethoraFor } from './services.ts';
+import { budgetFor, ethoraFor } from './services.ts';
 import { tryEthora } from './ethora.ts';
 import { cleanVisitor, record, readEvents } from './metrics.ts';
 import { buildReport } from './metrics-report.ts';
+import { budgetConfigFromEnv } from './budget.ts';
+import { existsSync, readFileSync } from 'node:fs';
 
 const PORT = Number(process.env.PORT ?? 2567);
 const ORIGIN = process.env.CORS_ORIGIN ?? '*';
@@ -47,6 +49,19 @@ const server = new Server({
       res.json(buildReport(readEvents(), { since }));
     });
 
+    // Daily AI budget per world (public: no secrets, lets a status page show when the characters are resting).
+    app.get('/api/ai-budget', (_req, res) => {
+      const out: Record<string, unknown> = {};
+      for (const { world } of listWorlds()) out[world.slug] = budgetFor(world.slug).snapshot();
+      // the generator writes its own day's runs and spend into the same file
+      const file = budgetConfigFromEnv().file;
+      let generator: unknown = null;
+      if (file && existsSync(file)) {
+        try { generator = (JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>)['_generator'] ?? null; } catch { /* ignore */ }
+      }
+      res.json({ ...out, _generator: generator });
+    });
+
     app.get('/api/worlds', (_req, res) => {
       res.json(listWorlds().map(({ world }) => ({ slug: world.slug, title: world.title, rooms: world.rooms.length, license: world.source.license })));
     });
@@ -71,9 +86,13 @@ const server = new Server({
         if (!ok) return res.status(502).json({ error: 'could not create chat identity' });
         await tryEthora('grant start room', () => ethora.grant(loaded.world.start, playerId));
       }
-      const token = signSession({ pid: playerId, name, world: loaded.world.slug });
-      record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor: cleanVisitor(req.body?.visitor) });
-      const body: EnterResponse = { token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, playerId) };
+      const visitor = cleanVisitor(req.body?.visitor);
+      const token = signSession({ pid: playerId, name, world: loaded.world.slug, ...(visitor ? { visitor } : {}) });
+      record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor });
+      const body: EnterResponse = {
+        token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, playerId),
+        ai: budgetFor(loaded.world.slug).snapshot(visitor),
+      };
       res.json(body);
     });
   },

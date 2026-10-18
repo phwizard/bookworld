@@ -23,6 +23,10 @@ pnpm provision -- --world alice                                           # -> E
 pnpm metrics                                                              # usage report from the local event log
 ```
 
-Details, keys and what each step does: `docs/GENERATOR.md`. `pnpm test` runs the unit tests (report, draft conversion, provisioner against a mock Ethora MCP).
+Details, keys and what each step does: `docs/GENERATOR.md`.
+
+## Costs and caps
+
+Two things cost money: every chat message that names a character makes its Ethora agent answer (Ethora's own plan limits apply first), and every generator run calls a model. The world service keeps a daily budget in `server/data/ai-budget.json`: `AI_DAILY_LIMIT` replies per world per day and `AI_DAILY_LIMIT_PER_PLAYER` per visitor; at the limit the characters "rest" until `AI_DAILY_RESET` (clients stop addressing them, rooms get a narration line, and with `ETHORA_API_KEY` the agents are switched off on Ethora too). The generator refuses to run past `GENERATOR_DAILY_RUNS` or `GENERATOR_DAILY_USD` unless `--ignore-budget` is passed. `GET /api/ai-budget` shows today's numbers. `pnpm test` runs the unit tests (report, draft conversion, provisioner against a mock Ethora MCP).
 
 License: MIT.

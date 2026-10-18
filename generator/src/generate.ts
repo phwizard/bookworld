@@ -14,6 +14,7 @@ import { completeJson, DEFAULT_MODEL, pickBackend } from './llm.ts';
 import { repoRoot, worldDir } from './paths.ts';
 import { repairPrompt, systemPrompt, userPrompt } from './prompt.ts';
 import { fetchGutenberg, splitChapters, stripGutenberg, writeKnowledge, type Chapter } from './source.ts';
+import { assertBudget, limitsFromEnv, readLedger, recordRun } from './ledger.ts';
 
 const LICENSES: License[] = ['public-domain', 'original', 'cc-by', 'cc-by-sa', 'private-attested'];
 const MAX_TEXT_CHARS = Number(process.env.GENERATOR_MAX_TEXT_CHARS ?? 450_000);
@@ -36,9 +37,10 @@ async function main() {
   const backend = pickBackend(str(args, 'backend'));
   const dryRun = bool(args, 'dry-run');
   const force = bool(args, 'force');
+  const ignoreBudget = bool(args, 'ignore-budget');
 
   if (!gutenberg && !textPath && !title && !draftPath) {
-    console.error('usage: pnpm generate -- (--gutenberg <id> | --text <file> | --title "..." --author "...") [--slug s] [--rooms 6] [--characters 3] [--notes "..."] [--out dir] [--model m] [--backend anthropic|claude-cli] [--draft file] [--dry-run] [--force]');
+    console.error('usage: pnpm generate -- (--gutenberg <id> | --text <file> | --title "..." --author "...") [--slug s] [--rooms 6] [--characters 3] [--notes "..."] [--out dir] [--model m] [--backend anthropic|claude-cli] [--draft file] [--dry-run] [--force] [--ignore-budget]');
     process.exit(2);
   }
 
@@ -96,9 +98,16 @@ async function main() {
       log(`dry run: ${messages[0]!.content.length} characters of prompt, backend ${backend}, model ${model ?? (backend === 'anthropic' ? DEFAULT_MODEL : 'CLI default')}`);
       return;
     }
+    // Daily spend guard (GENERATOR_DAILY_RUNS, GENERATOR_DAILY_USD); each model call is written to the ledger.
+    const limits = limitsFromEnv();
+    if (!ignoreBudget) assertBudget(limits);
+    const ledger = readLedger();
+    log(`budget today: ${ledger.runs} runs, $${ledger.usd.toFixed(2)} of ${limits.runs || 'unlimited'} runs / $${limits.usd || 'unlimited'}`);
     for (;;) {
       attempts++;
-      draft = (await completeJson({ system, messages, schema: DRAFT_SCHEMA as unknown as Record<string, unknown>, toolName: 'emit_world', model }, backend, log)) as Draft;
+      const done = await completeJson({ system, messages, schema: DRAFT_SCHEMA as unknown as Record<string, unknown>, toolName: 'emit_world', model }, backend, log);
+      recordRun({ slug, usd: done.usd, backend });
+      draft = done.value as Draft;
       ({ world, warnings, errors } = draftToWorld(draft, ctx));
       if (!errors.length || attempts >= 2) break;
       log(`draft has ${errors.length} problems, asking for a repair`);

@@ -40,3 +40,5 @@ button, input { font: inherit; }
 .hud .music { position: absolute; right: 16px; bottom: 16px; font-size: 12px; opacity: .65; text-shadow: 0 1px 3px #000; }
 .bw-line { font: 14px Georgia, serif; color: #2a2118; margin: 6px 4px; line-height: 1.4; }
 .bw-line b { color: #6b4a1c; }
+
+.hud .notice { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 70vw; padding: 8px 14px; border-radius: 8px; background: rgba(40, 28, 14, .8); color: #f3e6c4; font-size: 13px; text-align: center; pointer-events: none; }

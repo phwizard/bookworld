@@ -13,6 +13,7 @@
     "@bookworld/shared": "workspace:*",
     "@colyseus/sdk": "^0.18.5",
     "@ethora/chat-component": "^26.10.4",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@pixiv/three-vrm": "^3.5.5",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",

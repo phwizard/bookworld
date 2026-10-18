@@ -4,12 +4,13 @@ import { Room, type Client } from '@colyseus/core';
 import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp,
-  type SaidMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
+  type SaidMessage, type AiMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
 import { tryEthora, type EthoraWorldService } from '../ethora.ts';
-import { ethoraFor, simFor } from '../services.ts';
+import { budgetFor, ethoraFor, simFor } from '../services.ts';
+import type { AiBudget } from '../budget.ts';
 import { record } from '../metrics.ts';
 import type { CharState, WorldSim } from '../world/sim.ts';
 
@@ -55,7 +56,9 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private room!: WorldRoom;
   private ethora!: EthoraWorldService;
   private sim!: WorldSim;
+  private budget!: AiBudget;
   private unsubscribe: (() => void) | null = null;
+  private unsubscribeBudget: (() => void) | null = null;
 
   onCreate(options: CreateOptions) {
     const loaded = getWorld(options.world);
@@ -74,6 +77,10 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
     this.sim = simFor(options.world);
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
+    this.budget = budgetFor(options.world);
+    this.unsubscribeBudget = this.budget.subscribe(() => {
+      for (const c of this.clients) c.send(MSG.ai, this.budget.snapshot((c.userData as UserData | undefined)?.session.visitor) satisfies AiMessage);
+    });
 
     const [w, , d] = roomSize(room);
     this.onMessage(MSG.pos, (client, msg: PosMessage) => {
@@ -92,7 +99,11 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       const data = client.userData as UserData | undefined;
       if (!p || !data || !Array.isArray(msg?.characters)) return;
       const named = msg.characters.filter((id) => typeof id === 'string' && this.state.characters.has(id)).slice(0, 8);
-      for (const id of named) this.sim.address(id, p.x, p.z);
+      // Paid replies: count them against the daily budget; a sleeping or rationed character does not turn round.
+      const verdict = this.budget.spend(data.session.visitor, named.length);
+      if (named.length && !verdict.allowed) client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
+      else if (verdict.allowed && verdict.limited) client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
+      if (verdict.allowed) for (const id of named) this.sim.address(id, p.x, p.z);
       // Only the fact of a message and whether it named a character is kept; never the text.
       record({ ev: 'message', world: this.world.slug, pid: data.session.pid, location: this.room.id, mentions: named.length });
     });
@@ -117,6 +128,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.state.players.set(client.sessionId, p);
 
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
+    client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
@@ -137,6 +149,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   onDispose() {
     this.unsubscribe?.();
+    this.unsubscribeBudget?.();
   }
 
   private syncCharacters(chars: CharState[]) {

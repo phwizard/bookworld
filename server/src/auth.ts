@@ -5,6 +5,8 @@ export interface Session {
   pid: string;
   name: string;
   world: string;
+  /** anonymous browser id, when the client sent one */
+  visitor?: string;
 }
 
 const secret =
@@ -22,7 +24,7 @@ export function signSession(s: Session): string {
 export function verifySession(token: string): Session {
   const payload = jwt.verify(token, secret, { algorithms: ['HS256'] }) as jwt.JwtPayload & Session;
   if (!payload.pid || !payload.name || !payload.world) throw new Error('bad session');
-  return { pid: payload.pid, name: payload.name, world: payload.world };
+  return { pid: payload.pid, name: payload.name, world: payload.world, ...(payload.visitor ? { visitor: payload.visitor } : {}) };
 }
 
 export function newPlayerId(): string {
