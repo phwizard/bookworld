@@ -254,6 +254,9 @@ importers:
 
   server:
     dependencies:
+      '@bookworld/generator':
+        specifier: workspace:*
+        version: link:../generator
       '@bookworld/shared':
         specifier: workspace:*
         version: link:../shared

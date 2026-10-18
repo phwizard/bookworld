@@ -2,7 +2,8 @@ import { Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import express from 'express';
 import cors from 'cors';
-import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo, type WorldCard } from '@bookworld/shared';
+import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo, type StatsResponse, type WorldCard } from '@bookworld/shared';
+import { getJob, makeStatus, submit, validateRequest } from './make.ts';
 import { stats as presenceStats, visited } from './presence.ts';
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
@@ -63,9 +64,8 @@ const server = new Server({
       res.json({ ...out, _generator: generator });
     });
 
-    // The world picker: what each world is, who is in it now, when it was last alive.
-    app.get('/api/worlds', (_req, res) => {
-      const cards: WorldCard[] = listWorlds().map(({ world }) => {
+    const cards = (): WorldCard[] =>
+      listWorlds().map(({ world }) => {
         const p = presenceStats(world.slug);
         return {
           slug: world.slug,
@@ -84,7 +84,58 @@ const server = new Server({
           resting: budgetFor(world.slug).snapshot().asleep,
         };
       });
-      res.json(cards);
+
+    // The world picker: what each world is, who is in it now, when it was last alive. Public, CORS open,
+    // cacheable for a few seconds so a home page can poll it.
+    app.get('/api/worlds', (_req, res) => {
+      res.setHeader('cache-control', 'public, max-age=5');
+      res.json(cards());
+    });
+
+    // One call for a home page: online visitors, totals, and the cards.
+    app.get('/api/stats', (_req, res) => {
+      const w = cards();
+      const body: StatsResponse = {
+        generatedAt: new Date().toISOString(),
+        online: w.reduce((n, c) => n + c.online, 0),
+        worlds: w,
+        totals: {
+          worlds: w.length,
+          rooms: w.reduce((n, c) => n + c.rooms.length, 0),
+          characters: w.reduce((n, c) => n + c.characters.length, 0),
+          messages: w.reduce((n, c) => n + c.messages.total, 0),
+          visits: w.reduce((n, c) => n + c.visits, 0),
+        },
+      };
+      res.setHeader('cache-control', 'public, max-age=5');
+      res.json(body);
+    });
+
+    // An image any page can embed: <img src="https://<world service>/api/badge.svg">
+    app.get('/api/badge.svg', (req, res) => {
+      const w = cards();
+      const online = w.reduce((n, c) => n + c.online, 0);
+      const label = typeof req.query.label === 'string' ? req.query.label.slice(0, 40) : 'bookworld';
+      const value = online === 1 ? '1 visitor now' : `${online} visitors now`;
+      res.setHeader('content-type', 'image/svg+xml');
+      res.setHeader('cache-control', 'public, max-age=10');
+      res.send(badge(label, value, online > 0 ? '#c9a961' : '#6b5a3e'));
+    });
+
+    // Make your own world: the generator (and the provisioner when a key is configured) behind the daily budget.
+    app.get('/api/make', (_req, res) => res.json(makeStatus()));
+    app.post('/api/make', (req, res) => {
+      try {
+        const job = submit(validateRequest(req.body));
+        res.status(202).json({ jobId: job.id, status: job.status });
+      } catch (e) {
+        res.status(400).json({ error: (e as Error).message });
+      }
+    });
+    app.get('/api/make/:id', (req, res) => {
+      const job = getJob(req.params.id);
+      if (!job) return res.status(404).json({ error: 'unknown job' });
+      res.json(job);
     });
 
     app.get('/api/worlds/:slug', (req, res) => {
@@ -141,6 +192,19 @@ const server = new Server({
     });
   },
 });
+
+function badge(label: string, value: string, color: string): string {
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const lw = 7 * label.length + 14;
+  const vw = 7 * value.length + 14;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${lw + vw}" height="20" role="img" aria-label="${esc(label)}: ${esc(value)}">
+<rect rx="3" width="${lw + vw}" height="20" fill="#2a2118"/>
+<rect rx="3" x="${lw}" width="${vw}" height="20" fill="${color}"/>
+<g fill="#f3e6c4" font-family="Georgia,serif" font-size="12" text-anchor="middle">
+<text x="${lw / 2}" y="14">${esc(label)}</text>
+<text x="${lw + vw / 2}" y="14" fill="#1a140f">${esc(value)}</text>
+</g></svg>`;
+}
 
 server.define(COLYSEUS_ROOM_NAME, LocationRoom).filterBy(['world', 'location']);
 

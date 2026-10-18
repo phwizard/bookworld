@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-10-18T07:45:09.351Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 5,
+    "characters": 3,
+    "notes": "Scrooge's counting-house, his rooms, the Cratchit kitchen, the churchyard and Fezziwig's warehouse. Characters: Scrooge, Marley and the Ghost of Christmas Present; let the three spirits appear on a schedule."
+  },
+  "source": {
+    "title": "A Christmas Carol",
+    "author": "Charles Dickens",
+    "text": "gutenberg:46",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "STAVE I: MARLEY'S GHOST MARLEY was dead: to begin with. There is no doubt",
+      "chars": 36147
+    },
+    {
+      "index": 2,
+      "title": "STAVE II: THE FIRST OF THE THREE SPIRITS WHEN Scrooge awoke, it was so dark, that looking out of bed,",
+      "chars": 33940
+    },
+    {
+      "index": 3,
+      "title": "STAVE III: THE SECOND OF THE THREE SPIRITS AWAKING in the middle of a prodigiously tough snore, and",
+      "chars": 46176
+    },
+    {
+      "index": 4,
+      "title": "STAVE IV: THE LAST OF THE SPIRITS THE Phantom slowly, gravely, silently, approached. When",
+      "chars": 29018
+    },
+    {
+      "index": 5,
+      "title": "STAVE V: THE END OF IT YES! and the bedpost was his own. The bed was his own,",
+      "chars": 12495
+    }
+  ],
+  "warnings": []
+}

@@ -45,6 +45,15 @@ export interface WorldCard {
   resting: boolean;
 }
 
+/** GET /api/stats: the numbers a home page shows. */
+export interface StatsResponse {
+  generatedAt: string;
+  /** humans online across all worlds (not counting the away) */
+  online: number;
+  worlds: WorldCard[];
+  totals: { worlds: number; rooms: number; characters: number; messages: number; visits: number };
+}
+
 /** Daily cap on paid AI use (character replies), see server/src/budget.ts. */
 export interface AiState {
   /** replies per world per day, 0 = unlimited */

@@ -140,3 +140,13 @@ Also from the owner, the same evening: the chat panel is translucent now and you
 
 ![the world picker](journal/261018-09-world-picker.jpg)
 ![the wreck with the shore panorama](journal/261018-10-tempest-wreck-shore.jpg)
+
+## 18 Oct 2026, evening: numbers for the home page, and a form
+
+The owner wanted the counters outside the engine as well, for a project home page. So the world service now has a small public API (`docs/API.md`): `GET /api/stats` with people online, totals and the cards, `GET /api/worlds` with the cards alone, and `GET /api/badge.svg`, an image any page can embed with an img tag that reads "3 visitors now". All open to any origin and cacheable for a few seconds.
+
+Then the form. The generator became a function the world service can call, and the dashed "Your own book" card on the join screen became a form: title, author, Project Gutenberg number, rooms, characters, notes. The server runs one job at a time with a queue of three, checks the generator's daily budget first, generates, provisions on Ethora when it has an API key, loads the new world into the running service, and the card appears. The job's log streams to the form while it works. What it cannot do is the last step: the App Secret still has to be copied from the dashboard by hand (gap 8), so a world made by a visitor has rooms and characters on Ethora but no chat until the owner pastes one line into `.env`. That is the one thing between this form and a public "turn your book into a world" button.
+
+The first world made through the form, while writing this: "A Christmas Carol", Gutenberg #46, five rooms and three characters, $3.33, four minutes. Scrooge's counting-house, his chambers, Fezziwig's warehouse, the Cratchits' kitchen and the churchyard; Scrooge, Marley's Ghost and the Ghost of Christmas Present, who make their rounds on the hour: Marley into the counting-house at the top of the hour ("Expect the first Spirit when the bell tolls One!"), Present into the chambers at half past. The card appeared at the top of the list before the log had finished scrolling. It is in the repo as the third world.
+
+![the form after making a world](journal/261018-11-make-your-own.jpg)

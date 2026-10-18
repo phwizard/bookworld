@@ -13,6 +13,7 @@
     "test": "node --import tsx --test test/*.test.ts"
   },
   "dependencies": {
+    "@bookworld/generator": "workspace:*",
     "@bookworld/shared": "workspace:*",
     "@colyseus/core": "^0.18.19",
     "@colyseus/schema": "^5.0.40",

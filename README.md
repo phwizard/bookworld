@@ -25,7 +25,7 @@ pnpm provision -- --world alice                                           # -> E
 pnpm metrics                                                              # usage report from the local event log
 ```
 
-Details, keys and what each step does: `docs/GENERATOR.md`.
+Details, keys and what each step does: `docs/GENERATOR.md`. The join screen has the same thing as a form ("Your own book"): it runs the generator on the server behind the daily budget and, with `ETHORA_API_KEY`, provisions the world on Ethora. Public numbers for a home page (visitors online, per world cards, an SVG badge): `docs/API.md`.
 
 ## Costs and caps
 

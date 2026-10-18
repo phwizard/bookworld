@@ -70,3 +70,12 @@ button, input { font: inherit; }
 .join .card .people { font-size: 13px; opacity: .7; font-style: italic; }
 .join .card button { margin-top: 4px; }
 .join .card.make { border-style: dashed; opacity: .8; }
+
+.join .card .muted { font-size: 12px; opacity: .6; }
+.join .makeform { display: grid; gap: 8px; width: auto; }
+.join .makeform .row { display: flex; gap: 12px; }
+.join .makeform label { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.join .makeform label input { width: 60px; }
+.join .makeform textarea { padding: 8px 10px; border-radius: 6px; border: 1px solid #5a4630; background: #1a140f; color: inherit; font: inherit; resize: vertical; }
+.join .joblog { display: grid; gap: 4px; font-size: 12px; font-family: ui-monospace, monospace; opacity: .9; }
+.join .joblog a { color: #ffd98a; font-family: Georgia, serif; font-size: 15px; }

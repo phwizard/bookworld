@@ -1,4 +1,4 @@
-// Book -> world.json. See docs/GENERATOR.md.
+// Book -> world.json. See docs/GENERATOR.md. `generateWorld` is the function; the CLI below wraps it.
 //
 //   pnpm generate -- --gutenberg 11 --slug alice --rooms 6 --characters 3
 //   pnpm generate -- --text book.txt --title "..." --author "..." --year 1611 --slug tempest
@@ -6,49 +6,69 @@
 //   pnpm generate -- --draft worlds/tempest/draft.json --slug tempest                      (re-run the conversion only)
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import type { License, WorldSource } from '@bookworld/shared';
+import type { License, World, WorldSource } from '@bookworld/shared';
 import { bool, num, parseArgs, str } from './args.ts';
 import { loadAssets } from './assets.ts';
 import { DRAFT_SCHEMA, draftToWorld, slugify, type Draft } from './draft.ts';
-import { completeJson, DEFAULT_MODEL, pickBackend } from './llm.ts';
+import { completeJson, DEFAULT_MODEL, pickBackend, type Backend } from './llm.ts';
 import { repoRoot, worldDir } from './paths.ts';
 import { repairPrompt, systemPrompt, userPrompt } from './prompt.ts';
 import { fetchGutenberg, splitChapters, stripGutenberg, writeKnowledge, type Chapter } from './source.ts';
 import { assertBudget, limitsFromEnv, readLedger, recordRun } from './ledger.ts';
 
-const LICENSES: License[] = ['public-domain', 'original', 'cc-by', 'cc-by-sa', 'private-attested'];
+export const LICENSES: License[] = ['public-domain', 'original', 'cc-by', 'cc-by-sa', 'private-attested'];
 const MAX_TEXT_CHARS = Number(process.env.GENERATOR_MAX_TEXT_CHARS ?? 450_000);
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const log = (s: string) => console.error(`[generate] ${s}`);
+export interface GenerateOptions {
+  gutenberg?: number;
+  /** path of a local text file */
+  textPath?: string;
+  title?: string;
+  author?: string;
+  year?: number;
+  license?: License;
+  slug?: string;
+  /** output folder; default worlds/<slug> */
+  outDir?: string;
+  rooms?: number;
+  characters?: number;
+  notes?: string;
+  /** skip the model: convert this saved draft */
+  draftPath?: string;
+  model?: string;
+  backend?: Backend;
+  /** print the prompt and stop */
+  dryRun?: boolean;
+  /** overwrite an existing world.json */
+  force?: boolean;
+  ignoreBudget?: boolean;
+  log?: (s: string) => void;
+}
 
-  const gutenberg = num(args, 'gutenberg');
-  const textPath = str(args, 'text');
-  let title = str(args, 'title');
-  let author = str(args, 'author');
-  const year = num(args, 'year');
-  const licenseArg = str(args, 'license');
-  const rooms = num(args, 'rooms') ?? 6;
-  const characters = num(args, 'characters') ?? 3;
-  const notes = str(args, 'notes');
-  const draftPath = str(args, 'draft');
-  const model = str(args, 'model');
-  const backend = pickBackend(str(args, 'backend'));
-  const dryRun = bool(args, 'dry-run');
-  const force = bool(args, 'force');
-  const ignoreBudget = bool(args, 'ignore-budget');
+export interface GenerateResult {
+  slug: string;
+  dir: string;
+  world: World;
+  warnings: string[];
+  attempts: number;
+  usd: number;
+}
 
-  if (!gutenberg && !textPath && !title && !draftPath) {
-    console.error('usage: pnpm generate -- (--gutenberg <id> | --text <file> | --title "..." --author "...") [--slug s] [--rooms 6] [--characters 3] [--notes "..."] [--out dir] [--model m] [--backend anthropic|claude-cli] [--draft file] [--dry-run] [--force] [--ignore-budget]');
-    process.exit(2);
-  }
+export async function generateWorld(opts: GenerateOptions): Promise<GenerateResult> {
+  const log = opts.log ?? ((s: string) => console.error(`[generate] ${s}`));
+  const { gutenberg, textPath, draftPath, notes, model } = opts;
+  let { title, author } = opts;
+  const year = opts.year;
+  const rooms = opts.rooms ?? 6;
+  const characters = opts.characters ?? 3;
+  const backend = opts.backend ?? pickBackend();
+  if (!gutenberg && !textPath && !title && !draftPath) throw new Error('a Gutenberg number, a text file or a title is needed');
 
   // 1. the text
   let chapters: Chapter[] = [];
   let sourceRef: string | undefined;
-  let slug = str(args, 'slug');
-  const outDir = str(args, 'out') ? worldDir(str(args, 'out')!) : slug ? worldDir(slug) : null;
+  let slug = opts.slug;
+  const outDir = opts.outDir ? worldDir(opts.outDir) : slug ? worldDir(slug) : null;
   if (gutenberg) {
     const cacheDir = outDir ? join(outDir, 'source') : join(repoRoot(), 'generator', '.cache');
     log(`fetching Project Gutenberg #${gutenberg}`);
@@ -67,12 +87,12 @@ async function main() {
   author ??= 'Unknown';
   slug ??= slugify(title);
   const dir = outDir ?? worldDir(slug);
-  const license = (licenseArg ?? (gutenberg ? 'public-domain' : undefined)) as License | undefined;
+  const license = opts.license ?? (gutenberg ? 'public-domain' : undefined);
   if (!license || !LICENSES.includes(license)) throw new Error(`--license is required: one of ${LICENSES.join(', ')}`);
   if (chapters.length) log(`${chapters.length} chapters, ${chapters.reduce((n, c) => n + c.text.length, 0)} characters of text`);
   else log('no text; the model works from its own knowledge of the book');
 
-  if (existsSync(join(dir, 'world.json')) && !force && !dryRun) {
+  if (existsSync(join(dir, 'world.json')) && !opts.force && !opts.dryRun) {
     throw new Error(`${relative(repoRoot(), join(dir, 'world.json'))} exists; pass --force to overwrite it`);
   }
 
@@ -83,8 +103,9 @@ async function main() {
   let draft: Draft;
   let warnings: string[] = [];
   let errors: string[] = [];
-  let world;
+  let world: World | undefined;
   let attempts = 0;
+  let usd = 0;
   if (draftPath) {
     draft = JSON.parse(readFileSync(draftPath, 'utf8')) as Draft;
     ({ world, warnings, errors } = draftToWorld(draft, ctx));
@@ -93,20 +114,21 @@ async function main() {
     const messages: { role: 'user' | 'assistant'; content: string }[] = [
       { role: 'user', content: userPrompt({ title, author, year, rooms, characters, notes, chapters, maxChars: MAX_TEXT_CHARS, assets }) },
     ];
-    if (dryRun) {
+    if (opts.dryRun) {
       console.log(messages[0]!.content.slice(0, 4000) + '\n[...]');
       log(`dry run: ${messages[0]!.content.length} characters of prompt, backend ${backend}, model ${model ?? (backend === 'anthropic' ? DEFAULT_MODEL : 'CLI default')}`);
-      return;
+      throw new DryRun();
     }
     // Daily spend guard (GENERATOR_DAILY_RUNS, GENERATOR_DAILY_USD); each model call is written to the ledger.
     const limits = limitsFromEnv();
-    if (!ignoreBudget) assertBudget(limits);
+    if (!opts.ignoreBudget) assertBudget(limits);
     const ledger = readLedger();
     log(`budget today: ${ledger.runs} runs, $${ledger.usd.toFixed(2)} of ${limits.runs || 'unlimited'} runs / $${limits.usd || 'unlimited'}`);
     for (;;) {
       attempts++;
       const done = await completeJson({ system, messages, schema: DRAFT_SCHEMA as unknown as Record<string, unknown>, toolName: 'emit_world', model }, backend, log);
       recordRun({ slug, usd: done.usd, backend });
+      usd += done.usd;
       draft = done.value as Draft;
       ({ world, warnings, errors } = draftToWorld(draft, ctx));
       if (!errors.length || attempts >= 2) break;
@@ -138,7 +160,12 @@ async function main() {
     warnings,
   }, null, 2) + '\n');
   log(`wrote ${relative(repoRoot(), join(dir, 'world.json'))}: ${world!.rooms.length} rooms, ${world!.characters.length} characters, ${world!.scripts?.length ?? 0} scripts${warnings.length ? `, ${warnings.length} warnings` : ''}`);
-  log('next: pnpm provision -- --world ' + slug);
+  return { slug, dir, world: world!, warnings, attempts, usd };
+}
+
+/** Thrown by a dry run after printing the prompt. */
+export class DryRun extends Error {
+  constructor() { super('dry run'); }
 }
 
 function gutenbergMeta(raw: string): { title?: string; author?: string } {
@@ -148,7 +175,37 @@ function gutenbergMeta(raw: string): { title?: string; author?: string } {
   return { title, author };
 }
 
-main().catch((e) => {
-  console.error(`[generate] ${(e as Error).message}`);
-  process.exit(1);
-});
+const isMain = process.argv[1] && /generate\.ts$/.test(process.argv[1]);
+if (isMain) {
+  const args = parseArgs(process.argv.slice(2));
+  if (!num(args, 'gutenberg') && !str(args, 'text') && !str(args, 'title') && !str(args, 'draft')) {
+    console.error('usage: pnpm generate -- (--gutenberg <id> | --text <file> | --title "..." --author "...") [--slug s] [--rooms 6] [--characters 3] [--notes "..."] [--out dir] [--model m] [--backend anthropic|claude-cli] [--draft file] [--dry-run] [--force] [--ignore-budget]');
+    process.exit(2);
+  }
+  const licenseArg = str(args, 'license');
+  generateWorld({
+    gutenberg: num(args, 'gutenberg'),
+    textPath: str(args, 'text'),
+    title: str(args, 'title'),
+    author: str(args, 'author'),
+    year: num(args, 'year'),
+    license: licenseArg as License | undefined,
+    slug: str(args, 'slug'),
+    outDir: str(args, 'out'),
+    rooms: num(args, 'rooms'),
+    characters: num(args, 'characters'),
+    notes: str(args, 'notes'),
+    draftPath: str(args, 'draft'),
+    model: str(args, 'model'),
+    backend: pickBackend(str(args, 'backend')),
+    dryRun: bool(args, 'dry-run'),
+    force: bool(args, 'force'),
+    ignoreBudget: bool(args, 'ignore-budget'),
+  }).then((r) => {
+    console.error(`[generate] next: pnpm provision -- --world ${r.slug}`);
+  }).catch((e) => {
+    if (e instanceof DryRun) return;
+    console.error(`[generate] ${(e as Error).message}`);
+    process.exit(1);
+  });
+}

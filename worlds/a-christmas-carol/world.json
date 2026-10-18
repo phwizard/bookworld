@@ -1,0 +1,1176 @@
+{
+  "schema": "bookworld/0",
+  "slug": "a-christmas-carol",
+  "title": "A Christmas Carol",
+  "summary": "Walk Dickens's London on Christmas Eve: Scrooge's counting-house, his haunted chambers, Fezziwig's ball, the Cratchits' kitchen and a churchyard, with Scrooge, Marley's Ghost and the Ghost of Christmas Present abroad on their rounds.",
+  "source": {
+    "title": "A Christmas Carol",
+    "author": "Charles Dickens",
+    "text": "gutenberg:46",
+    "license": "public-domain"
+  },
+  "start": "counting-house",
+  "rooms": [
+    {
+      "id": "counting-house",
+      "name": "Scrooge's Counting-House",
+      "description": "It is Christmas Eve and the fog pours in at every chink and keyhole of Scrooge's counting-house. Scrooge keeps the coal-box by his own very small fire, while beyond the open door, in a dismal little cell like a tank, the clerk copies letters by a fire no bigger than one coal. The city clocks have only just gone three but it is quite dark already, and candles flare in the neighbouring offices like ruddy smears upon the brown air. The door east leads up the dark yard to Scrooge's chambers.",
+      "exits": {
+        "n": null,
+        "e": "scrooge-chambers",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4,
+          8
+        ],
+        "palette": {
+          "wall": "#6b6256",
+          "floor": "#4a3728",
+          "ceiling": "#3a342c",
+          "trim": "#2e2620"
+        },
+        "props": [
+          {
+            "id": "desk",
+            "pos": [
+              -2,
+              0,
+              -2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              -0.9
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2.4,
+              0.76,
+              -2.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -1.5,
+              0.76,
+              -2.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -1.7,
+              0.76,
+              -1.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug",
+            "pos": [
+              -2,
+              0.01,
+              -1.2
+            ],
+            "flat": true
+          },
+          {
+            "id": "desk",
+            "pos": [
+              2,
+              0,
+              2.8
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2,
+              0,
+              1.7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "books",
+            "pos": [
+              2.3,
+              0.76,
+              2.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              1.6,
+              0.76,
+              2.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              0.5,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              -3.2
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -4.3,
+              0,
+              3.2
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.3,
+              0,
+              -3.3
+            ]
+          },
+          {
+            "id": "door-open",
+            "pos": [
+              -4.6,
+              0,
+              1.5
+            ],
+            "rotY": 1.57
+          }
+        ],
+        "spawn": [
+          2.5,
+          0,
+          -0.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "scrooge-chambers",
+      "name": "Scrooge's Chambers",
+      "description": "A gloomy suite of rooms up a dark yard, once Jacob Marley's and now Scrooge's: sitting-room, bedroom and lumber-room. A very low fire burns in a grate paved all round with quaint Dutch tiles, a saucepan of gruel waits on the hob, and a disused bell hangs silent on the wall. The dressing-gown hangs in a suspicious attitude against the wall, and from the cellar below comes now and then a clanking, as of chains dragged over casks. West is the way back to the counting-house, north a door opens on the warehouse of long ago, and east lies Camden Town and the Cratchits' house.",
+      "exits": {
+        "n": "fezziwig-warehouse",
+        "e": "cratchit-kitchen",
+        "s": null,
+        "w": "counting-house"
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        },
+        {
+          "preset": "drips",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4,
+          10
+        ],
+        "palette": {
+          "wall": "#3b3330",
+          "floor": "#3a2a1f",
+          "ceiling": "#2a2420",
+          "trim": "#1f1a17"
+        },
+        "props": [
+          {
+            "id": "table-round",
+            "pos": [
+              -0.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -1.6,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              0.6,
+              0,
+              3
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "mug",
+            "pos": [
+              -0.5,
+              0.76,
+              3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -0.2,
+              0.76,
+              2.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -0.8,
+              0.76,
+              3.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              -0.5,
+              0.01,
+              3
+            ],
+            "flat": true
+          },
+          {
+            "id": "desk",
+            "pos": [
+              3.5,
+              0,
+              3.8
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3.5,
+              0,
+              2.7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "books",
+            "pos": [
+              3.2,
+              0.76,
+              3.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.9,
+              0.76,
+              3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -3,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -4.3,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.3,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              3,
+              0,
+              -4.2
+            ]
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              -4,
+              0,
+              3.8
+            ],
+            "rotY": 0.8
+          }
+        ],
+        "spawn": [
+          -3,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "fezziwig-warehouse",
+      "name": "Fezziwig's Warehouse",
+      "description": "Old Fezziwig's warehouse on Christmas Eve, the shutters up and every movable packed off, the floor swept and watered, the lamps trimmed and fuel heaped upon the fire. Fezziwig's high desk stands at one end, ready for the fiddler to make an orchestra of it, and along the wall wait cake, negus, cold roast, cold boiled, mince-pies and plenty of beer. The warehouse is as snug and warm and dry and bright a ball-room as you would desire to see upon a winter's night, with room for twenty couple at once. The only door is south, back to Scrooge's chambers.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "scrooge-chambers",
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          16,
+          5,
+          10
+        ],
+        "palette": {
+          "wall": "#6e4b2a",
+          "floor": "#8a6a3c",
+          "ceiling": "#4a3520",
+          "trim": "#d9a441"
+        },
+        "props": [
+          {
+            "id": "desk",
+            "pos": [
+              -6,
+              0,
+              -3.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -6,
+              0,
+              -2.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              -6.3,
+              0.76,
+              -3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -5.5,
+              0.76,
+              -3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              3,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "cake",
+            "pos": [
+              2.7,
+              0.76,
+              -3.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              3.4,
+              0.76,
+              -3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              3,
+              0.76,
+              -4.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2.5,
+              0.76,
+              -3.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              6,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              5.7,
+              0.76,
+              -3.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "mug",
+            "pos": [
+              6.4,
+              0.76,
+              -3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              6.1,
+              0.76,
+              -4.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -7.3,
+              0,
+              1
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              7.3,
+              0,
+              1
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -4,
+              0,
+              4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              4,
+              0,
+              4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -7.3,
+              0,
+              4.2
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.3,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "flat": true
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "cratchit-kitchen",
+      "name": "The Cratchits' Kitchen",
+      "description": "Bob Cratchit's four-roomed house in Camden Town on Christmas Day. The cloth is laid, the potatoes knock loudly at the saucepan-lid to be let out and peeled, the goose is on its way back from the baker's, and the pudding sings in the copper. Tiny Tim's little stool stands in the corner by the fire, and a jug of something hot with gin and lemons simmers on the hob. The door west leads back to Scrooge's chambers; south, through an iron gate, lies the churchyard.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "churchyard",
+        "w": "scrooge-chambers"
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          9,
+          3.5,
+          9
+        ],
+        "palette": {
+          "wall": "#a89a7c",
+          "floor": "#5a4632",
+          "ceiling": "#8a7d66",
+          "trim": "#6b4a2a"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              1,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1,
+              0,
+              -2.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1,
+              0,
+              0.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2.1,
+              0,
+              -1
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -0.1,
+              0,
+              -1
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bread",
+            "pos": [
+              0.6,
+              0.76,
+              -1.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              1.4,
+              0.76,
+              -0.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              0.8,
+              0.76,
+              -0.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "mug",
+            "pos": [
+              1.5,
+              0.76,
+              -1.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              0.4,
+              0.76,
+              -0.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              1.2,
+              0.76,
+              -1.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              1,
+              0.01,
+              -1
+            ],
+            "flat": true
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              3.3,
+              0,
+              3.1
+            ],
+            "rotY": -0.8
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              2.3,
+              0,
+              3.6
+            ],
+            "rotY": -1.2
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.5,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -3.8,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -2,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              3.9,
+              0,
+              -3.9
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.9,
+              0,
+              -1.5
+            ]
+          }
+        ],
+        "spawn": [
+          -2.5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "churchyard",
+      "name": "The Churchyard",
+      "description": "A churchyard walled in by houses, overrun by grass and weeds, the growth of vegetation's death, not life, choked up with too much burying beneath a black sky. Neglected stones lean among the furze and moss, and the wind moans over the graves while the city clocks strike the hours up in the clouds. One grave at the far end has been newly dug and waits without a name. The iron gate north leads back to the Cratchits' house.",
+      "exits": {
+        "n": "cratchit-kitchen",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          6,
+          14
+        ],
+        "palette": {
+          "wall": "#2a2d33",
+          "floor": "#3a4a2e",
+          "ceiling": "#0e1016",
+          "trim": "#1a1c20"
+        },
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4,
+              0,
+              -2
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -3,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -5,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2,
+              0,
+              2
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              5,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              -6.6,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              0,
+              0,
+              4
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          -4.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "scrooge",
+      "name": "Scrooge",
+      "home": "counting-house",
+      "persona": "You are Ebenezer Scrooge, a squeezing, wrenching, grasping, scraping, clutching, covetous old sinner, hard and sharp as flint, solitary as an oyster. It is Christmas Eve, cold, bleak, biting weather, foggy withal, and you sit in your counting-house in a court off Cornhill, London, by a very small fire. Your clerk Bob Cratchit copies letters in the dismal little tank beyond the open door; you keep the coal-box in your own room. The sign over the door still reads Scrooge and Marley, though Jacob Marley has been dead these seven years, this very night. Your nephew Fred came by to wish you a merry Christmas and you answered Bah! Humbug! Two portly gentlemen asked for a subscription for the Poor and you asked whether there were no prisons and no Union workhouses. You speak in a grating voice, short, dry, caustic. You call Christmas a humbug, a time for paying bills without money. You say Good afternoon! to end a conversation you dislike. Money, business, bargains and the banker's-book are your favourite subjects; you have no patience for merriment or idle people. You remember your boyhood at the lonely school, your sister Fan, your apprenticeship with old Fezziwig and the girl Belle, but you do not speak of those willingly and grow sharp when pressed. You know nothing of ghosts yet and do not believe in them; you know nothing past this night. Treat strangers as time-wasters until they talk business, and never give a farthing. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "a-christmas-carol-ch1",
+        "a-christmas-carol-ch2"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0.8,
+      "pos": [
+        -0.5,
+        0,
+        0.8
+      ],
+      "rotY": 1.2,
+      "schedule": [
+        {
+          "at": "45 * * * *",
+          "do": "move",
+          "to": "scrooge-chambers"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "say",
+          "text": "Humbug! There is more of gravy than of grave about you, whatever you are."
+        },
+        {
+          "at": "55 * * * *",
+          "do": "move",
+          "to": "counting-house"
+        }
+      ]
+    },
+    {
+      "id": "marley",
+      "name": "Marley",
+      "home": "scrooge-chambers",
+      "persona": "You are the Ghost of Jacob Marley, seven years dead, once Ebenezer Scrooge's partner in the counting-house. You appear in Scrooge's gloomy chambers up a dark yard, the rooms that were once your own: a low fire in the grate, Dutch tiles round the hearth, a chair on either side of it, a saucepan of gruel on the hob and a disused bell on the wall. You wear your pigtail, usual waistcoat, tights and boots, a kerchief bound about your head and chin, and a long chain of cash-boxes, keys, padlocks, ledgers, deeds and heavy purses wrought in steel; your body is transparent and your hair stirs as if by hot air. You speak in a hollow, mournful, dreadful voice, often crying out and shaking your chain. You say things like Ask me who I was, I wear the chain I forged in life, Mankind was my business, and that it is required of every man that the spirit within him should walk abroad among his fellowmen. You cannot rest, cannot stay, cannot linger anywhere; your time is nearly gone. You warn that Scrooge will be haunted by Three Spirits, the first when the bell tolls One, and that without their visits he cannot shun the path you tread. You know only your own life, your death and your wanderings; you know nothing of what the Spirits will show. Treat strangers as fellow-beings you failed in life, urging them to open their hearts while they can. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 40,
+      "knowledgeTags": [
+        "a-christmas-carol-ch1"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 0.6,
+      "pos": [
+        -2,
+        0,
+        -2
+      ],
+      "rotY": 2.4,
+      "schedule": [
+        {
+          "at": "0 * * * *",
+          "do": "move",
+          "to": "counting-house"
+        },
+        {
+          "at": "5 * * * *",
+          "do": "say",
+          "text": "In life my spirit never roved beyond the narrow limits of this money-changing hole. Expect the first Spirit when the bell tolls One!"
+        },
+        {
+          "at": "15 * * * *",
+          "do": "move",
+          "to": "scrooge-chambers"
+        }
+      ]
+    },
+    {
+      "id": "present",
+      "name": "Present",
+      "home": "cratchit-kitchen",
+      "persona": "You are the Ghost of Christmas Present, a jolly Giant, glorious to see, in a simple green robe bordered with white fur, a holly wreath set with shining icicles on your dark brown curls, bare feet, an empty rusted scabbard at your girdle and a glowing torch shaped like Plenty's horn in your hand. You are very young, born this very night, with more than eighteen hundred elder brothers. You stand in Bob Cratchit's four-roomed house in Camden Town, which you have blessed with a sprinkling from your torch: Mrs Cratchit in her twice-turned gown brave in ribbons, Martha, Belinda, Master Peter in his monstrous shirt collar, the two young Cratchits, and Tiny Tim with his little crutch on his stool by the fire; a goose, apple-sauce, mashed potatoes, a pudding like a speckled cannon-ball, and a jug of gin and lemons on the hob. You speak in a cheery, hearty, booming voice: Come in, and know me better, man! Look upon me! Touch my robe! You love every kindly given dinner, and a poor one most, because it needs it most. You are kind but stern: you rebuke those who talk of surplus population or who do deeds of ill-will in your name, and you show the children Ignorance and Want beneath your robe. Your life upon this globe is brief and ends at midnight. You know this one Christmas Day and all the homes keeping it; you know nothing of the future. Welcome strangers warmly and press them to share in the feast. Stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "a-christmas-carol-ch3"
+      ],
+      "avatar": "kaykit:Barbarian",
+      "wander": 0.8,
+      "pos": [
+        -2.2,
+        0,
+        2.2
+      ],
+      "rotY": 0.8,
+      "schedule": [
+        {
+          "at": "30 * * * *",
+          "do": "move",
+          "to": "scrooge-chambers"
+        },
+        {
+          "at": "32 * * * *",
+          "do": "say",
+          "text": "Come in! Come in, and know me better, man! I am the Ghost of Christmas Present. Look upon me!"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "move",
+          "to": "cratchit-kitchen"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "scrooge-enter",
+      "room": "counting-house",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "scrooge",
+          "text": "Bah! Humbug! What do you want with me, {player}?",
+          "waitMs": 4000
+        },
+        {
+          "who": "scrooge",
+          "text": "If you have come about a subscription, the answer is nothing. I wish to be left alone.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "marley-enter",
+      "room": "scrooge-chambers",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "marley",
+          "text": "{player}... ask me who I was.",
+          "waitMs": 4000
+        },
+        {
+          "who": "marley",
+          "text": "I wear the chain I forged in life. I made it link by link, and yard by yard. Is its pattern strange to you?",
+          "waitMs": 5000
+        }
+      ]
+    },
+    {
+      "id": "present-enter",
+      "room": "cratchit-kitchen",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "present",
+          "text": "Come in, {player}! Come in, and know me better!",
+          "waitMs": 4000
+        },
+        {
+          "who": "present",
+          "text": "There never was such a goose. Sit ye down before the fire, my dear, and have a warm.",
+          "waitMs": 4000
+        }
+      ]
+    }
+  ]
+}
