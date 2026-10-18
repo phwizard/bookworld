@@ -1,8 +1,8 @@
 // The model emits a "draft": rooms on a grid with links, asset ids instead of paths, chapter numbers
 // instead of knowledge tags. This file turns a draft into a valid world.json and reports what it had to fix.
 import {
-  DEFAULT_EXIT_WIDTH, DIRECTIONS, doorPose, roomSize, validateWorld,
-  type Direction, type Prop, type World, type WorldCharacter, type WorldRoom, type WorldScript, type WorldSource,
+  AMBIENCE_PRESETS, DEFAULT_EXIT_WIDTH, DIRECTIONS, doorPose, roomSize, validateWorld,
+  type Ambience, type AmbiencePreset, type Direction, type Prop, type Surface, type World, type WorldCharacter, type WorldRoom, type WorldScript, type WorldSource,
 } from '@bookworld/shared';
 import type { Assets } from './assets.ts';
 import { knowledgeTag } from './source.ts';
@@ -19,6 +19,8 @@ export interface DraftRoom {
   floor?: string | null;
   panorama?: string | null;
   music?: string | null;
+  /** ambience preset ids */
+  ambience?: string[];
   props?: { id: string; pos: [number, number, number]; rotY?: number; scale?: number }[];
   spawn?: [number, number, number];
 }
@@ -80,6 +82,7 @@ export const DRAFT_SCHEMA = {
           floor: { type: ['string', 'null'], description: 'floor texture id or null' },
           panorama: { type: ['string', 'null'], description: 'panorama id; required when template is panorama' },
           music: { type: ['string', 'null'], description: 'music id or null' },
+          ambience: { type: 'array', items: { type: 'string' }, description: 'ambience preset ids that suit the place, none to three' },
           props: {
             type: 'array',
             items: {
@@ -232,6 +235,13 @@ export function draftToWorld(draft: Draft, ctx: BuildContext): BuildResult {
     };
     const music = r.music ? manifest.music[r.music] : undefined;
     if (r.music && !music) warn(`room ${id}: unknown music "${r.music}"`);
+    const ambience: Ambience[] = [];
+    for (const a of (r.ambience ?? []).slice(0, 3)) {
+      if (AMBIENCE_PRESETS.includes(a as AmbiencePreset)) ambience.push({ preset: a as AmbiencePreset, volume: a === 'clock' ? 0.3 : 0.5 });
+      else warn(`room ${id}: unknown ambience "${a}" dropped`);
+    }
+    const floorKey = r.floor && manifest.textures[r.floor] ? r.floor : null;
+    const surface: Surface = (floorKey && manifest.textures[floorKey]?.surface) || (template === 'panorama' ? 'grass' : 'stone');
 
     // props: known ids only, inside the room, out of the doorways
     const props: Prop[] = [];
@@ -267,6 +277,8 @@ export function draftToWorld(draft: Draft, ctx: BuildContext): BuildResult {
       wallpaper: template === 'panorama' ? null : tex(r.wallpaper, 'wall'),
       floor: tex(r.floor, 'floor'),
       music: music ? { file: music.file, title: music.title, credit: music.credit, volume: 0.3 } : null,
+      surface,
+      ...(ambience.length ? { ambience } : {}),
       scene: {
         template,
         size,

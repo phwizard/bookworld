@@ -6,6 +6,7 @@ import { Scene } from './scene/Scene.tsx';
 import { Hud } from './ui/Hud.tsx';
 import { ChatPanel } from './ui/ChatPanel.tsx';
 import { Music } from './ui/Music.tsx';
+import { SoundFx } from './audio/SoundFx.tsx';
 
 export function WorldView() {
   const session = useStore((s) => s.session)!;
@@ -37,6 +38,7 @@ export function WorldView() {
       <Hud room={room} />
       <ChatPanel />
       <Music />
+      <SoundFx room={room} />
     </div>
   );
 }

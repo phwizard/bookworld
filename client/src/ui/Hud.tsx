@@ -35,7 +35,7 @@ export function Hud({ room }: { room: WorldRoom }) {
       {toast && <div className="toast">{toast}</div>}
       {locked && !chatOpen && <div className="crosshair" />}
       <div className="hint">
-        {count} here · WASD walk · Shift run · T talk · N music · Esc release mouse
+        {count} here · WASD walk · Shift run · T talk · N music · F effects · V voices · Esc release mouse
       </div>
       {room.music && (
         <div className="music">

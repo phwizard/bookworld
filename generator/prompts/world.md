@@ -15,7 +15,7 @@ You receive a book (or just its title) plus the lists of assets you may use. You
 - `template`: "box" for interiors and enclosed places (floor, four walls, ceiling); "panorama" for open-air places. A panorama room must name a `panorama` id from the list, has no walls, and should be 14 to 20 metres across.
 - `size`: [width, height, depth] in metres. Interiors 8 to 16 wide and deep, 3.5 to 6 high. Halls can be long (16 x 4 x 8).
 - `palette`: hex colours for wall, floor, ceiling, trim that suit the place; used wherever a texture is missing.
-- `wallpaper` and `floor`: texture ids from the lists (walls from the wall list, floors from the floor list), or null for a generated pattern in the palette colour. `music`: a music id whose mood fits, or null.
+- `wallpaper` and `floor`: texture ids from the lists (walls from the wall list, floors from the floor list), or null for a generated pattern in the palette colour. `music`: a music id whose mood fits, or null. `ambience`: none to three preset ids from the ambience list for the background sounds of the place (footsteps follow the floor texture by themselves).
 
 ## Props
 

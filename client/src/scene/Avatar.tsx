@@ -5,7 +5,8 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { poses, useStore } from '../store.ts';
 import { CharacterModel, avatarFile } from './CharacterModel.tsx';
-import type { Anim } from '@bookworld/shared';
+import { Stepper, surfaceFor } from '../audio/footsteps.ts';
+import { roomById, type Anim } from '@bookworld/shared';
 
 const BUBBLE_MS = 8000;
 
@@ -78,15 +79,25 @@ export function AvatarMesh({ name, color, isCharacter }: { name: string; color: 
   );
 }
 
+/** Footstep set of the room the player is in. */
+function useCurrentSurface() {
+  const world = useStore((s) => s.session!.world);
+  const location = useStore((s) => s.location);
+  return surfaceFor(roomById(world, location));
+}
+
 /** Another player; follows the server pose with a short lerp and plays the animation the server reports. */
 export function RemotePlayer({ sessionId, name }: { sessionId: string; name: string }) {
   const group = useRef<THREE.Group>(null);
   const initial = poses.get(sessionId);
   const [anim, setAnim] = useState<Anim>('idle');
+  const steps = useRef(new Stepper(0.6, true));
+  const surface = useCurrentSurface();
   useFrame((_, dt) => {
     const g = group.current;
     const target = poses.get(sessionId);
     if (!g || !target) return;
+    steps.current.tick(dt, target.anim, surface, [g.position.x, g.position.y, g.position.z]);
     const k = 1 - Math.exp(-dt * 12);
     g.position.x += (target.x - g.position.x) * k;
     g.position.y += (target.y - g.position.y) * k;
@@ -113,10 +124,13 @@ export function CharacterAvatar({ id, name, avatar }: { id: string; name: string
   const group = useRef<THREE.Group>(null);
   const initial = poses.get(key);
   const [anim, setAnim] = useState<Anim>('idle');
+  const steps = useRef(new Stepper(0.5, true));
+  const surface = useCurrentSurface();
   useFrame((_, dt) => {
     const g = group.current;
     const target = poses.get(key);
     if (!g || !target) return;
+    steps.current.tick(dt, target.anim, surface, [g.position.x, g.position.y, g.position.z]);
     const k = 1 - Math.exp(-dt * 10);
     g.position.x += (target.x - g.position.x) * k;
     g.position.y += (target.y - g.position.y) * k;

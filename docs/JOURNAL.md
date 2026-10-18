@@ -77,3 +77,17 @@ Two model backends: the Anthropic API when a key is present, otherwise the Claud
 **The provisioner.** `pnpm provision -- --world alice` does over the hosted Ethora MCP what was done by hand on day one: app, one chat room per location, one agent per character with the persona plus the room's setting and the house rules, the chapter files uploaded into the agent's own knowledge base, visibility set to unlisted (so the world service can move the agent later), invite into the home room. Every step lands in the gitignored `ethora.json` as soon as it succeeds, so a rerun continues where it stopped and a finished world reports "nothing to do". It authenticates with an Ethora user API key sent as a bearer header, which is how the hosted MCP serves headless clients. The claude.ai connector used in these sessions hides the tool that mints such keys (ETHORA-GAPS #15), so the real run against Ethora waits for a key from the owner; until then the provisioner is tested against a mock MCP server that answers with the shapes the real tools returned on day one, including a wrong-key run and the idempotent rerun.
 
 Also learned: the Claude Code CLI refuses to start inside another Claude Code session unless the `CLAUDECODE` variable is removed from the child's environment; and pnpm's `pnpm --filter pkg script` shorthand does not resolve for a freshly added package, so the root scripts say `run` explicitly.
+
+## 18 Oct 2026, afternoon: sound
+
+The owner asked for steps, world sounds and voices. Three layers, all client side, nothing new on the server.
+
+**Footsteps.** Every avatar already reports idle, walk or run, so a small stepper plays a sample at a walking or running cadence whenever the state says moving, with a little pitch jitter so five samples do not sound like a metronome. The room's floor picks the set: `surface` in the world file, or a guess from the floor texture name (planks are wood, tiles are stone, grass is grass). Samples are Kenney's CC0 Impact Sounds. Your own steps play in your head, quietly; other players' and characters' steps go through a panner at their position, with the audio listener glued to the camera each frame, so the Hatter walking round the table is heard on the right side.
+
+**Doors, clicks, ambience.** A door creak on each room change, open and close clicks on the chat panel, a soft drop when someone else speaks. Ambience without files: four small Web Audio generators, drips with a cave echo for the well, a ticking clock for the hall and the tea party (it is always six o'clock), birds and wind for the garden. The world file lists presets per room, so a generated world gets them from the model like the music.
+
+**Voices.** Characters read their lines through the browser's speech synthesis, off by default, V to switch on. Each character gets a fixed voice, pitch and pace from a hash of its name, so the Hatter stays the Hatter. Scripted lines and agent replies are spoken; human messages never are. The sequence that convinced me: walked into the tea party, the greeting came up as a bubble and was spoken; asked the Hatter about the date, the agent's reply was spoken too. Cloud voices can replace this later behind the same switch if the usage report shows people keep it on.
+
+Verified in Chrome with the dev counters: wood steps in the well, stone in the hall, grass outside, the door on each change, chat open and close, two greeting lines and one reply spoken.
+
+![the Tea Party with voices on](journal/261018-03-tea-party-voices-on.jpg)

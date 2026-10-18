@@ -28,6 +28,13 @@
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.35
       },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "drips",
+          "volume": 0.5
+        }
+      ],
       "scene": {
         "template": "box",
         "size": [
@@ -185,6 +192,13 @@
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.25
+        }
+      ],
       "scene": {
         "template": "box",
         "size": [
@@ -363,6 +377,17 @@
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.6
+        },
+        {
+          "preset": "wind",
+          "volume": 0.3
+        }
+      ],
       "scene": {
         "template": "panorama",
         "size": [
@@ -533,6 +558,17 @@
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.35
+        },
+        {
+          "preset": "birds",
+          "volume": 0.3
+        }
+      ],
       "scene": {
         "template": "box",
         "size": [

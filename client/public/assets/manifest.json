@@ -1,28 +1,110 @@
 {
   "_comment": "What the generator may pick from. Paths are relative to client/public. Credits in CREDITS.md. All CC0 unless noted.",
   "textures": {
-    "brown_planks_07":          { "file": "assets/textures/brown_planks_07.jpg",          "use": "both",  "look": "dark brown wooden planks: cabins, cellars, ships, old houses" },
-    "brown_mud_leaves_01":      { "file": "assets/textures/brown_mud_leaves_01.jpg",      "use": "floor", "look": "mud with dead leaves: forest floor, burrows, autumn ground" },
-    "patterned_plaster_wall":   { "file": "assets/textures/patterned_plaster_wall.jpg",   "use": "wall",  "look": "ornate pale plaster: halls, palaces, drawing rooms, courts" },
-    "checkered_pavement_tiles": { "file": "assets/textures/checkered_pavement_tiles.jpg", "use": "floor", "look": "black and white checkered tiles: halls, kitchens, chess-like formality" },
-    "forest_leaves_02":         { "file": "assets/textures/forest_leaves_02.jpg",         "use": "wall",  "look": "dense green leaves: hedges, bowers, garden walls, jungle" },
-    "grass_ground":             { "file": "assets/textures/grass_ground.jpg",             "use": "floor", "look": "short green grass: lawns, meadows, parks" },
-    "leafy_grass":              { "file": "assets/textures/leafy_grass.jpg",              "use": "floor", "look": "grass with scattered leaves: gardens, orchards, wild lawns" }
+    "brown_planks_07": {
+      "file": "assets/textures/brown_planks_07.jpg",
+      "use": "both",
+      "look": "dark brown wooden planks: cabins, cellars, ships, old houses",
+      "surface": "wood"
+    },
+    "brown_mud_leaves_01": {
+      "file": "assets/textures/brown_mud_leaves_01.jpg",
+      "use": "floor",
+      "look": "mud with dead leaves: forest floor, burrows, autumn ground",
+      "surface": "grass"
+    },
+    "patterned_plaster_wall": {
+      "file": "assets/textures/patterned_plaster_wall.jpg",
+      "use": "wall",
+      "look": "ornate pale plaster: halls, palaces, drawing rooms, courts",
+      "surface": "stone"
+    },
+    "checkered_pavement_tiles": {
+      "file": "assets/textures/checkered_pavement_tiles.jpg",
+      "use": "floor",
+      "look": "black and white checkered tiles: halls, kitchens, chess-like formality",
+      "surface": "stone"
+    },
+    "forest_leaves_02": {
+      "file": "assets/textures/forest_leaves_02.jpg",
+      "use": "wall",
+      "look": "dense green leaves: hedges, bowers, garden walls, jungle",
+      "surface": "grass"
+    },
+    "grass_ground": {
+      "file": "assets/textures/grass_ground.jpg",
+      "use": "floor",
+      "look": "short green grass: lawns, meadows, parks",
+      "surface": "grass"
+    },
+    "leafy_grass": {
+      "file": "assets/textures/leafy_grass.jpg",
+      "use": "floor",
+      "look": "grass with scattered leaves: gardens, orchards, wild lawns",
+      "surface": "grass"
+    }
   },
   "panoramas": {
-    "borghese_gardens_2k": { "file": "assets/panoramas/borghese_gardens_2k.hdr", "look": "sunlit formal garden with trees and a villa: parks, gardens, estates, island groves" }
+    "borghese_gardens_2k": {
+      "file": "assets/panoramas/borghese_gardens_2k.hdr",
+      "look": "sunlit formal garden with trees and a villa: parks, gardens, estates, island groves"
+    }
   },
   "music": {
-    "frost-waltz":      { "file": "assets/music/Frost_Waltz.m4a",      "title": "Frost Waltz",      "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0", "mood": "slow, mysterious, music-box waltz: caves, wells, night, wonder" },
-    "wallpaper":        { "file": "assets/music/Wallpaper.m4a",        "title": "Wallpaper",        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0", "mood": "light, curious, ticking: halls, puzzles, waiting rooms" },
-    "fairytale-waltz":  { "file": "assets/music/Fairytale_Waltz.m4a",  "title": "Fairytale Waltz",  "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0", "mood": "bright, open, dreamy: gardens, outdoors, meadows" },
-    "teddy-bear-waltz": { "file": "assets/music/Teddy_Bear_Waltz.m4a", "title": "Teddy Bear Waltz", "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0", "mood": "playful, slightly silly: parties, kitchens, comic scenes" }
+    "frost-waltz": {
+      "file": "assets/music/Frost_Waltz.m4a",
+      "title": "Frost Waltz",
+      "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+      "mood": "slow, mysterious, music-box waltz: caves, wells, night, wonder"
+    },
+    "wallpaper": {
+      "file": "assets/music/Wallpaper.m4a",
+      "title": "Wallpaper",
+      "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+      "mood": "light, curious, ticking: halls, puzzles, waiting rooms"
+    },
+    "fairytale-waltz": {
+      "file": "assets/music/Fairytale_Waltz.m4a",
+      "title": "Fairytale Waltz",
+      "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+      "mood": "bright, open, dreamy: gardens, outdoors, meadows"
+    },
+    "teddy-bear-waltz": {
+      "file": "assets/music/Teddy_Bear_Waltz.m4a",
+      "title": "Teddy Bear Waltz",
+      "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+      "mood": "playful, slightly silly: parties, kitchens, comic scenes"
+    }
   },
   "avatars": {
-    "kaykit:Knight":       { "look": "armoured knight, helmet: soldiers, guards, kings, duellists" },
-    "kaykit:Mage":         { "look": "robed figure with a tall purple hat: wizards, eccentrics, scholars, the Hatter" },
-    "kaykit:Barbarian":    { "look": "big bare-armed brute: strongmen, wild men, monsters in human form" },
-    "kaykit:Rogue":        { "look": "slim figure in dark leathers: thieves, sailors, servants, young heroes" },
-    "kaykit:Rogue_Hooded": { "look": "hooded figure: spirits, mysterious strangers, monks, prophets" }
+    "kaykit:Knight": {
+      "look": "armoured knight, helmet: soldiers, guards, kings, duellists"
+    },
+    "kaykit:Mage": {
+      "look": "robed figure with a tall purple hat: wizards, eccentrics, scholars, the Hatter"
+    },
+    "kaykit:Barbarian": {
+      "look": "big bare-armed brute: strongmen, wild men, monsters in human form"
+    },
+    "kaykit:Rogue": {
+      "look": "slim figure in dark leathers: thieves, sailors, servants, young heroes"
+    },
+    "kaykit:Rogue_Hooded": {
+      "look": "hooded figure: spirits, mysterious strangers, monks, prophets"
+    }
+  },
+  "ambience": {
+    "drips": {
+      "look": "water dripping with a cave echo: wells, cellars, caves, dungeons"
+    },
+    "clock": {
+      "look": "a ticking clock: halls, parlours, waiting rooms, anywhere time matters"
+    },
+    "birds": {
+      "look": "birdsong: gardens, woods, meadows, mornings"
+    },
+    "wind": {
+      "look": "low wind: open country, shores, ruins, night"
+    }
   }
 }

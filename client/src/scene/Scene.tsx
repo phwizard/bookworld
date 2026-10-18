@@ -1,5 +1,7 @@
-import { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Suspense, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+import { setListenerPose } from '../audio/engine.ts';
 import { Environment, KeyboardControls, PointerLockControls } from '@react-three/drei';
 import { assetUrl } from '../assets.ts';
 import { Physics } from '@react-three/rapier';
@@ -49,6 +51,7 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
           onLock={() => useStore.getState().setPointerLocked(true)}
           onUnlock={() => useStore.getState().setPointerLocked(false)}
         />
+        <ListenerSync />
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]}>
             <group key={room.id}>
@@ -63,6 +66,16 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
       </Canvas>
     </KeyboardControls>
   );
+}
+
+/** Keeps the audio listener on the camera so positional sounds come from the right side. */
+function ListenerSync() {
+  const forward = useMemo(() => new THREE.Vector3(), []);
+  useFrame(({ camera }) => {
+    camera.getWorldDirection(forward);
+    setListenerPose(camera.position, forward, camera.up);
+  });
+  return null;
 }
 
 function Others() {

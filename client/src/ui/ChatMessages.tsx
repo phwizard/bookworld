@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import type { CustomScrollableAreaProps, IMessage } from '@ethora/chat-component';
 import { isNarration, narrationText, parseCharacterLine } from '@bookworld/shared';
 import { useStore } from '../store.ts';
+import { playSound } from '../audio/engine.ts';
+import { speak } from '../audio/voice.ts';
 
 const BUBBLE_MAX_AGE_MS = 15000;
 const seen = new Set<string>();
@@ -20,6 +22,11 @@ export function speakerName(m: IMessage): string {
   const u = m.user;
   const full = (u?.name ?? [u?.firstName, u?.lastName].filter(Boolean).join(' ')).trim();
   return full.replace(/\s*\(guest\)\s*$/i, '');
+}
+
+/** True when a character of that name is in the room (characters speak; humans do not get a synthetic voice). */
+function isCharacter(name: string): boolean {
+  return Object.values(useStore.getState().characters).some((c) => c.name === name);
 }
 
 export function ChatMessages(props: CustomScrollableAreaProps) {
@@ -40,7 +47,10 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
       const line = parseCharacterLine(narrationText(m.body));
       if (line) {
         if (import.meta.env.DEV) console.log('[bubbles] line', { who: line.name, age: now - messageTime(m), date: m.date, ts: m.timestamp, tsMs: m.messageTimestampMs });
-        if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) useStore.getState().setBubble(line.name, line.text);
+        if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) {
+          useStore.getState().setBubble(line.name, line.text);
+          if (isCharacter(line.name)) speak(line.name, line.text);
+        }
         continue;
       }
       if (isNarration(m.body)) continue;
@@ -49,6 +59,8 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
       if (import.meta.env.DEV) console.log('[bubbles] candidate', { who, me, age: now - messageTime(m), body: m.body.slice(0, 40) });
       if (!who || who === me) continue;
       useStore.getState().setBubble(who, m.body);
+      playSound('message', { volume: 0.3 });
+      if (isCharacter(who)) speak(who, m.body);
     }
   });
 

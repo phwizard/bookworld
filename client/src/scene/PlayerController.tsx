@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { DIRECTIONS, DEFAULT_EXIT_WIDTH, entryPose, roomSize, roomSpawn, type Anim, type Direction, type WorldRoom } from '@bookworld/shared';
 import { requestMove, sendPos } from '../net/colyseus.ts';
 import { useStore } from '../store.ts';
+import { Stepper, surfaceFor } from '../audio/footsteps.ts';
 
 export type Controls = 'forward' | 'backward' | 'leftward' | 'rightward' | 'run';
 
@@ -26,13 +27,15 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
   const start = enterFrom ? entryPose(room, enterFrom) : { ...xyz(roomSpawn(room)), rotY: 0 };
   const [w, , d] = roomSize(room);
   const exitWidth = room.scene?.exitWidth ?? DEFAULT_EXIT_WIDTH;
+  const steps = useRef(new Stepper(0.35, false));
+  const surface = surfaceFor(room);
 
   useEffect(() => {
     camera.rotation.set(0, start.rotY, 0, 'YXZ');
     joinedAt.current = performance.now();
   }, [camera, start.rotY]);
 
-  useFrame(() => {
+  useFrame((_, dt) => {
     const h = ecctrl.current;
     if (!h) return;
     const chatOpen = useStore.getState().chatOpen;
@@ -52,6 +55,7 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
     euler.current.setFromQuaternion(camera.quaternion, 'YXZ');
     const moving = h.isMoving && h.moveSpeed > 0.3;
     const anim: Anim = !moving ? 'idle' : keys?.run ? 'run' : 'walk';
+    steps.current.tick(dt, anim, surface, [p.x, p.y, p.z]);
     sendPos({ x: p.x, y: p.y - (CAPSULE_HALF + CAPSULE_RADIUS + FLOAT), z: p.z, ry: euler.current.y, anim });
 
     // Door detection: standing inside a doorway on a wall that has an exit.

@@ -13,7 +13,7 @@ cp .env.example .env        # add ETHORA_CHAT_APP_SECRET for chat; movement work
 pnpm dev                    # world service on :2567, client on :5173
 ```
 
-Open http://localhost:5173, pick a name, click to look around, WASD to walk, Shift to run, T to talk, N to mute the music, Esc to release the mouse. Walk through a doorway to change rooms. `pnpm validate:worlds` checks every `worlds/*/world.json`.
+Open http://localhost:5173, pick a name, click to look around, WASD to walk, Shift to run, T to talk, N to mute the music, F to mute the sound effects, V to let the characters speak their lines aloud, Esc to release the mouse. Walk through a doorway to change rooms. `pnpm validate:worlds` checks every `worlds/*/world.json`.
 
 ## Make a world from a book
 
