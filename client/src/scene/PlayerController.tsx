@@ -6,7 +6,7 @@ import { useKeyboardControls } from '@react-three/drei';
 import { Ecctrl, type EcctrlHandle } from 'ecctrl';
 import * as THREE from 'three';
 import { DIRECTIONS, DEFAULT_EXIT_WIDTH, entryPose, roomSize, roomSpawn, type Anim, type Direction, type WorldRoom } from '@bookworld/shared';
-import { requestMove, sendPos } from '../net/colyseus.ts';
+import { rememberPosition, requestMove, sendPos } from '../net/colyseus.ts';
 import { useStore } from '../store.ts';
 import { Stepper, surfaceFor } from '../audio/footsteps.ts';
 
@@ -18,13 +18,13 @@ const FLOAT = 0.2;
 const EYE_ABOVE_CENTER = 0.6;
 const DOOR_MARGIN = 0.25;
 
-export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFrom: Direction | null }) {
+export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; enterFrom: Direction | null; at?: { x: number; z: number; ry: number } | null }) {
   const ecctrl = useRef<EcctrlHandle>(null);
   const camera = useThree((s) => s.camera);
   const [, getKeys] = useKeyboardControls<Controls>();
   const joinedAt = useRef(performance.now());
   const euler = useRef(new THREE.Euler(0, 0, 0, 'YXZ'));
-  const start = enterFrom ? entryPose(room, enterFrom) : { ...xyz(roomSpawn(room)), rotY: 0 };
+  const start = enterFrom ? entryPose(room, enterFrom) : at ? { x: at.x, y: 0, z: at.z, rotY: at.ry } : { ...xyz(roomSpawn(room)), rotY: 0 };
   const [w, , d] = roomSize(room);
   const exitWidth = room.scene?.exitWidth ?? DEFAULT_EXIT_WIDTH;
   const steps = useRef(new Stepper(0.35, false));
@@ -38,8 +38,8 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
   useFrame((_, dt) => {
     const h = ecctrl.current;
     if (!h) return;
-    const chatOpen = useStore.getState().chatOpen;
-    const keys = chatOpen ? null : getKeys();
+    // Walking is allowed while the chat panel is open; only typing in the composer takes the keys.
+    const keys = useStore.getState().chatTyping ? null : getKeys();
     h.setMovement({
       forward: !!keys?.forward,
       backward: !!keys?.backward,
@@ -57,6 +57,7 @@ export function PlayerController({ room, enterFrom }: { room: WorldRoom; enterFr
     const anim: Anim = !moving ? 'idle' : keys?.run ? 'run' : 'walk';
     steps.current.tick(dt, anim, surface, [p.x, p.y, p.z]);
     sendPos({ x: p.x, y: p.y - (CAPSULE_HALF + CAPSULE_RADIUS + FLOAT), z: p.z, ry: euler.current.y, anim });
+    rememberPosition(p.x, p.z, euler.current.y);
 
     // Door detection: standing inside a doorway on a wall that has an exit.
     if (performance.now() - joinedAt.current < 1500) return;

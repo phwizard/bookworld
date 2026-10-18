@@ -51,6 +51,13 @@ export interface JoinOptions {
   location: string;
   token: string;
   enterFrom?: Direction;
+  /** where to stand when not coming through a door (resuming after a reload or coming back from away) */
+  at?: { x: number; z: number; ry: number };
+}
+
+/** Resume a visit after a reload: the session token comes back with a fresh token and chat credentials. */
+export interface ResumeRequest {
+  token: string;
 }
 
 export type Anim = 'idle' | 'walk' | 'run';
@@ -63,6 +70,8 @@ export interface PlayerView {
   z: number;
   ry: number;
   anim: string;
+  /** idle for a while, or waiting to reconnect */
+  away: boolean;
 }
 
 export interface CharacterView {
@@ -95,6 +104,8 @@ export const MSG = {
   said: 'said',
   /** server -> client: AI budget state (on join, when it changes, and when this player's share is spent) */
   ai: 'ai',
+  /** client -> server: idle state; `gone` announces a leave caused by inactivity */
+  away: 'away',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -103,6 +114,7 @@ export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
 export interface SaidMessage { characters: string[] }
 export type AiMessage = AiState;
+export interface AwayMessage { away: boolean; gone?: boolean }
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.

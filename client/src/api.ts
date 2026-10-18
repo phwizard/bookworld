@@ -1,4 +1,4 @@
-import type { EnterRequest, EnterResponse } from '@bookworld/shared';
+import type { EnterRequest, EnterResponse, ResumeRequest } from '@bookworld/shared';
 
 export const SERVER_URL = (import.meta.env.VITE_WORLD_SERVER_URL as string | undefined) ?? 'http://localhost:2567';
 
@@ -13,6 +13,18 @@ export async function enterWorld(slug: string, name: string): Promise<EnterRespo
     const err = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(err.error ?? `enter failed (${res.status})`);
   }
+  return (await res.json()) as EnterResponse;
+}
+
+/** Picks a visit up again after a reload: same identity, fresh tokens. Throws when the session has expired. */
+export async function resumeWorld(slug: string, token: string): Promise<EnterResponse> {
+  const body: ResumeRequest = { token };
+  const res = await fetch(`${SERVER_URL}/api/worlds/${slug}/resume`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`resume failed (${res.status})`);
   return (await res.json()) as EnterResponse;
 }
 

@@ -21,6 +21,15 @@ interface State {
   /** daily AI budget as last reported by the server */
   ai: AiState | null;
   setAi(ai: AiState): void;
+  /** where a reload or a return from away puts the player (consumed by the next join without a door) */
+  resume: { location: string; at: { x: number; z: number; ry: number } | null } | null;
+  setResume(r: { location: string; at: { x: number; z: number; ry: number } | null } | null): void;
+  /** idle state of this player */
+  away: 'active' | 'away' | 'gone';
+  setAway(a: 'active' | 'away' | 'gone'): void;
+  /** the chat composer has focus: keys type instead of walking */
+  chatTyping: boolean;
+  setChatTyping(t: boolean): void;
   musicOn: boolean;
   setMusicOn(on: boolean): void;
   /** footsteps, doors, ambience (F) */
@@ -59,8 +68,14 @@ export const useStore = create<State>((set) => ({
   setVoiceOn: (voiceOn) => { try { localStorage.setItem('bookworld.voice', voiceOn ? 'on' : 'off'); } catch { /* ignore */ } set({ voiceOn }); },
   ai: null,
   setAi: (ai) => set({ ai }),
+  resume: null,
+  setResume: (resume) => set({ resume }),
+  away: 'active',
+  setAway: (away) => set({ away }),
+  chatTyping: false,
+  setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set({ location, enterFrom, players: {}, characters: {} }),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),

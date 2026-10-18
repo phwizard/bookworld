@@ -7,6 +7,8 @@ import { Hud } from './ui/Hud.tsx';
 import { ChatPanel } from './ui/ChatPanel.tsx';
 import { Music } from './ui/Music.tsx';
 import { SoundFx } from './audio/SoundFx.tsx';
+import { Presence } from './ui/Presence.tsx';
+import { focusComposer, blurComposer } from './ui/ChatPanel.tsx';
 
 export function WorldView() {
   const session = useStore((s) => s.session)!;
@@ -16,16 +18,18 @@ export function WorldView() {
   const room = roomById(session.world, location);
 
   useEffect(() => {
-    void joinLocation(session.world.start);
+    const resume = useStore.getState().resume;
+    void joinLocation(resume?.location ?? session.world.start, undefined, resume?.at ?? null);
   }, [session]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const s = useStore.getState();
       const typing = (e.target as HTMLElement)?.tagName === 'INPUT' || (e.target as HTMLElement)?.tagName === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable;
-      if (e.code === 'Escape' && s.chatOpen) { s.setChatOpen(false); return; }
+      // Esc: first out of the composer (the panel stays, walking works), then the panel closes.
+      if (e.code === 'Escape' && s.chatOpen) { if (s.chatTyping) blurComposer(); else s.setChatOpen(false); return; }
       if (typing) return;
-      if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); }
+      if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -39,6 +43,7 @@ export function WorldView() {
       <ChatPanel />
       <Music />
       <SoundFx room={room} />
+      <Presence />
     </div>
   );
 }

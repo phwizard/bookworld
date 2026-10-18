@@ -31,12 +31,12 @@ export function useBubble(name: string) {
 }
 
 /** Name label and speech bubble above a head at `height` metres. */
-export function AvatarLabels({ name, height = 1.9 }: { name: string; height?: number }) {
+export function AvatarLabels({ name, height = 1.9, away = false }: { name: string; height?: number; away?: boolean }) {
   const bubble = useBubble(name);
   return (
     <group>
       <Html position={[0, height + 0.3, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: 'none' }}>
-        <div className="label" style={{ transform: 'none' }}>{name}</div>
+        <div className={away ? 'label away' : 'label'} style={{ transform: 'none' }}>{away ? `${name} (away)` : name}</div>
       </Html>
       {bubble && (
         <Html position={[0, height + 0.65, 0]} center zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
@@ -87,7 +87,7 @@ function useCurrentSurface() {
 }
 
 /** Another player; follows the server pose with a short lerp and plays the animation the server reports. */
-export function RemotePlayer({ sessionId, name }: { sessionId: string; name: string }) {
+export function RemotePlayer({ sessionId, name, away = false }: { sessionId: string; name: string; away?: boolean }) {
   const group = useRef<THREE.Group>(null);
   const initial = poses.get(sessionId);
   const [anim, setAnim] = useState<Anim>('idle');
@@ -112,7 +112,7 @@ export function RemotePlayer({ sessionId, name }: { sessionId: string; name: str
     <group ref={group} position={[initial?.x ?? 0, initial?.y ?? 0, initial?.z ?? 0]} rotation-y={initial?.ry ?? 0}>
       <Suspense fallback={<AvatarMesh name={name} color={colorFor(name)} />}>
         <CharacterModel file={avatarFile(null, name)} anim={anim} />
-        <AvatarLabels name={name} />
+        <AvatarLabels name={name} away={away} />
       </Suspense>
     </group>
   );

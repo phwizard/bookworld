@@ -6,6 +6,23 @@ import { useStore } from '../store.ts';
 import { ChatMessages } from './ChatMessages.tsx';
 import { reportSaid } from '../net/colyseus.ts';
 
+let panelEl: HTMLElement | null = null;
+
+/** Puts the cursor in the message box (T). Retries briefly because the panel may still be mounting. */
+export function focusComposer(tries = 10) {
+  const area = panelEl?.querySelector('textarea');
+  // the panel may still be hidden (the open state has not rendered yet), in which case focus() does nothing
+  if (area) area.focus();
+  if (area && document.activeElement === area) return;
+  if (tries > 0) setTimeout(() => focusComposer(tries - 1), 100);
+}
+
+/** Leaves the message box so the keys walk again; the panel stays open for reading. */
+export function blurComposer() {
+  (document.activeElement as HTMLElement | null)?.blur?.();
+  useStore.getState().setChatTyping(false);
+}
+
 /** "Hatter" becomes "H\u200batter": looks the same, is not a mention for the agent's name matcher. */
 export function muteCharacterNames(text: string): string {
   let out = text;
@@ -32,6 +49,12 @@ export function ChatPanel() {
   useEffect(() => {
     const el = panel.current;
     if (!el) return;
+    panelEl = el;
+    // typing in the composer takes the keys away from walking; leaving it gives them back
+    const typingOn = (e: FocusEvent) => { if ((e.target as HTMLElement)?.tagName === 'TEXTAREA') useStore.getState().setChatTyping(true); };
+    const typingOff = (e: FocusEvent) => { if ((e.target as HTMLElement)?.tagName === 'TEXTAREA') useStore.getState().setChatTyping(false); };
+    el.addEventListener('focusin', typingOn);
+    el.addEventListener('focusout', typingOff);
     const gate = (e: Event) => {
       const ai = useStore.getState().ai;
       if (!ai || (!ai.asleep && !ai.limited)) return;
@@ -47,7 +70,11 @@ export function ChatPanel() {
     };
     el.addEventListener('keydown', gate, true);
     el.addEventListener('click', gate, true);
-    return () => { el.removeEventListener('keydown', gate, true); el.removeEventListener('click', gate, true); };
+    return () => {
+      el.removeEventListener('keydown', gate, true); el.removeEventListener('click', gate, true);
+      el.removeEventListener('focusin', typingOn); el.removeEventListener('focusout', typingOff);
+      panelEl = null;
+    };
   }, []);
 
   const config = useMemo<IConfig>(() => ({
@@ -89,7 +116,7 @@ export function ChatPanel() {
       <div className="body">
         {ethora.enabled && roomJID ? (
           <XmppProvider config={config}>
-            <Chat config={config} roomJID={roomJID} MainComponentStyles={{ height: '100%' }} CustomScrollableArea={ChatMessages} />
+            <Chat config={config} roomJID={roomJID} MainComponentStyles={{ height: '100%', background: 'transparent' }} CustomScrollableArea={ChatMessages} />
           </XmppProvider>
         ) : (
           <div className="disabled">

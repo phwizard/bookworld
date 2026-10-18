@@ -28,6 +28,8 @@ Status 18 Oct 2026: items 1, 2 and 9 shipped (docs/GENERATOR.md). Generator: `pn
 
 Added 18 Oct 2026 (owner's request): sound. Footsteps for players and characters from the room's floor (CC0 Kenney samples, positional for others), a door on each room change, chat open and close and incoming-message clicks, procedural room ambience from the world file (drips, clock, birds, wind), and character voices through the browser's speech synthesis (V, off by default). Next in this line: cloud text to speech if the report shows voices being kept on; proximity voice between players after deployment.
 
+Also 18 Oct: daily AI budget (character replies per world and per visitor, generator runs and spend; docs in README "Costs and caps"); presence: 60 s reconnection window with the same seat, resume after a reload (session token in the tab, `POST /api/worlds/:slug/resume`), away after 5 idle minutes and "has wandered off" after 20 with a key press to return, one Ethora user per visitor and name; the chat panel is translucent and walking works while it is open (Esc leaves the composer first).
+
 
 Generator (text -> world.json -> provisioning), panorama rooms, music, two worlds (Alice; The Tempest as an enacted play with scheduled performances), character schedules, world submissions by PR, README + 2-minute video, repo public. Measure: players/world/day, rooms per session, messages to characters vs humans, sessions with 2+ humans in a room, day-7 return.
 

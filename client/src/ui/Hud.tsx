@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { WorldRoom } from '@bookworld/shared';
 import { useStore } from '../store.ts';
 import { MiniMap } from './MiniMap.tsx';
+import { leaveWorld } from '../net/colyseus.ts';
 
 function resetLabel(iso: string): string {
   const d = new Date(iso);
@@ -10,7 +11,8 @@ function resetLabel(iso: string): string {
 
 export function Hud({ room }: { room: WorldRoom }) {
   const locked = useStore((s) => s.pointerLocked);
-  const chatOpen = useStore((s) => s.chatOpen);
+  const typing = useStore((s) => s.chatTyping);
+  const away = useStore((s) => s.away);
   const toast = useStore((s) => s.toast);
   const setToast = useStore((s) => s.setToast);
   const players = useStore((s) => s.players);
@@ -30,7 +32,7 @@ export function Hud({ room }: { room: WorldRoom }) {
     return () => clearTimeout(t);
   }, [toast, setToast]);
 
-  const count = Object.keys(players).length;
+  const count = Object.values(players).filter((p) => !p.away).length;
   return (
     <div className="hud">
       <div className="room">
@@ -41,16 +43,17 @@ export function Hud({ room }: { room: WorldRoom }) {
       {toast && <div className="toast">{toast}</div>}
       {ai?.asleep && <div className="notice">The characters are resting until {resetLabel(ai.resetAt)}. Visitors can still talk to each other.</div>}
       {ai && !ai.asleep && ai.limited && <div className="notice">You have had your share of the characters' attention for today. They are back for you after {resetLabel(ai.resetAt)}.</div>}
-      {locked && !chatOpen && <div className="crosshair" />}
+      {locked && !typing && <div className="crosshair" />}
       <div className="hint">
-        {count} here · WASD walk · Shift run · T talk · N music · F effects · V voices · Esc release mouse
+        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · T talk · N music · F effects · V voices · Esc release mouse ·{' '}
+        <button className="leave" onClick={() => void leaveWorld()}>Leave</button>
       </div>
       {room.music && (
         <div className="music">
           {musicOn ? '\u266a' : '\u266a off'} {room.music.title}{room.music.credit ? `, ${room.music.credit}` : ''}
         </div>
       )}
-      {!locked && !chatOpen && (
+      {!locked && !typing && away !== 'gone' && (
         <div className="click">
           <div>Click to look around</div>
         </div>

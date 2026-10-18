@@ -27,6 +27,8 @@ const keyboardMap: { name: Controls; keys: string[] }[] = [
  */
 export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Direction | null }) {
   const world = useStore((s) => s.session!.world);
+  const resume = useStore((s) => s.resume);
+  const at = !enterFrom && resume && resume.location === room.id ? resume.at : null;
   const [w, h, d] = roomSize(room);
   const ceiling = room.scene?.palette?.ceiling ?? '#2a2218';
   const panorama = room.scene?.template === 'panorama' ? assetUrl(room.scene.panorama) : null;
@@ -57,7 +59,7 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
             <group key={room.id}>
               <BoxRoom world={world} room={room} />
               <Props room={room} />
-              <PlayerController room={room} enterFrom={enterFrom} />
+              <PlayerController room={room} enterFrom={enterFrom} at={at} />
             </group>
           </Physics>
           <Others />
@@ -85,7 +87,7 @@ function Others() {
     <>
       {Object.entries(players)
         .filter(([sid]) => sid !== me)
-        .map(([sid, p]) => <RemotePlayer key={sid} sessionId={sid} name={p.name} />)}
+        .map(([sid, p]) => <RemotePlayer key={sid} sessionId={sid} name={p.name} away={p.away} />)}
     </>
   );
 }

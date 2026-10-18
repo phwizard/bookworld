@@ -4,7 +4,7 @@ import { Room, type Client } from '@colyseus/core';
 import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp,
-  type SaidMessage, type AiMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
+  type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -22,6 +22,7 @@ export const Player = schema({
   z: t.number(),
   ry: t.number(),
   anim: t.string(),
+  away: t.boolean(),
 }, 'Player');
 export type Player = SchemaType<typeof Player>;
 
@@ -45,7 +46,10 @@ export const LocationState = schema({
 export type LocationState = SchemaType<typeof LocationState>;
 
 interface CreateOptions { world: string; location: string }
-interface UserData { session: Session; moving: boolean }
+interface UserData { session: Session; moving: boolean; gone: boolean }
+
+/** seconds a dropped connection may come back before the player counts as gone */
+const RECONNECT_SECONDS = 60;
 
 const ANIMS = new Set(['idle', 'walk', 'run']);
 
@@ -94,6 +98,13 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     });
 
     this.onMessage(MSG.move, (client, msg: MoveMessage) => void this.handleMove(client, msg));
+    this.onMessage(MSG.away, (client, msg: AwayMessage) => {
+      const p = this.state.players.get(client.sessionId);
+      const data = client.userData as UserData | undefined;
+      if (!p || !data) return;
+      p.away = Boolean(msg?.away);
+      if (msg?.gone) data.gone = true;
+    });
     this.onMessage(MSG.said, (client, msg: SaidMessage) => {
       const p = this.state.players.get(client.sessionId);
       const data = client.userData as UserData | undefined;
@@ -118,33 +129,56 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   onJoin(client: Client, options: JoinOptions, auth: Session) {
     const session = auth ?? (client.auth as Session);
-    client.userData = { session, moving: false } satisfies UserData;
+    client.userData = { session, moving: false, gone: false } satisfies UserData;
     const enterFrom = options.enterFrom && DIRECTIONS.includes(options.enterFrom) ? options.enterFrom : undefined;
-    const pose = enterFrom ? entryPose(this.room, enterFrom, 1.8, (Math.random() - 0.5) * 1.2) : { ...spawnPose(this.room) };
+    const [w, , d] = roomSize(this.room);
+    const at = options.at;
+    const pose = enterFrom
+      ? entryPose(this.room, enterFrom, 1.8, (Math.random() - 0.5) * 1.2)
+      : at && Number.isFinite(at.x) && Number.isFinite(at.z)
+        ? { x: clamp(at.x, -w / 2 + 0.5, w / 2 - 0.5), y: 0, z: clamp(at.z, -d / 2 + 0.5, d / 2 - 0.5), rotY: Number.isFinite(at.ry) ? at.ry : 0 }
+        : { ...spawnPose(this.room) };
 
     const others = [...this.state.players.values()].map((o) => o.id);
     const p = new Player();
-    p.id = session.pid; p.name = session.name; p.x = pose.x; p.y = pose.y; p.z = pose.z; p.ry = pose.rotY; p.anim = 'idle';
+    p.id = session.pid; p.name = session.name; p.x = pose.x; p.y = pose.y; p.z = pose.z; p.ry = pose.rotY; p.anim = 'idle'; p.away = false;
     this.state.players.set(client.sessionId, p);
 
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
-    const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : `${session.name} has arrived`;
+    const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
     console.log(`[room ${this.room.id}] + ${session.name} (${client.sessionId})${enterFrom ? ' from ' + enterFrom : ''}`);
   }
 
-  onLeave(client: Client) {
+  async onLeave(client: Client, code?: number) {
     const data = client.userData as UserData | undefined;
+    const consented = code === 4000;
+    const p = this.state.players.get(client.sessionId);
+    // A dropped connection (not a door, not a deliberate leave) may come back for a while; the avatar waits, marked away.
+    if (!consented && data && !data.moving && p) {
+      p.away = true;
+      try {
+        const back = await this.allowReconnection(client, RECONNECT_SECONDS);
+        back.userData = data;
+        const again = this.state.players.get(client.sessionId);
+        if (again) again.away = false;
+        console.log(`[room ${this.room.id}] ${data.session.name} reconnected`);
+        return;
+      } catch {
+        // the window expired
+      }
+    }
     this.state.players.delete(client.sessionId);
     if (!data) return;
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     if (!data.moving) {
-      void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, `${data.session.name} has left`));
-      void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.pid));
+      const line = data.gone ? `${data.session.name} has wandered off` : `${data.session.name} has left`;
+      void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, line));
+      void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.uid));
     }
-    console.log(`[room ${this.room.id}] - ${data.session.name}`);
+    console.log(`[room ${this.room.id}] - ${data.session.name}${data.gone ? ' (wandered off)' : consented ? '' : ' (connection lost)'}`);
   }
 
   onDispose() {
@@ -175,15 +209,15 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const target = this.room.exits[dir];
     if (!target) return client.send(MSG.denied, { reason: 'there is a wall there' });
     data.moving = true;
-    const { pid, name } = data.session;
+    const { uid, name } = data.session;
     const enterFrom = OPPOSITE[dir];
 
     // Chat side: the player must be able to read the next room before the client switches to it.
-    await tryEthora('grant next room', () => this.ethora.grant(target, pid));
+    await tryEthora('grant next room', () => this.ethora.grant(target, uid));
     void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, `${name} has left (${DIRECTION_LABEL[dir]})`));
     client.send(MSG.moved, { to: target, enterFrom } satisfies MovedMessage);
     // The old room's access is revoked after the client has had time to disconnect from it.
-    setTimeout(() => void tryEthora('revoke old room', () => this.ethora.revoke(this.room.id, pid)), 3000);
+    setTimeout(() => void tryEthora('revoke old room', () => this.ethora.revoke(this.room.id, uid)), 3000);
   }
 }
 

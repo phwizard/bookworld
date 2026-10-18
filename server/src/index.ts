@@ -5,7 +5,7 @@ import cors from 'cors';
 import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo } from '@bookworld/shared';
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
-import { cleanName, newPlayerId, signSession } from './auth.ts';
+import { cleanName, ethoraUserId, newPlayerId, signSession, verifySession } from './auth.ts';
 import { budgetFor, ethoraFor } from './services.ts';
 import { tryEthora } from './ethora.ts';
 import { cleanVisitor, record, readEvents } from './metrics.ts';
@@ -80,18 +80,40 @@ const server = new Server({
       const name = cleanName(req.body?.name);
       if (!name) return res.status(400).json({ error: 'name required (1-24 characters)' });
       const playerId = newPlayerId();
+      const visitor = cleanVisitor(req.body?.visitor);
+      const uid = ethoraUserId(visitor, name);
       const ethora = ethoraFor(loaded.world.slug);
       if (ethora.enabled) {
-        const ok = await tryEthora('create guest', () => ethora.createGuest(playerId, name));
+        const ok = await tryEthora('create guest', () => ethora.createGuest(uid, name));
         if (!ok) return res.status(502).json({ error: 'could not create chat identity' });
-        await tryEthora('grant start room', () => ethora.grant(loaded.world.start, playerId));
+        await tryEthora('grant start room', () => ethora.grant(loaded.world.start, uid));
       }
-      const visitor = cleanVisitor(req.body?.visitor);
-      const token = signSession({ pid: playerId, name, world: loaded.world.slug, ...(visitor ? { visitor } : {}) });
+      const token = signSession({ pid: playerId, uid, name, world: loaded.world.slug, ...(visitor ? { visitor } : {}) });
       record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor });
       const body: EnterResponse = {
-        token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, playerId),
+        token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, uid),
         ai: budgetFor(loaded.world.slug).snapshot(visitor),
+      };
+      res.json(body);
+    });
+
+    // Resume after a reload: same player and chat identity, fresh tokens. Not a new session for the report.
+    app.post('/api/worlds/:slug/resume', async (req, res) => {
+      const loaded = getWorld(req.params.slug);
+      if (!loaded) return res.status(404).json({ error: 'unknown world' });
+      let session;
+      try {
+        session = verifySession(String(req.body?.token ?? ''));
+      } catch {
+        return res.status(401).json({ error: 'session expired' });
+      }
+      if (session.world !== loaded.world.slug) return res.status(400).json({ error: 'session is for another world' });
+      const ethora = ethoraFor(loaded.world.slug);
+      if (ethora.enabled) await tryEthora('resume guest', () => ethora.createGuest(session.uid, session.name));
+      const token = signSession(session);
+      const body: EnterResponse = {
+        token, playerId: session.pid, name: session.name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, session.uid),
+        ai: budgetFor(loaded.world.slug).snapshot(session.visitor),
       };
       res.json(body);
     });

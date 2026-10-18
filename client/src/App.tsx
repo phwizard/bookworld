@@ -1,13 +1,31 @@
-import { useState } from 'react';
-import { enterWorld } from './api.ts';
+import { useEffect, useState } from 'react';
+import { enterWorld, resumeWorld } from './api.ts';
 import { useStore } from './store.ts';
 import { WorldView } from './WorldView.tsx';
+import { clearSession, loadSession, saveSession } from './session.ts';
 
 const WORLD = new URLSearchParams(location.search).get('world') ?? 'alice';
 
 export function App() {
   const session = useStore((s) => s.session);
+  const [resuming, setResuming] = useState(() => loadSession(WORLD) !== null);
+
+  // A reload picks the visit up where it was: same name and chat identity, same room and spot.
+  useEffect(() => {
+    const saved = loadSession(WORLD);
+    if (!saved) return;
+    resumeWorld(WORLD, saved.token)
+      .then((res) => {
+        saveSession({ ...saved, token: res.token });
+        useStore.getState().setResume({ location: saved.location, at: saved.at ?? null });
+        useStore.getState().setSession(res);
+      })
+      .catch(() => clearSession())
+      .finally(() => setResuming(false));
+  }, []);
+
   if (session) return <WorldView />;
+  if (resuming) return <div className="join"><p>Returning to {WORLD}...</p></div>;
   return <Join />;
 }
 
@@ -29,6 +47,7 @@ function Join() {
       for (const key of Object.keys(localStorage)) {
         if (key.startsWith('@ethora/chat-component') || key.startsWith('persist:')) localStorage.removeItem(key);
       }
+      saveSession({ world: WORLD, token: res.token, location: res.world.start });
       setSession(res);
     } catch (err) {
       setError((err as Error).message);

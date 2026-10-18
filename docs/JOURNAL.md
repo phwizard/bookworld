@@ -101,3 +101,19 @@ The second meter is the generator: runs and dollars per day in the same budget f
 Checked live with the limit set to two: the third question to the Hatter went out with a zero-width space inside "Hatter" and he stayed quiet; the notice appeared at the top of the screen; `/api/ai-budget` showed used 2, asleep true.
 
 ![the characters resting after the daily limit](journal/261018-04-characters-resting.jpg)
+
+## 18 Oct 2026, night: being away, coming back
+
+The owner asked what happens to someone who is inactive or disconnected. The honest answer was: a drop meant "has left" after fifteen seconds with no way back except a reload as a stranger, and an idle tab stayed "here" forever. Three changes.
+
+**A minute to come back.** When a connection drops without a goodbye, the server keeps the seat for sixty seconds (the avatar waits, marked away) and the client tries to reconnect every few seconds; the same seat, no narration. If the window passes, the client rejoins at the same spot as a fresh arrival. Tested by closing the socket from the console: "Reconnected" came back in under a second, same session id.
+
+**A reload is not a new visit.** The session token, the room and the last position now live in the tab; on reload the client asks the server to resume, gets fresh chat credentials for the same identity, and joins the same room at the same spot ("Alice is back" rather than "Alice has arrived"). The usage report counts no new session. Along the way the chat identity moved from one Ethora user per entry to one per visitor and name, so coming back as Alice is the same chat user and the app's user list stops growing with every visit. A "Leave" link in the bottom line forgets the visit.
+
+**Away, then gone.** Five idle minutes mark the player away (others see "(away)", the room count skips them, the bottom line says so); twenty minutes and the client leaves the room with "has wandered off", shows a dark screen, and any key brings the player back to the same spot. Tested with the timers set to eight and twenty seconds.
+
+One side effect found on the way: React's StrictMode runs effects twice in development, which has joined every room twice since day one, and with the reconnection window the first seat now lingered as a ghost for a minute. StrictMode is gone.
+
+Also from the owner, the same evening: the chat panel is translucent now and you can keep walking while it is open. T puts the cursor in the message box, Esc takes it out again (keys walk, the panel stays for reading), a second Esc closes the panel.
+
+![wandered off, with the translucent panel](journal/261018-05-wandered-off-translucent-chat.jpg)
