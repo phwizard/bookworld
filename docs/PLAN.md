@@ -14,7 +14,7 @@ Steps (status as of 17 Oct 2026, evening):
 5. DONE. Chat panel mounts `@ethora/chat-component` pinned to the current room (`roomJID` prop, `disableRooms`), guest login = client JWT from the server (`jwtLogin`), `xmppSettings` passed explicitly, `initBeforeLoad: false`. Verified: panel follows the room, shows archive and live messages, sends. Bubbles: built on the component's `CustomScrollableArea`; verified with a second player.
 6. DONE. Narration is posted through the broadcast endpoint from the app's system account as italic markdown ("Alice has joined (S)"); it shows in the panel with the app name as sender (ETHORA-GAPS #11). Rendered as quiet italic system lines in the custom message list.
 7. DONE. From inside the 3D client: walked Rabbit Hole > Hall > Garden > Tea Party, opened the panel, mentioned @Hatter, got an in-character reply in about 5 s. Stays quiet when not mentioned.
-8. TODO. Deploy server to the droplet, client to Vercel, run the exit test with a second person.
+8. DONE 19 Oct 2026 (team test). World service and static client on the shared droplet behind Caddy at bookworld.ethora.com (docs/DEPLOY.md, deploy/), noindex while testing. Exit test with the team pending.
 
 Verified locally 17 Oct: two browser tabs, both walked Rabbit Hole -> Hall of Doors, each saw the other and "2 here", server narration lines correct.
 

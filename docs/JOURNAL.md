@@ -174,3 +174,13 @@ Two boys ran around the island for half an hour on the Wi-Fi, and the owner came
 Also found tonight: the Ethora backend SDK logs every request payload at debug level, guest passwords and server tokens included, unless NODE_ENV is production. The world service sets that now; gap 19.
 
 ![the chat with the room showing through, and the ghost lines from before the fix](journal/261018-13-chat-see-through.jpg)
+
+## 19 Oct 2026: live for the team at bookworld.ethora.com
+
+The owner's call this morning: no new droplet. The world lives on the shared DigitalOcean box that already hosts the Ethora satellite sites, as a fifth small Node service behind the box's Caddy, on a subdomain proxied through Cloudflare. The brief for that is `docs/DEPLOY.md`; the pieces that follow it are in `deploy/`: a systemd unit with a 350 MB cap, the Caddy block (static client from disk, everything else to the service on a localhost port, noindex for the test period), an idempotent install script for the box and a push script for the Mac that builds the client for the public URL and copies the checkout over one SSH connection, because the box rate-limits port 22.
+
+Three things had to change in the project to run there. The server had no build output (its workspace packages export TypeScript sources), so it runs its sources through tsx in production and tsx is a runtime dependency. The service binds to a host when told to, so it listens on 127.0.0.1 behind Caddy and still on every interface at home for LAN play. And scheduled character lines, cron scenes and the narration of character moves now post only to rooms with a player in them: the Tempest had been running seven scenes an hour for an empty island, and a line that names another character can draw a paid reply from that agent with nobody reading it. Ethora counted 3.7 million tokens on 18 Oct from local testing alone, and that is a likely part of it. The daily caps are in the production env file.
+
+The deploy itself took three attempts, all on the Mac side: the system bash is 3.2 and sourcing from a process substitution sets nothing there; npm put pnpm under the Node prefix where sudo's reset PATH could not find it. Then: user, dependencies in seven seconds, unit, health check, Caddy block, certificate. From the outside: TLS, the noindex header, all three worlds, chat on for Alice and the Tempest, a visitor counted in the Rabbit Hole, a message delivered. The owner ran the push script, since this session's permission rules keep it off production hosts.
+
+![the Rabbit Hole at bookworld.ethora.com, the first message delivered through Cloudflare](journal/261019-01-live-on-droplet.jpg)
