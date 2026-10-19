@@ -15,14 +15,15 @@ mkdir -p "$HOME_DIR" "$APP/server/data"
 chown -R bookworld:bookworld "$APP" "$HOME_DIR"
 chmod 600 "$APP/.env"
 
-# pnpm: via corepack from the Node tarball; nothing from apt
-if ! command -v pnpm >/dev/null 2>&1; then
-  corepack enable
-  corepack prepare "$(sed -n 's/.*"packageManager": *"\(pnpm@[^"]*\)".*/\1/p' "$APP/package.json")" --activate
+# pnpm: the version pinned in package.json, installed globally with the tarball's npm (the corepack bundled
+# with Node 22 cannot verify the signatures of current pnpm releases); nothing from apt
+PNPM_WANTED=$(sed -n 's/.*"packageManager": *"pnpm@\([^"]*\)".*/\1/p' "$APP/package.json")
+if [ "$(pnpm --version 2>/dev/null || true)" != "$PNPM_WANTED" ]; then
+  npm install -g "pnpm@$PNPM_WANTED" >/dev/null
 fi
 
 # runtime dependencies of the server and the workspace packages it imports (shared, generator); nothing of the client
-sudo -u bookworld -H env COREPACK_ENABLE_DOWNLOAD_PROMPT=0 nice -n 19 pnpm --dir "$APP" install --prod --frozen-lockfile --filter "@bookworld/server..." 2>&1 | tail -5
+sudo -u bookworld -H nice -n 19 pnpm --dir "$APP" install --prod --frozen-lockfile --filter "@bookworld/server..." 2>&1 | tail -5
 
 install -m 644 "$APP/deploy/bookworld.service" /etc/systemd/system/bookworld.service
 systemctl daemon-reload
