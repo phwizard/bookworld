@@ -5,7 +5,8 @@
 # Needs DEPLOY_HOST and DEPLOY_USER in .env and .env.production from deploy/make-env.sh.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-set -a; source <(grep -E '^DEPLOY_(HOST|USER)=' .env); set +a
+# (no process substitution: the Mac's /bin/bash is 3.2 and `source <(...)` sets nothing there)
+export "$(grep -E '^DEPLOY_HOST=' .env || echo DEPLOY_HOST=)" "$(grep -E '^DEPLOY_USER=' .env || echo DEPLOY_USER=)"
 : "${DEPLOY_HOST:?DEPLOY_HOST missing in .env}" "${DEPLOY_USER:?DEPLOY_USER missing in .env}"
 [ -f .env.production ] || ./deploy/make-env.sh
 PUBLIC_URL=${PUBLIC_URL:-https://bookworld.ethora.com}
