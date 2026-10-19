@@ -20,6 +20,8 @@ import { budgetConfigFromEnv } from './budget.ts';
 import { existsSync, readFileSync } from 'node:fs';
 
 const PORT = Number(process.env.PORT ?? 2567);
+// Unset: every interface (LAN play in development). Production sets 127.0.0.1 and lets Caddy face the internet.
+const HOST = process.env.HOST || undefined;
 const ORIGIN = process.env.CORS_ORIGIN ?? '*';
 
 const worlds = loadWorlds();
@@ -212,5 +214,5 @@ function badge(label: string, value: string, color: string): string {
 
 server.define(COLYSEUS_ROOM_NAME, LocationRoom).filterBy(['world', 'location']);
 
-await server.listen(PORT);
-console.log(`[bookworld] world service on :${PORT}`);
+await server.listen(PORT, HOST);
+console.log(`[bookworld] world service on ${HOST ?? ''}:${PORT}`);

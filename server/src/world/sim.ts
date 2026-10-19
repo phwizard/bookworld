@@ -93,6 +93,11 @@ export class WorldSim {
     return [...this.chars.values()].filter((c) => c.location === location);
   }
 
+  /** True while at least one location room (so at least one player) is in that location. */
+  occupied(location: string): boolean {
+    return (this.listeners.get(location)?.size ?? 0) > 0;
+  }
+
   private notify(location: string) {
     const set = this.listeners.get(location);
     if (!set) return;
@@ -159,6 +164,8 @@ export class WorldSim {
     const now = Date.now();
     const cooldown = (sc.cooldownSec ?? 120) * 1000;
     if (now - (this.lastScriptRun.get(sc.id) ?? 0) < cooldown) return;
+    // A scene with nobody in the room would only make the agents talk to each other (paid replies, no audience).
+    if (!this.occupied(sc.room)) return;
     this.lastScriptRun.set(sc.id, now);
     console.log(`[sim ${this.world.slug}] script ${sc.id} in ${sc.room}${playerName ? ' for ' + playerName : ''}`);
     for (const line of sc.lines) {
@@ -171,7 +178,7 @@ export class WorldSim {
 
   async say(characterId: string, text: string) {
     const c = this.chars.get(characterId);
-    if (!c) return;
+    if (!c || !this.occupied(c.location)) return;
     await tryEthora(`say ${characterId}`, () => this.ethora.post(c.location, characterLine(c.name, text)));
   }
 
@@ -195,9 +202,10 @@ export class WorldSim {
     this.notify(to);
     console.log(`[sim ${this.world.slug}] ${c.name}: ${from} -> ${to}`);
 
-    await tryEthora('narrate character left', () => this.ethora.narrate(from, leftLine));
+    // The chat side always follows the move; the narration lines only where someone is there to read them.
+    if (this.occupied(from)) await tryEthora('narrate character left', () => this.ethora.narrate(from, leftLine));
     await tryEthora('agent move', () => this.ethora.moveAgent(characterId, from, to));
-    await tryEthora('narrate character joined', () => this.ethora.narrate(to, joinLine));
+    if (this.occupied(to)) await tryEthora('narrate character joined', () => this.ethora.narrate(to, joinLine));
   }
 }
 

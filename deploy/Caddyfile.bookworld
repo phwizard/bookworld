@@ -1,0 +1,21 @@
+# Appended to /etc/caddy/Caddyfile by deploy/install.sh. Static client from disk; Colyseus (matchmaking,
+# the WebSocket upgrade) and /api/* to the world service. noindex for the whole test period.
+http://bookworld.ethora.com {
+    redir https://bookworld.ethora.com{uri} permanent
+}
+https://bookworld.ethora.com {
+    header X-Robots-Tag "noindex, nofollow"
+    encode gzip
+    @static file {
+        root /var/www/bookworld/client/dist
+        try_files {path} {path}/index.html
+    }
+    handle @static {
+        root * /var/www/bookworld/client/dist
+        rewrite * {file_match.relative}
+        file_server
+    }
+    handle {
+        reverse_proxy 127.0.0.1:3104
+    }
+}

@@ -49,7 +49,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-  Adjust `ExecStart` to the server package's real entry point. `MemoryMax=350M` is the budget; if Colyseus plus the generator need more, say so in the journal before raising it.
+  The real unit is `deploy/bookworld.service`. The server has no build output (its `build` script only typechecks; the workspace packages export TypeScript sources), so `ExecStart` is `/usr/local/bin/node --import tsx src/index.ts` with `tsx` as a runtime dependency. `MemoryMax=350M` is the budget; if Colyseus plus the generator need more, say so in the journal before raising it.
 
 - Caddy block appended to `/etc/caddy/Caddyfile` (back the file up first: `cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak-$(date +%s)`, then `caddy validate --config /etc/caddy/Caddyfile` and `systemctl reload caddy`). Static client from disk, everything else (Colyseus matchmaking, the WebSocket upgrade, `/api/*`) to Node:
 
@@ -75,19 +75,20 @@ https://bookworld.ethora.com {
 }
 ```
 
-  Keep `noindex` for the whole test period.
+  Keep `noindex` for the whole test period. The block is `deploy/Caddyfile.bookworld`.
 
 ## Build off the box
 
 The box has one vCPU, a 768 MB heap cap convention and swap already in use. A Three.js production build does not belong there. Build on the Mac (`pnpm build`) and copy `client/dist` and `server/dist` up with rsync, or build in GitHub Actions once the repo is on GitHub and pull the artefact. Only `pnpm install --prod` for the server's runtime dependencies runs on the box, at low priority (`nice -n 19`).
 
-Until the GitHub repo exists, rsync from the Mac is the deploy. After it exists, follow the box convention: a read-only deploy key in `/var/lib/deploy-keys/bookworld`, wired through the checkout's `core.sshCommand`, and a `deploy-app bookworld` case in `/usr/local/bin/deploy-app` (pull, install, restart, health check on `:3104`). Write the deploy script into this repo under `deploy/` so the box can be rebuilt from here.
+Until the GitHub repo exists, rsync from the Mac is the deploy: `./deploy/push.sh` builds the client for the public URL, copies the checkout (no node_modules, git history, docs, client sources or generator working files) and `.env.production` over one multiplexed SSH connection, then runs `deploy/install.sh` on the box as root. That script is idempotent: system user, pnpm through corepack, `pnpm install --prod --frozen-lockfile --filter "@bookworld/server..."` at nice 19, the unit, a restart, a health check on `:3104`, and the Caddy block if it is missing (backup, validate, reload). `SKIP_BUILD=1 ./deploy/push.sh` skips the client build. After it exists, follow the box convention: a read-only deploy key in `/var/lib/deploy-keys/bookworld`, wired through the checkout's `core.sshCommand`, and a `deploy-app bookworld` case in `/usr/local/bin/deploy-app` (pull, install, restart, health check on `:3104`). Write the deploy script into this repo under `deploy/` so the box can be rebuilt from here.
 
 ## Production settings
 
-- `.env` on the box (mode 600, owner `bookworld`): the Ethora App Secrets for each world, `BOOKWORLD_SESSION_SECRET` set (not random per boot, or every restart logs everyone out), `PORT=3104`, `CORS_ORIGIN=https://bookworld.ethora.com`, `WORLDS_DIR` and `DATA_DIR` pointing inside `/var/www/bookworld`.
+- `.env` on the box (mode 600, owner `bookworld`) is the Mac's `.env.production`, written once by `deploy/make-env.sh` from the local `.env`: the Ethora App Secrets for each world, `BOOKWORLD_SESSION_SECRET` set (not random per boot, or every restart logs everyone out), `METRICS_TOKEN`, `PORT=3104`, `HOST=127.0.0.1`, `CORS_ORIGIN=https://bookworld.ethora.com`, `WORLDS_DIR` and `DATA_DIR` pointing inside `/var/www/bookworld`, the AI caps, `MAKE_WORLD=off`. Edit it by hand to change anything; the script never overwrites it.
 - Client build: `VITE_WORLD_SERVER_URL=https://bookworld.ethora.com` so the browser talks to the same origin over `wss`.
 - `MAKE_WORLD_ALLOW_CLI` stays off on a public host. `MAKE_WORLD` only with `ANTHROPIC_API_KEY` and the daily generator budget in place.
+- Scheduled character lines and cron scenes only post to a room while a player is in it (the world service skips them otherwise, 19 Oct). Before that, the Tempest's seven scenes an hour ran around the clock for an empty island, and any line that named another character could draw a paid agent reply with nobody reading it.
 - The AI budget caps stay on. The owner's test apps already produced multi-million token days on Ethora during local testing; a public URL multiplies that. Check `GET /api/ai-budget` after the first evening with the team.
 - Logs: `journalctl -u bookworld -f`. Caddy access logs are off by default on this box; turn them on per host only if needed.
 

@@ -287,6 +287,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.3
         version: 9.0.3
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
     devDependencies:
       '@types/cors':
         specifier: ^2.8.19
@@ -300,9 +303,6 @@ importers:
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

@@ -1,0 +1,26 @@
+# systemd unit for the world service on the shared droplet (docs/DEPLOY.md). Installed by deploy/install.sh.
+[Unit]
+Description=bookworld.ethora.com (world service)
+After=network.target
+
+[Service]
+Type=simple
+User=bookworld
+Group=bookworld
+WorkingDirectory=/var/www/bookworld/server
+EnvironmentFile=/var/www/bookworld/.env
+Environment=NODE_ENV=production
+Environment=HOME=/var/www/bookworld-home
+# The service runs its TypeScript through tsx (a runtime dependency); there is no separate server build.
+ExecStart=/usr/local/bin/node --import tsx src/index.ts
+Restart=always
+RestartSec=3
+MemoryMax=350M
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/bookworld/server/data /var/www/bookworld-home
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
