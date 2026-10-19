@@ -18,12 +18,15 @@ chmod 600 "$APP/.env"
 # pnpm: the version pinned in package.json, installed globally with the tarball's npm (the corepack bundled
 # with Node 22 cannot verify the signatures of current pnpm releases); nothing from apt
 PNPM_WANTED=$(sed -n 's/.*"packageManager": *"pnpm@\([^"]*\)".*/\1/p' "$APP/package.json")
-if [ "$(pnpm --version 2>/dev/null || true)" != "$PNPM_WANTED" ]; then
-  npm install -g "pnpm@$PNPM_WANTED" >/dev/null
+PNPM_BIN="$(npm prefix -g)/bin/pnpm"
+if [ "$("$PNPM_BIN" --version 2>/dev/null || true)" != "$PNPM_WANTED" ]; then
+  npm install -g "pnpm@$PNPM_WANTED" >/dev/null 2>&1
 fi
+"$PNPM_BIN" --version >/dev/null
 
-# runtime dependencies of the server and the workspace packages it imports (shared, generator); nothing of the client
-sudo -u bookworld -H nice -n 19 pnpm --dir "$APP" install --prod --frozen-lockfile --filter "@bookworld/server..." 2>&1 | tail -5
+# runtime dependencies of the server and the workspace packages it imports (shared, generator); nothing of the client.
+# sudo resets PATH, so pnpm goes by full path; node is on the secure path as /usr/local/bin/node.
+sudo -u bookworld -H nice -n 19 "$PNPM_BIN" --dir "$APP" install --prod --frozen-lockfile --filter "@bookworld/server..." 2>&1 | tail -5
 
 install -m 644 "$APP/deploy/bookworld.service" /etc/systemd/system/bookworld.service
 systemctl daemon-reload
