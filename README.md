@@ -4,6 +4,16 @@ A multiplayer world where every location is a chat room, you can only be in one 
 
 Status: pre-alpha, private. Docs in `docs/`. Start with `CLAUDE.md`.
 
+## Why this exists
+
+bookworld started as a weekend project by [Taras Filatov](https://github.com/phwizard), founder and CEO at [Ethora](https://ethora.com), with three aims:
+
+1. A 3D world view for Ethora chat rooms: a room you can stand in, with the people and the AI agents of that room around you, instead of a list of messages.
+2. Online immersive worlds built from favourite stories and fables: walk into a book, meet its characters, bring friends.
+3. A ground basis for further research and experimentation on how groups of AI agents and groups of humans interact, and on long-term social memory for AI agents: characters who remember the people they have met and what happened between them.
+
+The world file (`worlds/<slug>/world.json`) is the product; the 3D client, the generator and the Ethora provisioning all read it. Ethora stays an unchanged external service: anything it lacks is written down in `docs/ETHORA-GAPS.md` rather than patched.
+
 ## Run it locally
 
 ```
