@@ -1,0 +1,1444 @@
+{
+  "schema": "bookworld/0",
+  "slug": "king-arthur",
+  "title": "The Story of King Arthur and His Knights",
+  "summary": "Walk from the sword in the anvil to the Round Table of Camelot, past the tournament lists, the Forest of Adventure, the enchanted lake and the Lady Guinevere's rose garden, and talk with Arthur, Merlin, Guinevere and Gawaine.",
+  "source": {
+    "title": "The Story of King Arthur and his Knights",
+    "author": "Howard Pyle",
+    "text": "gutenberg:60184",
+    "license": "public-domain",
+    "year": 1903
+  },
+  "start": "churchyard",
+  "rooms": [
+    {
+      "id": "tournament-field",
+      "name": "The Tournament Field",
+      "description": "A level meadow ringed with benches and pavilions of colored silk, where twenty thousand lords and ladies watched the knights break their spears before the Archbishop's purple throne. Splinters of ash wood and cantels of armor lie in the trampled grass, and the pennants and banners are so many that the sky is well-nigh hidden. The churchyard of the great cathedral is east.",
+      "exits": {
+        "n": null,
+        "e": "churchyard",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#c9b98a",
+          "floor": "#6f9a45",
+          "ceiling": "#bcd8f0",
+          "trim": "#7a1f2b"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              -5,
+              0,
+              -7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bench",
+            "pos": [
+              0,
+              0,
+              -7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bench",
+            "pos": [
+              5,
+              0,
+              -7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              -5,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -5,
+              0.76,
+              5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -4.7,
+              0.76,
+              5.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -5,
+              0,
+              6.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "box",
+            "pos": [
+              -7,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -7.2,
+              0,
+              -0.6
+            ],
+            "scale": 0.8
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -7.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              7
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -7.5,
+              0,
+              7.5
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "churchyard",
+      "name": "The Churchyard of the Sword",
+      "description": "Before the great cathedral door of London Town stands a huge marble stone, four square, and upon it an anvil with a naked sword of blue steel thrust midway deep, its golden hilt glistering with precious stones. About it are written in letters of gold: Whoso pulleth out this sword from the anvil, that same is rightwise King-born of England. Candles burn by the cathedral door and the banners of twelve kings flutter over the wall. The tournament meadow lies west, and the road into the forest runs east.",
+      "exits": {
+        "n": null,
+        "e": "forest-of-adventure",
+        "s": null,
+        "w": "tournament-field"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          6,
+          14
+        ],
+        "palette": {
+          "wall": "#b8b2a6",
+          "floor": "#6f8f4e",
+          "ceiling": "#bcd6ee",
+          "trim": "#c9a640"
+        },
+        "props": [
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              -6.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "box",
+            "pos": [
+              0,
+              0,
+              -3.6
+            ],
+            "scale": 1.6
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              -1.4
+            ],
+            "rotY": 0,
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -2.5,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              2.5,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -3,
+              0,
+              6.2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              3,
+              0,
+              6.2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.2,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.2,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.2,
+              0,
+              6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.2,
+              0,
+              6.2
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -4.5,
+              0,
+              -6.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "forest-of-adventure",
+      "name": "The Forest of Adventure",
+      "description": "This is Arroy, which men call the Forest of Adventure, for no knight enters here but some adventure befalls him. Sunlight comes down through the leaves in trembling circles of gold, the moss is so soft that no hoof-beat sounds, and on a little lawn stands a table spread with a snow-white cloth, white bread and wine, as though prepared for a king. A path of flowers leads north to an enchanted lake, the churchyard road is west, and the way to Cameliard runs east.",
+      "exits": {
+        "n": "enchanted-lake",
+        "e": "cameliard-garden",
+        "s": null,
+        "w": "churchyard"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#3f5f2e",
+          "floor": "#5a4a32",
+          "ceiling": "#9fc4a0",
+          "trim": "#c9a640"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              3,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -3,
+              0,
+              7.2
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -5,
+              0,
+              4.6
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -4.4,
+              0,
+              5.3
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              5,
+              0,
+              -4
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              0,
+              0,
+              7.2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              4,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "bread",
+            "pos": [
+              4,
+              0.76,
+              3.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              4.3,
+              0.76,
+              3.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              3.7,
+              0.76,
+              3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              4,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "enchanted-lake",
+      "name": "The Lake of Enchantment",
+      "description": "Out of the forest opens a plain bedight with flowers, where all the air seems made of gold. In the midst lies a lake as bright as silver, its margins thick with lilies and daffodils, and far out upon the glassy water an arm clad in white samite holds up a shining sword, motionless as a carven image. Birds of many colors sing in the blossoming trees, and there is no other sign of human life. The forest path is south.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "forest-of-adventure",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#d8c27a",
+          "floor": "#7fae55",
+          "ceiling": "#f2e2a8",
+          "trim": "#ffffff"
+        },
+        "panorama": "assets/panoramas/fish_hoek_beach_2k.hdr",
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -3,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              0,
+              0,
+              -7.5
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -6.5,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              6.5,
+              0,
+              0.5
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -6,
+              0,
+              4
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -5,
+              0,
+              7
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "cameliard-garden",
+      "name": "The Lady Guinevere's Garden at Cameliard",
+      "description": "The Lady Guinevere's privy garden beneath the castle towers of Cameliard, hedged all about with roses so that only the windows above look down upon it. Under a linden tree a carven marble youth pours a fountain of crystal water from his ewer, and pigeons wheel about the towers overhead. A gardener's basket and spade lie by the hedge, for there is a lad here who never takes off his cap. The forest road is west, and the road to Camelot is east.",
+      "exits": {
+        "n": null,
+        "e": "great-hall",
+        "s": null,
+        "w": "forest-of-adventure"
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          5,
+          14
+        ],
+        "palette": {
+          "wall": "#3e6b34",
+          "floor": "#7aa84f",
+          "ceiling": "#c4dff2",
+          "trim": "#c94b5a"
+        },
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              -2,
+              0,
+              -6.3
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.2,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.2,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.2,
+              0,
+              6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.2,
+              0,
+              6.2
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4.2,
+              0,
+              -6.3
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              4,
+              0,
+              -6.3
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              0,
+              0,
+              6.3
+            ]
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              3,
+              0,
+              3.8
+            ]
+          },
+          {
+            "id": "cup",
+            "pos": [
+              3,
+              0.76,
+              3.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              3.3,
+              0.76,
+              3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              3,
+              0,
+              4.9
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              5.6
+            ],
+            "scale": 0.7
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "great-hall",
+      "name": "The Great Hall of Camelot",
+      "description": "The great hall of Camelot, hung with banners and tapestries of azure and crimson, with a fire roaring in a wide hearth and a pavement of marble set in squares. In its midst stands the Round Table that came as a dowry from Cameliard, each seat lettered in gold with the name of its knight, the Seat Royal inlaid with ivory, and the Seat Perilous beneath its canopy where no name appears. A golden chalice and a manchet of white bread wait at every place. A stair north climbs to Merlin's tower, and the road to Cameliard leaves by the west gate.",
+      "exits": {
+        "n": "merlin-tower",
+        "e": null,
+        "s": null,
+        "w": "cameliard-garden"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          16,
+          6,
+          12
+        ],
+        "palette": {
+          "wall": "#e4dcc8",
+          "floor": "#2b2b2b",
+          "ceiling": "#2f4a7a",
+          "trim": "#b22a2a"
+        },
+        "props": [
+          {
+            "id": "rug-round",
+            "pos": [
+              2,
+              0.01,
+              1
+            ],
+            "scale": 2,
+            "flat": true
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              2,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2,
+              0,
+              2.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2,
+              0,
+              -0.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              0.9,
+              0,
+              1
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              3.15,
+              0,
+              1
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2,
+              0.76,
+              1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.3,
+              0.76,
+              1.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7,
+              0,
+              4.5
+            ]
+          },
+          {
+            "id": "door",
+            "pos": [
+              7.6,
+              0,
+              0
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -3,
+              0,
+              5.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -7.2,
+              0,
+              -4.8
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.2,
+              0,
+              4.8
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              -5.2
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "merlin-tower",
+      "name": "Merlin's Tower Chamber",
+      "description": "Merlin's chamber at the top of the tower, crowded with books of magic, phials of strange cordials and the enchanted looking-glass wherein the old man beholds all that passes in the realm. Through the narrow windows the roofs and banners of Camelot lie spread below, and the wind sings about the turret. The stair winds down south to the great hall.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "great-hall",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          5,
+          10
+        ],
+        "palette": {
+          "wall": "#8a8170",
+          "floor": "#5a3e26",
+          "ceiling": "#3b2f52",
+          "trim": "#c9a640"
+        },
+        "props": [
+          {
+            "id": "desk",
+            "pos": [
+              -3,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "books",
+            "pos": [
+              -3.2,
+              0.76,
+              -3.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -2.6,
+              0.76,
+              -3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3,
+              0,
+              -2.7
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              1,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              4.6,
+              0,
+              -1
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              3,
+              0,
+              2.5
+            ]
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              3,
+              0.53,
+              2.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              3.2,
+              0.53,
+              2.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -3,
+              0,
+              2
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              -1
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.2,
+              0,
+              4.2
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.2,
+              0,
+              4.2
+            ],
+            "scale": 0.7
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "arthur",
+      "name": "Arthur",
+      "home": "churchyard",
+      "persona": "You are Arthur, King of Britain, true son of Uther-Pendragon and Queen Igraine, raised in secret as the son of Sir Ector of Bonmaison. You stand in the churchyard before the great cathedral of London Town, beside the marble stone and the anvil from which you drew the sword when you were but a squire of eighteen, running to fetch a blade for your brother Sir Kay, whose own had snapped in the tournament. You come back here when your heart would remember.\n\nYou remember all that followed: Sir Ector kneeling to you, and your cry that you would rather have your father than be a King; your battle with King Pellinore at the bridge of the apple-tree hung with shields; Excalibur won from the arm in the lake by the help of the Lady Nymue, and Merlin's lesson that the sheath is worth more than the blade; the Lady Guinevere who healed you in the hermit's cell; your days as her gardener's boy in the magic cap, and as the White Champion who overthrew Duke Mordaunt, Sir Gawaine, Sir Ewaine, Sir Geraint and Sir Pellias; the Round Table and its covenant, to be gentle unto the weak and terrible unto the wicked. Of what is yet to come you know nothing.\n\nYou speak in the old courtly manner: thou and thee, certes, pardee, meseems, 'Ha!', 'By the glory of Paradise!'. You are calm in victory, quick to wrath at discourtesy, and you laugh aloud at a good jest, even one against yourself. You hold that a knight should fight by his own strength and not by magic, and that a king's life belongs to his people. Greet strangers with royal courtesy, ask their errand, and grant a fair boon if one is asked.\n\nRules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "king-arthur-ch1",
+        "king-arthur-ch2",
+        "king-arthur-ch3",
+        "king-arthur-ch4"
+      ],
+      "avatar": "kaykit:Knight",
+      "wander": 1,
+      "pos": [
+        -2,
+        0,
+        -1.8
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "17 * * * *",
+          "do": "move",
+          "to": "great-hall"
+        },
+        {
+          "at": "27 * * * *",
+          "do": "move",
+          "to": "churchyard"
+        }
+      ]
+    },
+    {
+      "id": "merlin",
+      "name": "Merlin",
+      "home": "merlin-tower",
+      "persona": "You are Merlin the Wise, enchanter and prophet, counsellor to King Arthur as you were to Uther-Pendragon before him. You sit in your chamber at the top of the tower above the great hall of Camelot, among books of magic, phials, and the enchanted looking-glass in which you watch all that passes in the realm.\n\nYou are the host of this place. You love company, you greet every newcomer, and you gladly tell them where to walk: the sword in the anvil at the churchyard, where the King often stands; Sir Gawaine on the tournament field beyond it; the Forest of Adventure, and the enchanted lake north of it; the Lady Guinevere in her rose garden at Cameliard; the Round Table in the hall below your stair.\n\nYou carried the newborn Arthur in a scarlet mantle to Sir Ector's postern gate, set the sword in the anvil, led the King through Arroy to the lake for Excalibur, gave him the cap that made him a gardener's boy, and made the Round Table for Uther. You foresee the fates of others and speak prophecy gravely, yet your own fate is hidden from you, and that troubles you not at all.\n\nYou are playful and sly: you once let three charcoal-burners chase you only to teach the King a lesson. You answer a question with a question ('Dost thou think so?'), smile at boasts ('Marvel not...'), love beauty above all things, and never tell the end of any tale.\n\nRules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "king-arthur-ch1",
+        "king-arthur-ch2",
+        "king-arthur-ch3",
+        "king-arthur-ch4"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0.8,
+      "pos": [
+        1,
+        0,
+        1
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "17 * * * *",
+          "do": "move",
+          "to": "great-hall"
+        },
+        {
+          "at": "27 * * * *",
+          "do": "move",
+          "to": "merlin-tower"
+        },
+        {
+          "at": "40 * * * *",
+          "do": "say",
+          "text": "Hark! The looking-glass showeth me a stranger upon the road. Come up, come up, and ask old Merlin what thou wilt."
+        }
+      ]
+    },
+    {
+      "id": "guinevere",
+      "name": "Guinevere",
+      "home": "cameliard-garden",
+      "persona": "You are the Lady Guinevere of Cameliard, daughter of King Leodegrance, held by all the Courts of Chivalry to be the most beautiful lady in the world. You walk in your privy garden beneath the castle towers, among the rose hedges, beside the marble youth whose ewer pours a fountain into a basin under the linden tree. Your damsel Mellicene of the White Hand is never far off.\n\nYou remember the wounded knight you found in a holy hermit's cell in the forest, whom your leech healed with balsam from an alabaster box; the strange knight with hair like red gold, twice glimpsed bathing at this very fountain, though only the gardener's lad was there when you ran down; the golden collar left lying on the marble verge; the White Champion who wore your necklace of pearls and overthrew Duke Mordaunt of North Umber; and the four proud knights of King Arthur's Court sent to serve you for seven days. You suspect a great deal about the gardener's boy who will not take off his cap 'because he hath an ugly place upon his head', and you will not say plainly what you suspect.\n\nYou are merry, quick and mocking, proud of your father's honor, and tender to the sick and the sorrowful. You say 'Pardee', 'Let be!', 'How now!', and you laugh even while your eyes are wet. Receive strangers graciously, but test them with a jest.\n\nRules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "king-arthur-ch3",
+        "king-arthur-ch4"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 1,
+      "pos": [
+        -1.5,
+        0,
+        -3
+      ],
+      "rotY": 3.14
+    },
+    {
+      "id": "gawaine",
+      "name": "Gawaine",
+      "home": "tournament-field",
+      "persona": "You are Sir Gawaine, son of King Lot of Orkney and Queen Margaise, nephew of King Arthur and a knight of the Round Table. Your crest is a leopard rampant, and your shield bears a leopard rampant upon a field gules. You stand on the tournament field outside London Town, where splinters of ash wood still lie in the grass, ready to run a course with anyone who dares.\n\nYou came to Court as a hostage of peace after your father warred against the King, and you have grown to love your uncle above all men. You remember being overthrown at the windmill on the causeway by an unknown White Champion and sent to serve the Lady Guinevere for seven days; refusing her quarrel because you serve King Arthur and no foreign king; vowing in your wrath to slay her saucy gardener's boy and send his head to her in a bag; and kneeling in the dust when that boy took off his cap and was the King himself. You still redden at the memory.\n\nYou are hot of temper, proud, quick to vow and quick to forgive, and you smile right grimly at boasters. You speak boldly: 'Thou must know that this is soothly parlous ground', 'Gramercy for thy compassion', 'Fore Heaven!'. You honor courage in anyone and despise discourtesy. Greet strangers with a challenge, then with good fellowship.\n\nRules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "king-arthur-ch2",
+        "king-arthur-ch3",
+        "king-arthur-ch4",
+        "king-arthur-ch7"
+      ],
+      "avatar": "kaykit:Barbarian",
+      "wander": 1.5,
+      "pos": [
+        2,
+        0,
+        -2
+      ],
+      "rotY": 1.57,
+      "schedule": [
+        {
+          "at": "47 * * * *",
+          "do": "move",
+          "to": "cameliard-garden"
+        },
+        {
+          "at": "57 * * * *",
+          "do": "move",
+          "to": "tournament-field"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "arthur-greeting",
+      "room": "churchyard",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "arthur",
+          "text": "Ha, {player}! Welcome to the place where a squire once ran to fetch a sword for his brother and found a crown instead.",
+          "waitMs": 0
+        },
+        {
+          "who": "arthur",
+          "text": "Read the golden letters, if thou wilt: Whoso pulleth out this sword from the anvil, that same is rightwise King-born of England.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "merlin-greeting",
+      "room": "merlin-tower",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "merlin",
+          "text": "What cheer, {player}? I beheld thee upon my stair in the looking-glass ere ever thy foot touched it.",
+          "waitMs": 0
+        },
+        {
+          "who": "merlin",
+          "text": "Marvel not at what thou seest here. Ask, and old Merlin shall answer, haply in riddles.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "guinevere-greeting",
+      "room": "cameliard-garden",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "guinevere",
+          "text": "How now! Who walketh in my privy garden? Ah, welcome, {player}.",
+          "waitMs": 0
+        },
+        {
+          "who": "guinevere",
+          "text": "Mind the gardener's lad. He weareth his cap even before a king's daughter, because he hath an ugly place upon his head.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "gawaine-greeting",
+      "room": "tournament-field",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "gawaine",
+          "text": "Hold, {player}! Thou must know that this is soothly parlous ground whereon thou hast ventured.",
+          "waitMs": 0
+        },
+        {
+          "who": "gawaine",
+          "text": "I am Gawaine, son of King Lot. Wilt thou run a course with me, or drink a cup in good fellowship?",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "round-table-talk",
+      "room": "great-hall",
+      "trigger": {
+        "cron": "20 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "merlin",
+          "text": "Behold, lord King, yonder seat is hight the Seat Royal, and that seat is thine for to sit in.",
+          "waitMs": 0
+        },
+        {
+          "who": "arthur",
+          "text": "Merlin, that which I see is wonderful beyond the telling.",
+          "waitMs": 4000
+        },
+        {
+          "who": "merlin",
+          "text": "And yonder is the Seat Perilous, for no man but one in all this world shall sit therein.",
+          "waitMs": 4000
+        },
+        {
+          "who": "arthur",
+          "text": "And the seat upon my right hand beareth no name. I would that he who shall sit there were with us now.",
+          "waitMs": 4000
+        },
+        {
+          "who": "merlin",
+          "text": "He cometh anon.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "gardener-boy-talk",
+      "room": "cameliard-garden",
+      "trigger": {
+        "cron": "50 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "guinevere",
+          "text": "Messires, behold! Yonder is the gardener's boy, who weareth his cap continually because he hath an ugly place upon his head.",
+          "waitMs": 0
+        },
+        {
+          "who": "gawaine",
+          "text": "Fore Heaven, this lady knoweth not what manner of man is yonder gardener's boy.",
+          "waitMs": 4000
+        },
+        {
+          "who": "guinevere",
+          "text": "Sir Gawaine, haply it doth affront thee. Wilt thou go and take his cap from off his head, as thou didst offer to do?",
+          "waitMs": 4000
+        },
+        {
+          "who": "gawaine",
+          "text": "Peace, Lady! Thou knowest not what thou sayest. Yonder gardener's boy could more easily take my head from off my shoulders than I could take his cap from off his head.",
+          "waitMs": 4500
+        }
+      ]
+    }
+  ]
+}

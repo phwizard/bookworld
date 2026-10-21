@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-10-21T22:03:11.999Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 7,
+    "characters": 4,
+    "notes": "Keep the world in Transylvania: the inn at Bistritz, the Borgo Pass by night (panorama), the courtyard and gate of Castle Dracula (panorama), the great hall or library where the Count talks with Harker, Harker's bedroom with the locked doors, the ruined chapel and crypt with the boxes of earth, the battlements or the tower. Characters: Dracula (the courteous, chilling host, smart mode), Jonathan (Harker, the trapped guest), Mina, and Van Helsing; display names as given. Gothic mood: dark palettes, candle light, wolves and wind outside, drips in the crypt. Besides the on-enter greetings give two rooms a script with a cron trigger (at minutes 10 and 40 of the hour) in which two characters present exchange 3 to 5 short lines from the text, with schedule moves so they are in the same room when it runs."
+  },
+  "source": {
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "text": "gutenberg:345",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "CHAPTER I JONATHAN HARKER’S JOURNAL",
+      "chars": 30773
+    },
+    {
+      "index": 2,
+      "title": "CHAPTER II JONATHAN HARKER’S JOURNAL--_continued_",
+      "chars": 28664
+    },
+    {
+      "index": 3,
+      "title": "CHAPTER III JONATHAN HARKER’S JOURNAL--_continued_",
+      "chars": 30077
+    },
+    {
+      "index": 4,
+      "title": "CHAPTER IV JONATHAN HARKER’S JOURNAL--_continued_",
+      "chars": 30854
+    },
+    {
+      "index": 5,
+      "title": "CHAPTER V _Letter from Miss Mina Murray to Miss Lucy Westenra._",
+      "chars": 18152
+    },
+    {
+      "index": 6,
+      "title": "CHAPTER VI MINA MURRAY’S JOURNAL",
+      "chars": 29771
+    },
+    {
+      "index": 7,
+      "title": "CHAPTER VII CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST",
+      "chars": 30931
+    },
+    {
+      "index": 8,
+      "title": "CHAPTER VIII MINA MURRAY’S JOURNAL",
+      "chars": 33186
+    },
+    {
+      "index": 9,
+      "title": "CHAPTER IX _Letter, Mina Harker to Lucy Westenra._",
+      "chars": 30660
+    },
+    {
+      "index": 10,
+      "title": "CHAPTER X _Letter, Dr. Seward to Hon. Arthur Holmwood._",
+      "chars": 31000
+    },
+    {
+      "index": 11,
+      "title": "CHAPTER XI _Lucy Westenra’s Diary._",
+      "chars": 27111
+    },
+    {
+      "index": 12,
+      "title": "CHAPTER XII DR. SEWARD’S DIARY",
+      "chars": 38104
+    },
+    {
+      "index": 13,
+      "title": "CHAPTER XIII DR. SEWARD’S DIARY--_continued_.",
+      "chars": 34580
+    },
+    {
+      "index": 14,
+      "title": "CHAPTER XIV MINA HARKER’S JOURNAL",
+      "chars": 32861
+    },
+    {
+      "index": 15,
+      "title": "CHAPTER XV DR. SEWARD’S DIARY--_continued_.",
+      "chars": 29965
+    },
+    {
+      "index": 16,
+      "title": "CHAPTER XVI DR. SEWARD’S DIARY--_continued_",
+      "chars": 24032
+    },
+    {
+      "index": 17,
+      "title": "CHAPTER XVII DR. SEWARD’S DIARY--_continued_",
+      "chars": 29543
+    },
+    {
+      "index": 18,
+      "title": "CHAPTER XVIII DR. SEWARD’S DIARY",
+      "chars": 36071
+    },
+    {
+      "index": 19,
+      "title": "CHAPTER XIX JONATHAN HARKER’S JOURNAL",
+      "chars": 29608
+    },
+    {
+      "index": 20,
+      "title": "CHAPTER XX JONATHAN HARKER’S JOURNAL",
+      "chars": 31505
+    },
+    {
+      "index": 21,
+      "title": "CHAPTER XXI DR. SEWARD’S DIARY",
+      "chars": 32315
+    },
+    {
+      "index": 22,
+      "title": "CHAPTER XXII JONATHAN HARKER’S JOURNAL",
+      "chars": 28243
+    },
+    {
+      "index": 23,
+      "title": "CHAPTER XXIII DR. SEWARD’S DIARY",
+      "chars": 29722
+    },
+    {
+      "index": 24,
+      "title": "CHAPTER XXIV DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING",
+      "chars": 32458
+    },
+    {
+      "index": 25,
+      "title": "CHAPTER XXV DR. SEWARD’S DIARY",
+      "chars": 33072
+    },
+    {
+      "index": 26,
+      "title": "CHAPTER XXVI DR. SEWARD’S DIARY",
+      "chars": 37759
+    },
+    {
+      "index": 27,
+      "title": "CHAPTER XXVII MINA HARKER’S JOURNAL",
+      "chars": 42540
+    }
+  ],
+  "warnings": []
+}

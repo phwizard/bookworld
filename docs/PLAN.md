@@ -38,3 +38,5 @@ Generator (text -> world.json -> provisioning), panorama rooms, music, two world
 ## Later
 
 2D/mobile client on the same world file; claiming and building (fields reserved); voice; self-hosted Ethora Core guide.
+
+Added 21 Oct 2026 (owner's request): two more worlds, `dracula` (Stoker, Gutenberg 345, seven rooms in Transylvania, Dracula, Jonathan, Mina, Van Helsing) and `king-arthur` (Howard Pyle, Gutenberg 60184, seven rooms, Arthur, Merlin, Guinevere, Gawaine), generated with the CLI backend and provisioned by hand over the MCP. Chat waits on their App Secrets (gap 8).

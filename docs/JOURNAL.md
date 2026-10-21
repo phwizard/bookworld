@@ -184,3 +184,15 @@ Three things had to change in the project to run there. The server had no build 
 The deploy itself took three attempts, all on the Mac side: the system bash is 3.2 and sourcing from a process substitution sets nothing there; npm put pnpm under the Node prefix where sudo's reset PATH could not find it. Then: user, dependencies in seven seconds, unit, health check, Caddy block, certificate. From the outside: TLS, the noindex header, all three worlds, chat on for Alice and the Tempest, a visitor counted in the Rabbit Hole, a message delivered. The owner ran the push script, since this session's permission rules keep it off production hosts.
 
 ![the Rabbit Hole at bookworld.ethora.com, the first message delivered through Cloudflare](journal/261019-01-live-on-droplet.jpg)
+
+## 21 Oct 2026: two more worlds, Transylvania and Camelot
+
+The owner asked for Dracula's Transylvania and the world of King Arthur. Both came out of the generator in one evening from their Project Gutenberg texts: Stoker's novel (number 345) and Howard Pyle's "The Story of King Arthur and His Knights" of 1903 (number 60184), chosen over Malory because Pyle's prose is lively, modern enough to read, and has Merlin, Excalibur, Guinevere and the Round Table all in one book.
+
+Dracula stays in the Carpathians, as asked: the Golden Krone at Bistritz, the Borgo Pass by night, the courtyard, the library where the Count talks with his guest, Harker's bedroom with the locked doors, the ruined chapel with the boxes of earth, the tower window. Dracula hosts in smart mode; Jonathan, Mina and Van Helsing answer when named. King Arthur has the churchyard with the sword in the anvil, the tournament field, the Forest of Adventure, the Lake of Enchantment, Guinevere's garden at Cameliard, the great hall with the Round Table and Merlin's tower chamber, with Merlin as the host. Each world has two cron scenes an hour and schedule moves to bring the pairs together, as in the Tempest.
+
+Provisioning was by hand over the hosted MCP again, in the provisioner's order and with its exact payloads (the agent prompt function was imported straight from the provisioner so the house rules match): two apps, fourteen rooms, eight agents, eight crawls of the Gutenberg text with the weekly re-crawl switched off, visibility unlisted, invitations into the home rooms. The smoke test: Dracula answered "Enter freely and of your own will!" in his library, and Merlin sent the visitor to the churchyard, the field and the garden. Both replies carried a long dash despite the rule in the prompt; the model does what it does.
+
+What is missing is the one thing the API will not give (gap 8): the two App Secrets from the dashboard. Until they are in the env files the new worlds run with chat off, and the characters stand in their rooms without a voice.
+
+![the Borgo Pass, a panorama room, with Mina waiting by the road](journal/261021-01-borgo-pass.jpg)

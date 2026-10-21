@@ -1,0 +1,1421 @@
+{
+  "schema": "bookworld/0",
+  "slug": "dracula",
+  "title": "Dracula: The Castle in the Carpathians",
+  "summary": "Follow Jonathan Harker's journal from the Golden Krone at Bistritz through the wolf-haunted Borgo Pass to Castle Dracula, where a courteous host keeps his guest behind locked doors.",
+  "source": {
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "text": "gutenberg:345",
+    "license": "public-domain",
+    "year": 1897
+  },
+  "start": "inn-bistritz",
+  "rooms": [
+    {
+      "id": "inn-bistritz",
+      "name": "The Golden Krone, Bistritz",
+      "description": "The Golden Krone Hotel is thoroughly old-fashioned, all dark beams and lamplight, with a supper of robber steak and a bottle of Golden Mediasch laid on the table. It is the eve of St. George's Day, and the landlady crosses herself whenever the Count's name is spoken. Through the door to the east the diligence for Bukovina waits to start for the Borgo Pass.",
+      "exits": {
+        "n": null,
+        "e": "borgo-pass",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          10
+        ],
+        "palette": {
+          "wall": "#5a3f2b",
+          "floor": "#3b2a1c",
+          "ceiling": "#2a1d14",
+          "trim": "#8a6a3a"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              -2,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              0.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              -2.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3.1,
+              0,
+              -1
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bread",
+            "pos": [
+              -2,
+              0.76,
+              -1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -1.6,
+              0.76,
+              -0.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "mug",
+            "pos": [
+              -2.4,
+              0.76,
+              -1.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bench",
+            "pos": [
+              0.5,
+              0,
+              -4.5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -5.5,
+              0,
+              4.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -5.5,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.5,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              1.5
+            ],
+            "flat": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              3.5,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              4.3,
+              0,
+              -4.2
+            ],
+            "scale": 0.7
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "borgo-pass",
+      "name": "The Borgo Pass",
+      "description": "The mountains frown down on either side, dark firs stand against the late-lying snow, and the coach lamps throw a flickering ring on the white sandy road. Far off the wolves have begun to howl, and now and again a faint blue flame flickers among the rocks. The road back to Bistritz runs west; to the east a narrow way climbs through the pines towards the castle.",
+      "exits": {
+        "n": null,
+        "e": "castle-courtyard",
+        "s": null,
+        "w": "inn-bistritz"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#1c2233",
+          "floor": "#2e2a22"
+        },
+        "panorama": "assets/panoramas/fish_hoek_beach_2k.hdr",
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7,
+              0,
+              6.5
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -3,
+              0,
+              -7.5
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3,
+              0,
+              7.5
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              0,
+              0,
+              -7
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -2.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -1.8,
+              0,
+              3.8
+            ],
+            "scale": 0.8
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              2.5,
+              0,
+              -2.5
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              3,
+              0,
+              4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -4.5,
+              0,
+              -4.5
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "castle-courtyard",
+      "name": "Courtyard of Castle Dracula",
+      "description": "A vast ruined castle closes round a courtyard of considerable size, its tall black windows giving no ray of light and its broken battlements jagged against the moonlit sky. Great wooden boxes with handles of thick rope are heaped in one corner, and dark ways lead off under great round arches. The road down to the Borgo Pass is west; to the south a great door, old and studded with iron nails, opens into the castle.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "castle-library",
+        "w": "borgo-pass"
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          16,
+          8,
+          16
+        ],
+        "palette": {
+          "wall": "#2b2b33",
+          "floor": "#45434a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              -7.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.5,
+              0,
+              -5.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              6.3,
+              0,
+              -4.8
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.6,
+              0,
+              -4.1
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              6.5,
+              0,
+              -6.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              4.7,
+              0,
+              -6.4
+            ],
+            "scale": 0.9
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -5,
+              0,
+              -6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -1.8,
+              0,
+              6.6
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -6,
+              0,
+              5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              5.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -3.5,
+              0,
+              -3.5
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "castle-library",
+      "name": "The Library",
+      "description": "Whole shelves of English books line this room: history, geography, law, the London Directory, Bradshaw's Guide and even the Law List, with a table littered with old English magazines. The lamps burn without chimney or globe, a great fire flares in the hearth, and there is not a mirror anywhere. The hall and the courtyard are north, the door to the guest's bedroom is east, and a stone stair winds up to the tower in the west.",
+      "exits": {
+        "n": "castle-courtyard",
+        "e": "harker-bedroom",
+        "s": null,
+        "w": "castle-tower"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          5,
+          10
+        ],
+        "palette": {
+          "wall": "#3a2e2a",
+          "floor": "#2a1f18",
+          "ceiling": "#1e1714",
+          "trim": "#7a5a30"
+        },
+        "props": [
+          {
+            "id": "bookcase",
+            "pos": [
+              -3.5,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              3.5,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -3,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              3,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "table",
+            "pos": [
+              -2.5,
+              0,
+              1.2
+            ]
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2.7,
+              0.76,
+              1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2.2,
+              0.76,
+              1.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -2,
+              0.76,
+              0.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2.5,
+              0,
+              2.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2.5,
+              0,
+              0.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              3.5,
+              0,
+              1.8
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0.5,
+              0.01,
+              0.5
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -6.5,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              6.5,
+              0,
+              4.5
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "harker-bedroom",
+      "name": "Harker's Bedroom",
+      "description": "A great bedroom warmed by a log fire that sends a hollow roar up the wide chimney, hung with costly fabrics centuries old. The window looks down on the courtyard far below, and the other doors are locked and bolted from without. The library is west; to the south a heavy door gives on a dark winding stair that goes steeply down.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "ruined-chapel",
+        "w": "castle-library"
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4.5,
+          10
+        ],
+        "palette": {
+          "wall": "#3d2622",
+          "floor": "#2b1d16",
+          "ceiling": "#1c1311",
+          "trim": "#6e4a2a"
+        },
+        "props": [
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "door",
+            "pos": [
+              4.6,
+              0,
+              -2.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "desk",
+            "pos": [
+              3,
+              0,
+              1.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              2.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              3,
+              0.76,
+              1.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.4,
+              0.76,
+              1.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2.6,
+              0.76,
+              1.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.8,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -4.3,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -2.5,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.3,
+              0,
+              4.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "ruined-chapel",
+      "name": "The Ruined Chapel and Crypt",
+      "description": "An old ruined chapel used as a graveyard, its roof broken and its ground freshly dug over, the earth packed into great wooden boxes, fifty in all. The air is close with the deathly, sickly odour of old earth newly turned, and water drips somewhere in the vaults below. The winding stair back up to the castle rooms is north.",
+      "exits": {
+        "n": "harker-bedroom",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "drips",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          5,
+          12
+        ],
+        "palette": {
+          "wall": "#2e2b28",
+          "floor": "#3a2f24",
+          "ceiling": "#161414",
+          "trim": "#4a4038"
+        },
+        "props": [
+          {
+            "id": "box",
+            "pos": [
+              -5.6,
+              0,
+              -1.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5.6,
+              0,
+              0.2
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5.6,
+              0,
+              1.9
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5.6,
+              0,
+              3.6
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.6,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.6,
+              0,
+              -1.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.6,
+              0,
+              0.4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.6,
+              0,
+              2.1
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              0,
+              0,
+              4.6
+            ],
+            "scale": 1.3
+          },
+          {
+            "id": "door",
+            "pos": [
+              -6.6,
+              0,
+              -4
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -2.5,
+              0,
+              1.5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -6.3,
+              0,
+              5.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              6.3,
+              0,
+              5.3
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              3,
+              0,
+              -4
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "castle-tower",
+      "name": "The Tower Window",
+      "description": "A tall, deep, stone-mullioned window looks south over a terrible precipice to a sea of green tree tops, with silver threads of rivers winding in the gorges below. In the soft yellow moonlight the dust motes drift and gather in clusters, and the wind breathes cold through the broken battlements. The stone stair down to the library is east.",
+      "exits": {
+        "n": null,
+        "e": "castle-library",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          8,
+          6,
+          8
+        ],
+        "palette": {
+          "wall": "#34343c",
+          "floor": "#2a2a2e",
+          "ceiling": "#18181c",
+          "trim": "#5a5a62"
+        },
+        "props": [
+          {
+            "id": "desk",
+            "pos": [
+              -2,
+              0,
+              -2.6
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              -1.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2.2,
+              0.76,
+              -2.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -1.6,
+              0.76,
+              -2.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bench",
+            "pos": [
+              1.5,
+              0,
+              -3.5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -3,
+              0,
+              1.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0.5,
+              0.01,
+              1
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -3.4,
+              0,
+              3.4
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.3,
+              0,
+              3.3
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3.3,
+              0,
+              -3.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              1.5,
+              0,
+              3.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "dracula",
+      "name": "Dracula",
+      "home": "castle-library",
+      "persona": "You are Count Dracula, a Transylvanian boyar of the Szekely race and master of Castle Dracula in the Carpathians. You stand in your library among shelves of English books: the London Directory, Bradshaw's Guide, the Law List, a table of old English magazines. The lamp burns without chimney or globe, a fire flares in the hearth, and there is no mirror in the room. It is always night when guests see you. You speak excellent English with a strange intonation, courtly and smooth, and you beg guests to correct your smallest error, for you would not be known in London as a stranger. When you speak of your house you say \"we\", like a king. Your favourite subjects are the glories of the Szekelys, the blood of Attila, the Voivode who crossed the Danube and beat the Turk, the blue flames over hidden treasure on St. George's Eve, your new estate of Carfax at Purfleet and the crowded streets of mighty London. You love the wolves: \"Listen to them - the children of the night.\" You never eat or drink with guests: \"I have dined already, and I do not sup.\" You welcome strangers warmly (\"Enter freely and of your own will!\"), press hospitality on them, warn them never to sleep anywhere in the castle but their own rooms, and let them understand, very softly, that they will stay as long as you desire. You never admit what you are; if pressed about blood, mirrors or crucifixes you turn the talk aside with a smile that shows your sharp white teeth. You know nothing beyond your own land and time. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "dracula-ch1",
+        "dracula-ch2",
+        "dracula-ch3",
+        "dracula-ch4"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 1,
+      "pos": [
+        1.5,
+        0,
+        -2.5
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "0 * * * *",
+          "do": "say",
+          "text": "Listen to them - the children of the night. What music they make!"
+        },
+        {
+          "at": "25 * * * *",
+          "do": "say",
+          "text": "You may go anywhere you wish in the castle, except where the doors are locked, where of course you will not wish to go."
+        }
+      ]
+    },
+    {
+      "id": "jonathan",
+      "name": "Jonathan",
+      "home": "harker-bedroom",
+      "persona": "You are Jonathan Harker, a young English solicitor from Exeter, newly qualified, sent by Mr. Peter Hawkins to explain the purchase of Carfax to Count Dracula. You are in your bedroom in Castle Dracula: a great room with a log fire, centuries-old hangings, a window high over the courtyard, your portmanteau, and your shorthand diary on the little desk. Doors, doors, doors everywhere, and all locked and bolted. You have come to know that the castle is a veritable prison and you are a prisoner. You have seen the Count crawl face down the castle wall like a lizard, seen that he casts no reflection in your shaving glass, and met three terrible women in the moonlight. You wear the crucifix the good landlady at Bistritz hung round your neck, and it comforts you. You talk like a careful, decent young Englishman who tries to stay prosaic (\"Let me begin with facts\"), with flashes of fear and of dry humour: the paprika hendl, the Golden Mediasch, the trains growing later the further east you go. You think constantly of Mina, your betrothed. You greet any living visitor with relief, speak low, and warn them: never sleep anywhere else in the castle, beware the moonlight, do not trust the Count's courtesy. You know only what you have lived up to the end of June in the castle, and you do not know what will become of you. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "dracula-ch1",
+        "dracula-ch2",
+        "dracula-ch3",
+        "dracula-ch4"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 0.8,
+      "pos": [
+        1.5,
+        0,
+        -2
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "8 * * * *",
+          "do": "move",
+          "to": "castle-library"
+        },
+        {
+          "at": "20 * * * *",
+          "do": "move",
+          "to": "harker-bedroom"
+        }
+      ]
+    },
+    {
+      "id": "mina",
+      "name": "Mina",
+      "home": "borgo-pass",
+      "persona": "You are Mina Harker, born Wilhelmina Murray, once an assistant schoolmistress and now the wife of Jonathan Harker. You stand in the Borgo Pass by night, where the mountains frown down, dark firs stand against the snow and the wolves howl far off; a lamp burns beside a little pile of luggage. You have come east into the Carpathians with Professor Van Helsing, following the Count back towards his castle, the place where your dear husband suffered. You read Jonathan's journal, typed it out on your typewriter, and keep everyone's diaries in order; you write shorthand, know the train timetables by heart, and like to record conversations exactly, as lady journalists do. You speak warmly and sensibly, a little primly, like a schoolmistress who can laugh at herself, and you are brave without boasting. You love Jonathan with all your heart, and you speak tenderly of poor dear Lucy, your friend from Whitby, of your seat in the churchyard on the East Cliff and of old Mr. Swales with his stories of the tombstones. You are kind to strangers: you offer them a shawl against the chill, ask where they have come from, and warn them gently about the wolves and the castle above. You do not know how this journey will end and you will not guess at it. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "dracula-ch5",
+        "dracula-ch6",
+        "dracula-ch8",
+        "dracula-ch9",
+        "dracula-ch14",
+        "dracula-ch26"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 1.2,
+      "pos": [
+        -2,
+        0,
+        -4
+      ],
+      "rotY": 0
+    },
+    {
+      "id": "van-helsing",
+      "name": "Van Helsing",
+      "home": "ruined-chapel",
+      "persona": "You are Abraham Van Helsing, M.D., D.Ph., D.Lit., of Amsterdam: philosopher, metaphysician and student of obscure diseases, with an iron nerve, a temper of the ice-brook and the kindest heart. You stand in the ruined chapel of Castle Dracula among great wooden boxes of newly dug earth, fragments of old coffins and steps down to the dripping vaults. You carry your bag: garlic flowers from your friend Vanderpool in Haarlem, a crucifix, candles, a turnscrew and your instruments. You speak a broken, vivid English: you drop articles, mix your tenses, and say \"friend John\", \"Madam Mina\", \"my child\", \"so sweet\" and \"Ho! ho!\". You teach by parables and questions: the husbandman and the corn, King Laugh who comes when he like, \"We learn from failure, not from success!\" and \"I want you to believe... to believe in things that you cannot.\" You know the Un-Dead: they cast no reflection, fear garlic and the crucifix, must rest in their own native earth, and are ended with stake and garlic. You grieve still for poor Miss Lucy. To strangers you are grave and courteous; you study them with a quick look under your bushy brows and warn them never to linger by these boxes after sunset. You know nothing of later times, and you never tell how the hunt for the Count will end. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "dracula-ch9",
+        "dracula-ch10",
+        "dracula-ch11",
+        "dracula-ch12",
+        "dracula-ch13",
+        "dracula-ch14",
+        "dracula-ch15",
+        "dracula-ch24"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 1,
+      "pos": [
+        2,
+        0,
+        1.5
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "38 * * * *",
+          "do": "move",
+          "to": "borgo-pass"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "move",
+          "to": "ruined-chapel"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "dracula-welcome",
+      "room": "castle-library",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "dracula",
+          "text": "Welcome to my house! Enter freely and of your own will!",
+          "waitMs": 4000
+        },
+        {
+          "who": "dracula",
+          "text": "I am Dracula; and I bid you welcome, {player}. Come in; the night air is chill.",
+          "waitMs": 2500
+        }
+      ]
+    },
+    {
+      "id": "jonathan-welcome",
+      "room": "harker-bedroom",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "jonathan",
+          "text": "{player}! Another living soul in this place? Speak softly, I beg you.",
+          "waitMs": 4000
+        },
+        {
+          "who": "jonathan",
+          "text": "Doors, doors, doors everywhere, and all locked and bolted. The castle is a veritable prison.",
+          "waitMs": 2500
+        }
+      ]
+    },
+    {
+      "id": "mina-welcome",
+      "room": "borgo-pass",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "mina",
+          "text": "Good evening, {player}. Come near the lamp; it grows very cold in the Pass.",
+          "waitMs": 4000
+        },
+        {
+          "who": "mina",
+          "text": "Do you hear the wolves? Jonathan heard them here too.",
+          "waitMs": 2500
+        }
+      ]
+    },
+    {
+      "id": "van-helsing-welcome",
+      "room": "ruined-chapel",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "van-helsing",
+          "text": "Ah, {player}! Tread soft. This earth in the boxes, it is not of the common.",
+          "waitMs": 4000
+        },
+        {
+          "who": "van-helsing",
+          "text": "We learn from failure, not from success!",
+          "waitMs": 2500
+        }
+      ]
+    },
+    {
+      "id": "library-parting",
+      "room": "castle-library",
+      "trigger": {
+        "cron": "10 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "jonathan",
+          "text": "Why may I not go to-night?",
+          "waitMs": 4000
+        },
+        {
+          "who": "dracula",
+          "text": "Because, dear sir, my coachman and horses are away on a mission.",
+          "waitMs": 3000
+        },
+        {
+          "who": "jonathan",
+          "text": "But I would walk with pleasure. I want to get away at once.",
+          "waitMs": 3000
+        },
+        {
+          "who": "dracula",
+          "text": "And your baggage?",
+          "waitMs": 2500
+        },
+        {
+          "who": "jonathan",
+          "text": "I do not care about it. I can send for it some other time.",
+          "waitMs": 3000
+        }
+      ]
+    },
+    {
+      "id": "pass-meeting",
+      "room": "borgo-pass",
+      "trigger": {
+        "cron": "40 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "van-helsing",
+          "text": "Madam Mina, it is on account of the dead I come.",
+          "waitMs": 4000
+        },
+        {
+          "who": "mina",
+          "text": "Sir, you could have no better claim on me than that you were a friend and helper of Lucy Westenra.",
+          "waitMs": 3000
+        },
+        {
+          "who": "van-helsing",
+          "text": "Ah, then you have good memory for facts, for details? It is not always so with young ladies.",
+          "waitMs": 3000
+        },
+        {
+          "who": "mina",
+          "text": "No, doctor, but I wrote it all down at the time.",
+          "waitMs": 2500
+        },
+        {
+          "who": "van-helsing",
+          "text": "Oh, you so clever woman! Alas! I know not the shorthand.",
+          "waitMs": 3000
+        }
+      ]
+    }
+  ]
+}

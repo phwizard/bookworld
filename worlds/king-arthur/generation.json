@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-10-21T22:06:44.963Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 7,
+    "characters": 4,
+    "notes": "The world of King Arthur, Merlin and the knights of the Round Table. Rooms: the churchyard with the sword in the stone, the great hall of Camelot with the Round Table, Merlin's tower chamber, the lake of the Lady of the Lake where Excalibur is given (panorama), the forest of adventure (panorama), the tournament field (panorama), Queen Guinevere's garden at Cameliard. Characters: Arthur, Merlin (the wise, playful host, smart mode), Guinevere, Gawaine; single-word display names. Bright medieval mood: stone halls with banners and tapestries, birds and wind in the open places, a hearth in the hall. Besides the on-enter greetings give two rooms a script with a cron trigger (at minutes 20 and 50 of the hour) in which two characters present exchange 3 to 5 short lines from the text, with schedule moves so they are in the same room when it runs."
+  },
+  "source": {
+    "title": "The Story of King Arthur and his Knights",
+    "author": "Howard Pyle",
+    "text": "gutenberg:60184",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "Chapter Third _How King Arthur Overcame the Knight-Enchanter, and How Sir",
+      "chars": 14244
+    },
+    {
+      "index": 2,
+      "title": "PART I The Winning of Kinghood",
+      "chars": 61213
+    },
+    {
+      "index": 3,
+      "title": "PART II The Winning of a Sword",
+      "chars": 79176
+    },
+    {
+      "index": 4,
+      "title": "PART III The Winning of a Queen",
+      "chars": 157704
+    },
+    {
+      "index": 5,
+      "title": "PART I The Story of Merlin",
+      "chars": 80609
+    },
+    {
+      "index": 6,
+      "title": "PART II The Story of Sir Pellias",
+      "chars": 160100
+    },
+    {
+      "index": 7,
+      "title": "PART III The Story of Sir Gawaine",
+      "chars": 69417
+    }
+  ],
+  "warnings": []
+}
