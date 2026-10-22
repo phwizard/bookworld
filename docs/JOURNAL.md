@@ -196,3 +196,13 @@ Provisioning was by hand over the hosted MCP again, in the provisioner's order a
 What is missing is the one thing the API will not give (gap 8): the two App Secrets from the dashboard. Until they are in the env files the new worlds run with chat off, and the characters stand in their rooms without a voice.
 
 ![the Borgo Pass, a panorama room, with Mina waiting by the road](journal/261021-01-borgo-pass.jpg)
+
+## 22 Oct 2026: the two new worlds get their voice
+
+The owner pasted the App Secrets of the Dracula and King Arthur apps from the dashboard, and they are the same string. A fingerprint check against the local env files showed the Alice and Tempest secrets are that string too: four apps, one "App Secret". So the value the dashboard labels per app is a per-owner key, which is the explanation for gap 18 (a token for app B signed with app A's secret was accepted). The owner takes it to the Ethora backend team; here it changes nothing, each world keeps its own variable and a different value will drop in when Ethora splits them.
+
+With the lines in `.env` and `.env.production` the local service reported chat on for both worlds, and the real test is a walk: into the Golden Krone as a visitor (guest created, arrival narrated, message delivered, nobody home since Jonathan lives upstairs in the castle), east through the door into the Borgo Pass, a question to Mina, and her answer in character about the carriage that has not come. Then the churchyard in London Town, where Arthur answered a question about the sword in the anvil in his courtly thou-and-thee. Both replies without a long dash this time.
+
+One thing to watch: Arthur also answered his own scripted greeting. The world service posts scripted lines from the app account as "**Arthur:** ..." and the agent in mentioned mode read its own name in that line as a mention and replied, addressing the app by its name. Mina did not do the same with her lines in the Borgo Pass, so the check is not deterministic. That is a paid reply per arrival when it happens; gap 20 has the detail and the options.
+
+![Mina in the Borgo Pass answering through the chat panel, with the new secret in place](journal/261022-01-borgo-pass-mina.jpg)
