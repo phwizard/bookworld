@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; height: 100%; background: #0d0b09; color: #efe6d2; overflow: hidden; }
 button, input { font: inherit; }
-.join { min-height: 100%; display: grid; place-items: center; overflow: auto; background: radial-gradient(ellipse at top, #2a2118 0%, #0d0b09 70%); }
+.join { height: 100%; box-sizing: border-box; display: grid; place-items: center; overflow: auto; -webkit-overflow-scrolling: touch; background: radial-gradient(ellipse at top, #2a2118 0%, #0d0b09 70%); }
 .join form { display: grid; gap: 12px; width: min(420px, 90vw); padding: 28px; background: rgba(0,0,0,.35); border: 1px solid #5a4630; border-radius: 10px; }
 .join h1 { margin: 0 0 4px; font-weight: normal; letter-spacing: .04em; }
 .join p { margin: 0; opacity: .75; line-height: 1.4; }
