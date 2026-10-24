@@ -1,6 +1,6 @@
 // World file types and helpers shared by the server, the clients and the generator.
 // Schema reference: docs/WORLD-FILE.md
-import { INSTRUMENTS, type WorldItem } from './music.js';
+import { INSTRUMENTS, type Instrument, type WorldItem } from './music.js';
 
 export type Direction = 'n' | 'e' | 's' | 'w';
 export const DIRECTIONS: Direction[] = ['n', 'e', 's', 'w'];
@@ -134,6 +134,17 @@ export interface WorldScript {
   onInterrupt?: 'improvise-then-resume' | 'stop' | 'ignore';
 }
 
+/** A practice room: a character teaches the songs in the world's songs folder (docs/SONGBOOK.md). */
+export interface WorldLesson {
+  room: string;
+  /** character id of the trainer */
+  trainer: string;
+  /** what the trainer plays the cues on (default guitar) */
+  instrument?: Instrument;
+  /** song ids to offer here; default: every song in the folder */
+  songs?: string[];
+}
+
 export interface World {
   schema: 'bookworld/0';
   slug: string;
@@ -147,6 +158,8 @@ export interface World {
   scripts?: WorldScript[];
   /** things visitors can pick up and carry (instruments), see shared/src/music.ts */
   items?: WorldItem[];
+  /** practice rooms where a character drills songs with visitors, see shared/src/song.ts */
+  lessons?: WorldLesson[];
 }
 
 export const DEFAULT_ROOM_SIZE: [number, number, number] = [12, 4, 12];
@@ -223,6 +236,11 @@ export function validateWorld(input: unknown): string[] {
     if (!INSTRUMENTS.includes(it.instrument)) errors.push(`item ${it.id}: unknown instrument ${JSON.stringify(it.instrument)}`);
     if (!byId.has(it.room)) errors.push(`item ${it.id}: room ${it.room} is not a room id`);
     if (it.pos && (!Array.isArray(it.pos) || it.pos.length !== 3)) errors.push(`item ${it.id}: pos must be [x,y,z]`);
+  }
+  for (const l of w.lessons ?? []) {
+    if (!byId.has(l.room)) errors.push(`lesson in ${l.room}: not a room id`);
+    if (!charIds.has(l.trainer)) errors.push(`lesson in ${l.room}: trainer ${l.trainer} is not a character`);
+    if (l.instrument && !INSTRUMENTS.includes(l.instrument)) errors.push(`lesson in ${l.room}: unknown instrument ${l.instrument}`);
   }
   const grid = layoutGrid(w as World);
   const seen = new Map<string, string>();

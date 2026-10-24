@@ -5,7 +5,8 @@ import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp, musicLine, validToken,
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
-  type TakeMessage, type PlayMessage, type PlayedMessage,
+  type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
+  characterLine, characterSeat, LESSON_MODES,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -15,6 +16,8 @@ import type { AiBudget } from '../budget.ts';
 import { record } from '../metrics.ts';
 import * as presence from '../presence.ts';
 import type { CharState, ItemState, WorldSim } from '../world/sim.ts';
+import { Lesson, songCard } from '../world/lesson.ts';
+import { progressOn, saveProgress, songById, songsFor } from '../world/songs.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -70,6 +73,8 @@ interface UserData {
   /** chords played since the last line went into the chat */
   phrase: string[];
   phraseTimer: NodeJS.Timeout | null;
+  /** the drill under way with this room's trainer, if any */
+  lesson: Lesson | null;
 }
 
 /** how far (metres) a player may stand from an item to pick it up */
@@ -94,6 +99,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private ethora!: EthoraWorldService;
   private sim!: WorldSim;
   private budget!: AiBudget;
+  /** the practice room definition when this room has a trainer */
+  private lessonDef: WorldLesson | null = null;
   /** reconnection windows of dropped seats, by session id */
   private ghosts = new Map<string, { reject: Function }>();
   private unsubscribe: (() => void) | null = null;
@@ -118,6 +125,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.sim = simFor(options.world);
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
     this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
+    this.lessonDef = loaded.world.lessons?.find((l) => l.room === room.id) ?? null;
     this.budget = budgetFor(options.world);
     this.unsubscribeBudget = this.budget.subscribe(() => {
       for (const c of this.clients) c.send(MSG.ai, this.budget.snapshot((c.userData as UserData | undefined)?.session.visitor) satisfies AiMessage);
@@ -192,12 +200,69 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       const tokens = msg.tokens.filter((tk) => typeof tk === 'string' && tk.length <= 8 && validToken(it.instrument, tk)).slice(0, 8);
       if (!tokens.length) return;
       this.broadcast(MSG.played, { sessionId: client.sessionId, name: data.session.name, instrument: it.instrument, tokens } satisfies PlayedMessage, { except: client });
+      if (it.instrument !== 'drums') data.lesson?.onChords(tokens);
       data.phrase.push(...tokens);
       if (data.phraseTimer) clearTimeout(data.phraseTimer);
       if (data.phrase.length >= PHRASE_MAX) this.flushPhrase(client);
       else data.phraseTimer = setTimeout(() => this.flushPhrase(client), PHRASE_GAP_MS);
     });
+    // The practice room: start a song, answer with words, ask for a hint, skip, stop. Chords arrive through MSG.play.
+    this.onMessage(MSG.lesson, (client, msg: LessonCommand) => {
+      const data = client.userData as UserData | undefined;
+      if (!data || !this.lessonDef || !msg || typeof msg.do !== 'string') return;
+      switch (msg.do) {
+        case 'start': {
+          const song = typeof msg.song === 'string' ? songById(this.world.slug, msg.song) : undefined;
+          if (!song || !LESSON_MODES.includes(msg.mode)) return client.send(MSG.denied, { reason: 'no such song here' });
+          if (!this.lessonDef.songs?.length || this.lessonDef.songs.includes(song.id)) this.startLesson(client, data, song, msg.mode);
+          break;
+        }
+        case 'answer': if (typeof msg.text === 'string') data.lesson?.onAnswer(msg.text.slice(0, 300)); break;
+        case 'hint': data.lesson?.askHint(); break;
+        case 'skip': data.lesson?.skip(); break;
+        case 'stop': data.lesson?.stop(); data.lesson = null; this.sendLesson(client, data, null); break;
+      }
+    });
     console.log(`[room] created ${options.world}/${options.location}`);
+  }
+
+  private trainer(): { id: string; name: string } | null {
+    if (!this.lessonDef) return null;
+    const c = this.world.characters.find((ch) => ch.id === this.lessonDef!.trainer);
+    return c ? { id: c.id, name: c.name } : null;
+  }
+
+  /** The shelf of songs with this player's progress, and the lesson under way. */
+  private sendLesson(client: Client, data: UserData, active: LessonActive | null) {
+    const trainer = this.trainer();
+    if (!trainer) return;
+    const songs = songsFor(this.world.slug, this.lessonDef?.songs).map((s) => songCard(s, progressOn(this.world.slug, data.session.uid, s)));
+    client.send(MSG.lessonState, { trainer: trainer.name, songs, active } satisfies LessonStateMessage);
+  }
+
+  private startLesson(client: Client, data: UserData, song: Song, mode: LessonMode) {
+    const trainer = this.trainer();
+    if (!trainer) return;
+    data.lesson?.stop();
+    const instrument = this.lessonDef?.instrument ?? 'guitar';
+    const { slug } = this.world;
+    const uid = data.session.uid;
+    const lesson = new Lesson(song, mode, data.session.name, progressOn(slug, uid, song), {
+      state: (active) => { if (data.lesson === lesson) this.sendLesson(client, data, active); },
+      sing: (text) => void tryEthora('trainer line', () => this.ethora.post(this.room.id, characterLine(trainer.name, text))),
+      play: (chords) => this.broadcast(MSG.played, { sessionId: characterSeat(trainer.id), name: trainer.name, instrument, tokens: chords } satisfies PlayedMessage),
+      narrate: (text) => void tryEthora('lesson score', () => this.ethora.narrate(this.room.id, text)),
+      save: (p) => saveProgress(slug, uid, song.id, p),
+      finished: (note, p) => {
+        record({ ev: 'lesson', world: slug, pid: data.session.pid, location: this.room.id, song: song.id, mode, hits: lesson.active().score.hits, tries: lesson.active().score.tries });
+        void tryEthora('trainer memory', () => this.ethora.remember(trainer.id, note));
+        void p;
+      },
+    });
+    data.lesson = lesson;
+    presence.message(slug);
+    void tryEthora('narrate lesson', () => this.ethora.narrate(this.room.id, `${data.session.name} asks ${trainer.name} for a lesson on "${song.title}" (${mode})`));
+    lesson.start();
   }
 
   /** The chords played so far go into the room's chat as one line, for the people reading and the characters. */
@@ -223,7 +288,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   onJoin(client: Client, options: JoinOptions, auth: Session) {
     const session = auth ?? (client.auth as Session);
-    client.userData = { session, moving: false, gone: false, phrase: [], phraseTimer: null } satisfies UserData;
+    client.userData = { session, moving: false, gone: false, phrase: [], phraseTimer: null, lesson: null } satisfies UserData;
     const enterFrom = options.enterFrom && DIRECTIONS.includes(options.enterFrom) ? options.enterFrom : undefined;
     const [w, , d] = roomSize(this.room);
     const at = options.at;
@@ -253,6 +318,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
     presence.joined(this.world.slug, client.sessionId, this.room.id);
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
+    if (this.lessonDef) this.sendLesson(client, client.userData as UserData, null);
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
@@ -288,6 +354,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     presence.left(this.world.slug, client.sessionId);
     if (!data) return;
     this.flushPhrase(client);
+    data.lesson?.stop();
+    data.lesson = null;
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     // The same person on another seat in this room (a reload, a second tab) keeps the chat membership and the narration quiet;
     // revoking here used to cut the chat of the live seat a minute after every reload.

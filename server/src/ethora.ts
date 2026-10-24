@@ -5,6 +5,7 @@ import { randomBytes } from 'node:crypto';
 import { EthoraSDKService, createServerToken } from '@ethora/sdk-backend';
 import { narrationBody, NARRATOR_NAME } from '@bookworld/shared';
 import { listWorlds, type WorldEthoraIds } from './world/load.ts';
+import { ethoraMcpAvailable, withEthoraMcp } from './ethora-mcp.ts';
 
 const apiBaseUrl = process.env.ETHORA_API_BASE_URL ?? 'https://api.chat.ethora.com/v1';
 const xmppDomain = process.env.ETHORA_XMPP_DOMAIN ?? 'xmpp.chat.ethora.com';
@@ -108,6 +109,21 @@ export class EthoraWorldService {
     if (agent.botInstanceId && from) {
       await post(`${sdkApiUrl}/v2/agents/${agent.agentId}/bot-instances/${agent.botInstanceId}/leave-chat`, { chatJid: from.jid });
     }
+  }
+
+  /**
+   * Adds a note to a character's Memory (the agent's standing notes, `soulMd`). Needs the user API key for the hosted
+   * MCP: the app's server token may not touch agents (ETHORA-GAPS #14, #17). Without it the note stays in the log.
+   */
+  async remember(characterId: string, note: string): Promise<boolean> {
+    const agent = this.ids?.agents?.[characterId];
+    if (!agent) return false;
+    if (!ethoraMcpAvailable) {
+      console.log(`[memory:${characterId}] (no ETHORA_API_KEY, not written) ${note}`);
+      return false;
+    }
+    await withEthoraMcp((call) => call('ethora-agent-soul-append', { agentId: agent.agentId, append: note }));
+    return true;
   }
 
   /** Posts a narration line ("Alice has joined (E)", italic) into the room through the app's broadcast sender. */

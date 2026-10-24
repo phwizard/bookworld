@@ -1,6 +1,7 @@
 // Wire protocol between the 3D client and the world service (Colyseus), plus the HTTP enter flow.
 import type { Direction, World } from './world.js';
 import type { Instrument } from './music.js';
+import type { LessonCommand, LessonStateMessage } from './song.js';
 
 export const COLYSEUS_ROOM_NAME = 'location';
 
@@ -160,6 +161,10 @@ export const MSG = {
   play: 'play',
   /** server -> the others in the room: what a player just played (the player heard it locally already) */
   played: 'played',
+  /** client -> server: a lesson command (start a song, answer, hint, skip, stop) */
+  lesson: 'lesson',
+  /** server -> one player: the practice room's songs and the lesson under way */
+  lessonState: 'lessonState',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -172,6 +177,10 @@ export interface AwayMessage { away: boolean; gone?: boolean }
 export interface TakeMessage { id: string }
 export interface PlayMessage { tokens: string[] }
 export interface PlayedMessage { sessionId: string; name: string; instrument: Instrument; tokens: string[] }
+export type LessonMessage = LessonCommand;
+export type LessonStateMsg = LessonStateMessage;
+/** `sessionId` of a PlayedMessage when a character plays: "c:" plus its id (clients keep character poses under that key) */
+export function characterSeat(characterId: string): string { return `c:${characterId}`; }
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.
