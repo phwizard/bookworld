@@ -26,6 +26,8 @@ export interface Song {
   license?: string;
   /** language of the words as a BCP 47 tag ("en", "uk", "ru-RU"); the client's speech recognition listens in it */
   lang?: string;
+  /** beats per minute, for the band and the trainer's cues */
+  tempo?: number;
   sections: SongSection[];
 }
 
@@ -186,6 +188,7 @@ function parseChordPro(lines: string[], song: Song) {
       else if (name === 'capo') song.capo = Number(value) || undefined;
       else if (name === 'license') song.license = value;
       else if (name === 'language' || name === 'lang') song.lang = value;
+      else if (name === 'tempo') song.tempo = Number(value) || undefined;
       else if (name === 'start_of_chorus' || name === 'soc') open(value || 'Chorus');
       else if (name === 'start_of_bridge' || name === 'sob') open(value || 'Bridge');
       else if (name === 'start_of_verse' || name === 'sov') open(value || `Verse ${++verses}`);
@@ -225,11 +228,12 @@ function parseOverLyrics(lines: string[], song: Song) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!.trim();
     if (!line) { flushInstrumental(); if (cur.section?.lines.length) cur.section = null; continue; }
-    const meta = /^(title|artist|by|key|capo|license|language|lang)\s*:\s*(.+)$/i.exec(line);
+    const meta = /^(title|artist|by|key|capo|license|language|lang|tempo)\s*:\s*(.+)$/i.exec(line);
     if (meta && !cur.section) {
       const k = meta[1]!.toLowerCase(), v = meta[2]!.trim();
       if (k === 'title') song.title = v; else if (k === 'artist' || k === 'by') song.artist = v; else if (k === 'key') song.key = v;
-      else if (k === 'capo') song.capo = Number(v) || undefined; else if (k === 'language' || k === 'lang') song.lang = v; else song.license = v;
+      else if (k === 'capo') song.capo = Number(v) || undefined; else if (k === 'language' || k === 'lang') song.lang = v;
+      else if (k === 'tempo') song.tempo = Number(v) || undefined; else song.license = v;
       continue;
     }
     const header = SECTION_HEADER.exec(line);
@@ -260,6 +264,7 @@ export function songToChordPro(song: Song): string {
   if (song.capo) out.push(`{capo: ${song.capo}}`);
   if (song.license) out.push(`{license: ${song.license}}`);
   if (song.lang) out.push(`{language: ${song.lang}}`);
+  if (song.tempo) out.push(`{tempo: ${song.tempo}}`);
   for (const s of song.sections) {
     out.push('');
     const chorus = /chorus|refrain/i.test(s.name);
@@ -314,6 +319,8 @@ export interface SongCard {
   last?: string;
   /** speech recognition tag for the words ("uk-UA"); en-US when the file says nothing */
   lang: string;
+  /** beats per minute when the file says */
+  tempo?: number;
   /** on the player's own list */
   listed?: boolean;
 }

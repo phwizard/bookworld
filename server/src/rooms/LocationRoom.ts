@@ -6,7 +6,7 @@ import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp, musicLine, validToken,
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
-  type ChatSeenMessage, characterLine, characterSeat, LESSON_MODES,
+  type ChatSeenMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -18,6 +18,7 @@ import { debug, debugOn, firstSighting } from '../debuglog.ts';
 import * as presence from '../presence.ts';
 import type { CharState, ItemState, WorldSim } from '../world/sim.ts';
 import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
+import { Band } from '../world/band.ts';
 import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
 
 export const Player = schema({
@@ -102,6 +103,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private budget!: AiBudget;
   /** the practice room definition when this room has a trainer */
   private lessonDef: WorldLesson | null = null;
+  /** the room's bass and drums playing along, when switched on */
+  private band!: Band;
   /** reconnection windows of dropped seats, by session id */
   private ghosts = new Map<string, { reject: Function }>();
   private unsubscribe: (() => void) | null = null;
@@ -124,6 +127,12 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.setState(state);
 
     this.sim = simFor(options.world);
+    this.band = new Band({
+      instruments: () => this.sim.itemsIn(room.id).filter((it) => !it.heldBy && (it.instrument === 'bass' || it.instrument === 'drums')).map((it) => ({ id: it.id, instrument: it.instrument as 'bass' | 'drums' })),
+      bar: (msg) => this.broadcast(MSG.bar, msg),
+      state: (s) => this.broadcast(MSG.bandState, s),
+      narrate: (text) => void tryEthora('band', () => this.ethora.narrate(room.id, text)),
+    });
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
     this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
     this.lessonDef = loaded.world.lessons?.find((l) => l.room === room.id) ?? null;
@@ -206,7 +215,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       if (!tokens.length) return;
       this.broadcast(MSG.played, { sessionId: client.sessionId, name: data.session.name, instrument: it.instrument, tokens } satisfies PlayedMessage, { except: client });
       this.log('play', data, { instrument: it.instrument, tokens });
-      if (it.instrument !== 'drums') data.lesson?.onChords(tokens);
+      if (it.instrument !== 'drums') { data.lesson?.onChords(tokens); this.band.setChord(tokens[tokens.length - 1]!); }
       data.phrase.push(...tokens);
       if (data.phraseTimer) clearTimeout(data.phraseTimer);
       if (data.phrase.length >= PHRASE_MAX) this.flushPhrase(client);
@@ -238,6 +247,19 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           break;
         }
       }
+    });
+    // The band: the room's unheld bass and drums play along with whoever is playing (B), on the room's clock.
+    this.onMessage(MSG.band, (client, msg: BandCommand) => {
+      const data = client.userData as UserData | undefined;
+      if (!data || !msg) return;
+      this.log('band', data, { cmd: msg });
+      if (typeof msg.bpm === 'number' && Number.isFinite(msg.bpm)) this.band.setTempo(msg.bpm);
+      if (msg.on === true && !this.band.start(data.session.name, typeof msg.bpm === 'number' ? msg.bpm : undefined)) client.send(MSG.denied, { reason: 'no bass or drums lying here for the band' });
+      if (msg.on === false) this.band.stop();
+    });
+    this.onMessage(MSG.clock, (client, msg: ClockMessage) => {
+      if (!msg || typeof msg.t0 !== 'number') return;
+      client.send(MSG.clock, { t0: msg.t0, now: Date.now() } satisfies ClockMessage);
     });
     // While the operator's debug log is on, the clients mirror the room's chat (humans and characters) into it:
     // the service cannot read a room's history itself (ETHORA-GAPS #23). Each message is written once per room.
@@ -327,6 +349,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       },
     }, plan.goal);
     data.lesson = lesson;
+    if (song.tempo) this.band.setTempo(song.tempo);
     presence.message(slug);
     void tryEthora('narrate lesson', () => this.ethora.narrate(this.room.id, `${data.session.name} asks ${trainer.name} for a lesson on "${song.title}" (${mode})`));
     lesson.start();
@@ -385,6 +408,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
     presence.joined(this.world.slug, client.sessionId, this.room.id);
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
+    client.send(MSG.bandState, this.band.state());
     if (this.lessonDef) this.sendLesson(client, client.userData as UserData, null);
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
@@ -446,6 +470,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   }
 
   onDispose() {
+    this.band.stop();
     this.unsubscribe?.();
     this.unsubscribeItems?.();
     this.unsubscribeBudget?.();

@@ -18,6 +18,21 @@ export function focusComposer(tries = 10) {
   if (tries > 0) setTimeout(() => focusComposer(tries - 1), 100);
 }
 
+/**
+ * Sends a line into the room in the visitor's own name through the chat component's composer (the component owns
+ * the connection; this fills its box and presses Enter for them). The panel opens so they see the answer.
+ */
+export function sayInChat(text: string): boolean {
+  const area = panelEl?.querySelector('textarea');
+  if (!area) return false;
+  useStore.getState().setChatOpen(true);
+  Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(area, text);
+  area.dispatchEvent(new Event('input', { bubbles: true }));
+  // the component sends on keyCode 13, not on key
+  area.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true } as KeyboardEventInit));
+  return true;
+}
+
 /** Leaves the message box so the keys walk again; the panel stays open for reading. */
 export function blurComposer() {
   (document.activeElement as HTMLElement | null)?.blur?.();

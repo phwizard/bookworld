@@ -3,3 +3,4 @@ export * from './protocol.js';
 export * from './music.js';
 export * from './song.js';
 export * from './chroma.js';
+export * from './band.js';

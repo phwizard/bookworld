@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AiState, Direction, EnterResponse, PlayerView, CharacterView, ItemView, LessonStateMessage } from '@bookworld/shared';
+import type { AiState, Direction, EnterResponse, PlayerView, CharacterView, ItemView, LessonStateMessage, BandState } from '@bookworld/shared';
 
 export interface RemotePose { x: number; y: number; z: number; ry: number; anim: string }
 
@@ -30,6 +30,9 @@ interface State {
   setMicOn(on: boolean): void;
   micLevel: number;
   setMicLevel(v: number): void;
+  /** the room's bass and drums playing along (B), as the server reports it */
+  band: BandState | null;
+  setBand(b: BandState | null): void;
   /** singing into the microphone answers a words round (the browser's speech recognition) */
   singOn: boolean;
   setSingOn(on: boolean): void;
@@ -92,6 +95,8 @@ export const useStore = create<State>((set) => ({
   setMicLevel: (micLevel) => set((s) => (Math.abs(s.micLevel - micLevel) < 0.03 ? s : { micLevel })),
   singOn: false,
   setSingOn: (singOn) => set({ singOn }),
+  band: null,
+  setBand: (band) => set({ band }),
   chatOpen: false,
   pointerLocked: false,
   toast: null,
@@ -111,7 +116,7 @@ export const useStore = create<State>((set) => ({
   chatTyping: false,
   setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, resume: enterFrom ? null : s.resume })),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, band: null, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),

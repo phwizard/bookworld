@@ -169,6 +169,14 @@ export const MSG = {
   lessonState: 'lessonState',
   /** client -> server, only while the debug log is on: a chat message seen in the room (human or character), for the log */
   chat: 'chat',
+  /** client -> server: the band (the room's bass and drums) on or off, or a new tempo */
+  band: 'band',
+  /** server -> room: the band's state */
+  bandState: 'bandState',
+  /** server -> room: a bar to play, with the server time it starts at */
+  bar: 'bar',
+  /** client -> server -> client: clock sync for the bars */
+  clock: 'clock',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }

@@ -176,4 +176,18 @@ export function playTokens(instrument: Instrument, tokens: string[], opts: PlayO
   return tokens.length * step;
 }
 
+/**
+ * One hit at a moment given in the page's clock (Date.now() milliseconds), placed at `at`: the band's bars arrive a
+ * little ahead with their times. A hit already more than a tenth of a second in the past is dropped.
+ */
+export function playHitAt(instrument: Instrument, token: string, whenMs: number, at?: [number, number, number]): void {
+  const c = audioContext();
+  if (c.state !== 'running') { void c.resume().catch(() => undefined); return; }
+  const t = c.currentTime + (whenMs - Date.now()) / 1000;
+  if (import.meta.env.DEV) { recent.push(`${instrument}@${(t - c.currentTime).toFixed(2)}:${token}`); if (recent.length > 60) recent.shift(); }
+  if (t < c.currentTime - 0.1) return;
+  const out: AudioNode = at ? pannerAt(at, instrumentsOut()) : instrumentsOut();
+  voice(c, out, Math.max(t, c.currentTime + 0.005), instrument, token);
+}
+
 export const DRUM_LABEL: Record<string, string> = Object.fromEntries(DRUM_KEYS.map((k) => [k, k === 'ohat' ? 'open hat' : k]));

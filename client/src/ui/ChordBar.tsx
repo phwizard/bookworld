@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { INSTRUMENT_LABEL, keysFor } from '@bookworld/shared';
 import { selectHolding, useStore } from '../store.ts';
 import { playTokens, DRUM_LABEL } from '../audio/instruments.ts';
-import { dropItem, sendPlayed } from '../net/colyseus.ts';
+import { dropItem, sendBand, sendPlayed } from '../net/colyseus.ts';
+import { BPM_MAX, BPM_MIN } from '@bookworld/shared';
 import { listening, startListening, stopListening } from '../audio/listen.ts';
 
 /** chords pressed within this window go to the server as one message (fewer messages while strumming fast) */
@@ -41,8 +42,23 @@ export function strike(index: number): boolean {
   return token ? strikeToken(token) : false;
 }
 
+/** True when a bass or drums lies unheld in the room: something for the band to play. */
+export function bandAvailable(): boolean {
+  return Object.values(useStore.getState().items).some((it) => !it.heldBy && (it.instrument === 'bass' || it.instrument === 'drums'));
+}
+
+/** The band on or off (B). */
+export function toggleBand(): void {
+  const band = useStore.getState().band;
+  if (band?.on) sendBand({ on: false });
+  else if (bandAvailable()) sendBand({ on: true });
+  else useStore.getState().setToast('No bass or drums lying here for the band');
+}
+
 export function ChordBar() {
   const holding = useStore(selectHolding);
+  const band = useStore((s) => s.band);
+  const bandItems = useStore((s) => Object.values(s.items).some((it) => !it.heldBy && (it.instrument === 'bass' || it.instrument === 'drums')));
   const lessonChords = useStore((s) => (s.lesson?.active && !s.lesson.active.finished ? s.lesson.active.song.chords : null));
   const micOn = useStore((s) => s.micOn);
   const setMicOn = useStore((s) => s.setMicOn);
@@ -109,6 +125,21 @@ export function ChordBar() {
           </>
         )}
         <button className="link" onClick={() => dropItem()}>put it down (E)</button>
+        {(bandItems || band?.on) && (
+          <>
+            {' · '}
+            <button className={band?.on ? 'link mic on' : 'link mic'} onClick={() => toggleBand()} title="the bass and the drums lying here play along with your chords">
+              {band?.on ? `band on: ${band.parts.join(' and ')}` : 'band (B)'}
+            </button>
+            {band?.on && (
+              <span className="tempo">
+                {' '}<button className="link" onClick={() => sendBand({ bpm: Math.max(BPM_MIN, band.bpm - 6) })} title="slower">-</button>
+                {' '}{band.bpm} bpm{' '}
+                <button className="link" onClick={() => sendBand({ bpm: Math.min(BPM_MAX, band.bpm + 6) })} title="faster">+</button>
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

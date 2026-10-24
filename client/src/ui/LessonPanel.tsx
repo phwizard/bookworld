@@ -5,6 +5,7 @@ import { GOAL_MAX, LESSON_MODES, type LessonMode, type SongCard } from '@bookwor
 import { selectHolding, useStore } from '../store.ts';
 import { sendLesson } from '../net/colyseus.ts';
 import { hearing, setHearingLang, speechSupported, startHearing, stopHearing } from '../audio/speech.ts';
+import { sayInChat } from './ChatPanel.tsx';
 
 const MODE_LABEL: Record<LessonMode, string> = { chords: 'chords', words: 'words', both: 'both' };
 
@@ -71,6 +72,14 @@ export function LessonPanel() {
   const saveGoal = () => { if (goal !== null) { sendLesson({ do: 'plan', goal }); setGoal(null); } };
   const lastSong = plan?.song ? lesson.songs.find((s) => s.id === plan.song) : undefined;
   const canContinue = lastSong && lastSong.learned < lastSong.lines;
+  // a question to the trainer agent in the visitor's name: a variation on the line (a paid reply, like any mention)
+  const askAnotherWay = () => {
+    const r = active?.round;
+    if (!r) return;
+    const chords = r.task === 'chords' && active?.feedback ? active.feedback.expected : r.cue?.chords.join(' ');
+    const words = r.task === 'chords' ? r.lyric : r.cue?.lyric;
+    if (!sayInChat(`${lesson.trainer}, show me another way to play "${words || 'that line'}"${chords ? ` (${chords})` : ''}: answer with one music line in the same key, and a word on why.`)) setToast('The chat is not ready yet');
+  };
 
   return (
     <div className="lesson">
@@ -172,6 +181,9 @@ export function LessonPanel() {
             <button onClick={() => sendLesson({ do: 'hint' })} disabled={!!active.feedback || !!active.round.hint}>Hint</button>
             <button onClick={() => sendLesson({ do: 'skip' })} disabled={!!active.feedback}>Skip</button>
             <button onClick={() => sendLesson({ do: 'stop' })}>Stop</button>
+            {active.round.task === 'chords' && active.feedback && (
+              <button className="link" onClick={askAnotherWay} title={`ask ${lesson.trainer} for a variation (the agent answers with a music line the room plays)`}>another way?</button>
+            )}
             {active.mode !== 'chords' && speechSupported() && (
               <button className={singOn ? 'link mic on' : 'link mic'} onClick={() => setSingOn(!singOn)} title={`hear you sing the words (speech recognition, ${active.song.lang})`}>
                 {singOn ? 'hearing you sing' : 'sing (mic)'}

@@ -5,11 +5,12 @@ import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
   type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type ChatSeenMessage,
+  type BandCommand, type BandState, type BarMessage, type ClockMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
 import { clearSession, updateSession } from '../session.ts';
-import { playTokens } from '../audio/instruments.ts';
+import { playHitAt, playTokens } from '../audio/instruments.ts';
 
 const client = new Client(SERVER_URL);
 let current: Room<LocationStateView> | null = null;
@@ -20,7 +21,15 @@ export function currentRoom() {
   return current;
 }
 
-if (import.meta.env.DEV) (window as unknown as { __net: unknown }).__net = { room: () => current, lastAt: () => lastAt };
+/** server clock minus the page's clock (Date.now()), from the ping-pong on join; the band's bars are timed in server ms */
+let serverOffset = 0;
+let clockTimer: ReturnType<typeof setInterval> | null = null;
+export function serverToLocal(serverMs: number): number {
+  return serverMs - serverOffset;
+}
+function syncClock(room: Room<LocationStateView>) {
+  room.send(MSG.clock, { t0: Date.now() } satisfies ClockMessage);
+}
 
 export async function joinLocation(location: string, enterFrom?: Direction, at?: { x: number; z: number; ry: number } | null, reconnectToken?: string): Promise<void> {
   const session = useStore.getState().session;
@@ -125,6 +134,28 @@ function wire(room: Room<LocationStateView>) {
     useStore.getState().setBubble(msg.name, `♪ ${msg.tokens.join(' ')}`);
   });
   room.onMessage<LessonStateMessage>(MSG.lessonState, (msg) => useStore.getState().setLesson(msg));
+  room.onMessage<BandState>(MSG.bandState, (msg) => useStore.getState().setBand(msg));
+  // the band: every hit of the bar scheduled against the server's time, from where the instrument lies
+  room.onMessage<BarMessage>(MSG.bar, (msg) => {
+    const beatMs = 60000 / msg.bpm;
+    const start = serverToLocal(msg.at);
+    for (const part of msg.parts) {
+      const it = items[part.item];
+      const at: [number, number, number] | undefined = it ? [it.x, it.y + 0.8, it.z] : undefined;
+      for (const h of part.hits) playHitAt(part.instrument, h.token, start + h.beat * beatMs, at);
+    }
+  });
+  room.onMessage<ClockMessage>(MSG.clock, (msg) => {
+    const t1 = Date.now();
+    if (typeof msg?.now !== 'number' || typeof msg.t0 !== 'number') return;
+    // the server stamped its clock halfway through the round trip
+    const offset = msg.now - (msg.t0 + t1) / 2;
+    serverOffset = serverOffset === 0 ? offset : serverOffset * 0.5 + offset * 0.5;
+  });
+  syncClock(room);
+  setTimeout(() => syncClock(room), 1500);
+  if (clockTimer) clearInterval(clockTimer);
+  clockTimer = setInterval(() => { if (current === room) syncClock(room); else if (clockTimer) { clearInterval(clockTimer); clockTimer = null; } }, 30000);
   room.onMessage<DeniedMessage>(MSG.denied, (msg) => useStore.getState().setToast(msg.reason));
   room.onMessage<AiMessage>(MSG.ai, (msg) => {
     const before = useStore.getState().ai;
@@ -255,8 +286,13 @@ export function sendPlayed(tokens: string[]) {
   current?.send(MSG.play, { tokens } satisfies PlayMessage);
 }
 
-// a hand on the wire for the browser console while developing (the lesson commands, the debug chat mirror)
-if (import.meta.env.DEV) (window as unknown as { __net: unknown }).__net = { sendLesson, sendPlayed, reportChatSeen };
+/** The band on or off, or a new tempo. */
+export function sendBand(cmd: BandCommand) {
+  current?.send(MSG.band, cmd);
+}
+
+// a hand on the wire for the browser console while developing (the lesson commands, the band, the debug chat mirror)
+if (import.meta.env.DEV) (window as unknown as { __net: unknown }).__net = { room: () => current, lastAt: () => lastAt, sendLesson, sendPlayed, sendBand, reportChatSeen, offset: () => serverOffset };
 
 let moveLock = 0;
 export function requestMove(dir: Direction) {

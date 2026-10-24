@@ -3,7 +3,7 @@ import { roomById } from '@bookworld/shared';
 import { useStore } from './store.ts';
 import { dropItem, joinLocation, takeItem } from './net/colyseus.ts';
 import { selectHolding } from './store.ts';
-import { ChordBar } from './ui/ChordBar.tsx';
+import { ChordBar, toggleBand } from './ui/ChordBar.tsx';
 import { LessonPanel } from './ui/LessonPanel.tsx';
 import { loadSession } from './session.ts';
 import { Menu } from './ui/Menu.tsx';
@@ -45,6 +45,8 @@ export function WorldView() {
       }
       // L: the practice room's lessons
       if (e.code === 'KeyL' && !e.repeat && s.lesson) { e.preventDefault(); s.setLessonOpen(!s.lessonOpen); if (!s.lessonOpen) document.exitPointerLock?.(); return; }
+      // B: the band (the room's bass and drums play along)
+      if (e.code === 'KeyB' && !e.repeat) { e.preventDefault(); toggleBand(); return; }
       if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
     };
     window.addEventListener('keydown', onKey);

@@ -77,6 +77,8 @@
   "items": [
     { "id": "lesson-guitar", "kind": "instrument", "instrument": "guitar", "name": "the lesson guitar", "room": "practice-room", "pos": [-0.6, 0, -2.2] },
     { "id": "lesson-piano", "kind": "instrument", "instrument": "piano", "name": "the old upright", "room": "practice-room", "pos": [1.6, 0, -2.2] },
+    { "id": "practice-bass", "kind": "instrument", "instrument": "bass", "name": "the practice bass", "room": "practice-room", "pos": [-3.2, 0, 0.6] },
+    { "id": "practice-drums", "kind": "instrument", "instrument": "drums", "name": "the little kit", "room": "practice-room", "pos": [3.2, 0, 0.6] },
     { "id": "stage-bass", "kind": "instrument", "instrument": "bass", "name": "a bass guitar", "room": "stage", "pos": [-3, 0, -3] },
     { "id": "stage-drums", "kind": "instrument", "instrument": "drums", "name": "the house drum", "room": "stage", "pos": [3, 0, -3] }
   ],
