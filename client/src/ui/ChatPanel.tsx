@@ -5,6 +5,7 @@ import { Chat, XmppProvider, type IConfig } from '@ethora/chat-component';
 import { useStore } from '../store.ts';
 import { ChatMessages } from './ChatMessages.tsx';
 import { reportSaid } from '../net/colyseus.ts';
+import type { LessonStateMessage } from '@bookworld/shared';
 
 let panelEl: HTMLElement | null = null;
 
@@ -33,6 +34,14 @@ export function muteCharacterNames(text: string): string {
   return out;
 }
 
+/** The lesson under way as one line: what the trainer needs in order to answer "how am I doing". */
+function scoreboard(l: LessonStateMessage): string {
+  const a = l.active!;
+  const learned = `${a.song.learned} of ${a.song.lines} lines learned`;
+  const weak = a.weak?.length ? `, keeps missing ${a.weak.join(', ')}` : '';
+  return `Lesson: "${a.song.title}" (${a.mode}), round ${a.round?.n ?? a.score.tries}, ${a.score.hits} of ${a.score.tries} right, ${learned}${weak}`;
+}
+
 export function ChatPanel() {
   const session = useStore((s) => s.session)!;
   const location = useStore((s) => s.location);
@@ -56,17 +65,26 @@ export function ChatPanel() {
     el.addEventListener('focusin', typingOn);
     el.addEventListener('focusout', typingOff);
     const gate = (e: Event) => {
-      const ai = useStore.getState().ai;
-      if (!ai || (!ai.asleep && !ai.limited)) return;
       if (e instanceof KeyboardEvent && (e.key !== 'Enter' || e.shiftKey)) return;
       const area = el.querySelector('textarea');
       if (!area || !area.value) return;
       if (e instanceof MouseEvent && (e.target as HTMLElement)?.closest('textarea')) return;
-      const muted = muteCharacterNames(area.value);
-      if (muted === area.value) return;
-      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(area, muted);
+      const s = useStore.getState();
+      let text = area.value;
+      const ai = s.ai;
+      if (ai && (ai.asleep || ai.limited)) {
+        text = muteCharacterNames(text);
+        if (text !== area.value) s.setToast(ai.asleep ? 'The characters are resting; only visitors will read this' : 'Your share of the characters is used up for today');
+      }
+      // A question to the trainer during a lesson carries the scoreboard with it: the agent does not see the room's
+      // own lines (ETHORA-GAPS #22), so the score travels inside the visitor's message, in brackets for all to read.
+      const lesson = s.lesson;
+      if (lesson?.active && !lesson.active.finished && text.toLowerCase().includes(lesson.trainer.toLowerCase()) && !text.includes('(Lesson:')) {
+        text += `\n(${scoreboard(lesson)})`;
+      }
+      if (text === area.value) return;
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(area, text);
       area.dispatchEvent(new Event('input', { bubbles: true }));
-      useStore.getState().setToast(ai.asleep ? 'The characters are resting; only visitors will read this' : 'Your share of the characters is used up for today');
     };
     el.addEventListener('keydown', gate, true);
     el.addEventListener('click', gate, true);

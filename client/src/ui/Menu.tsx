@@ -44,6 +44,7 @@ export function Menu() {
             <tr><td>T or Enter</td><td>talk; Esc leaves the message box, Esc again closes the chat</td></tr>
             <tr><td>E</td><td>pick up an instrument you stand next to, or put it down</td></tr>
             <tr><td>1 to 8</td><td>play chords (or drum hits) on the instrument you carry; the chat gets the phrase, and the characters may join in</td></tr>
+            <tr><td>L</td><td>in a practice room: the lessons panel; "listen (mic)" on the chord bar hears your own instrument</td></tr>
             <tr><td>M</td><td>this menu</td></tr>
           </tbody>
         </table>

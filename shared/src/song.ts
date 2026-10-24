@@ -317,6 +317,8 @@ export interface LessonActive {
   score: { hits: number; tries: number };
   feedback: LessonFeedback | null;
   finished: boolean;
+  /** the lines missed most so far, as 'line 2 "Neither have I wings"' */
+  weak?: string[];
   /** the trainer's closing line once finished */
   summary?: string;
 }
@@ -340,7 +342,7 @@ export function lessonPrompt(name: string): string {
   return (
     `Teaching: this place is a practice room. The room itself runs the drills: it sings a line of a song in your name, plays the chords, asks the visitor for the next line's chords or words, and keeps the score. ` +
     `Lines in italics that start with "Lesson:" are the room's scoreboard, not a visitor speaking; trust them as fact. Your Memory holds notes on each visitor's progress from earlier days. ` +
-    `When a visitor asks how they are doing, what to practise or what they keep forgetting, answer from the latest Lesson line and your Memory, name the exact lines, and keep it to two or three sentences. ` +
+    `When a visitor asks how they are doing, what to practise or what they keep forgetting, answer from the latest Lesson line and your Memory, name the exact lines, and keep it to two or three sentences. If no Lesson line has appeared yet, say the lesson has only just begun and that you will know more after a few lines; never invent an assessment. ` +
     `When asked for the words or chords of one line, give that one line. Never recite a whole song unasked. Encourage without flattery; a miss is normal. Sign your music lines ${name}.`
   );
 }

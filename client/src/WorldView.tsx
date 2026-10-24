@@ -4,6 +4,7 @@ import { useStore } from './store.ts';
 import { dropItem, joinLocation, takeItem } from './net/colyseus.ts';
 import { selectHolding } from './store.ts';
 import { ChordBar } from './ui/ChordBar.tsx';
+import { LessonPanel } from './ui/LessonPanel.tsx';
 import { loadSession } from './session.ts';
 import { Menu } from './ui/Menu.tsx';
 import { Scene } from './scene/Scene.tsx';
@@ -42,6 +43,8 @@ export function WorldView() {
         else if (s.nearItem) takeItem(s.nearItem);
         return;
       }
+      // L: the practice room's lessons
+      if (e.code === 'KeyL' && !e.repeat && s.lesson) { e.preventDefault(); s.setLessonOpen(!s.lessonOpen); if (!s.lessonOpen) document.exitPointerLock?.(); return; }
       if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
     };
     window.addEventListener('keydown', onKey);
@@ -54,6 +57,7 @@ export function WorldView() {
       <Scene room={room} enterFrom={enterFrom} />
       <Hud room={room} />
       <ChordBar />
+      <LessonPanel />
       <ChatPanel />
       <Music />
       <SoundFx room={room} />

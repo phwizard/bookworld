@@ -203,7 +203,8 @@ export class Lesson {
     }
     this.feedback = { ok, expected: step.task === 'chords' ? progression(line.chords).join(' ') : line.lyric, given };
     this.io.save(this.progress);
-    if (this.roundNo % 5 === 0) this.io.narrate(this.scoreLine());
+    // the scoreboard goes into the chat after a miss (what the trainer needs to know) and every fifth round
+    if (!ok || this.roundNo % 5 === 0) this.io.narrate(this.scoreLine());
     this.push();
     this.timer = this.schedule(() => this.next(), ok ? AFTER_HIT_MS : AFTER_MISS_MS);
   }
@@ -262,7 +263,8 @@ export class Lesson {
     const round = this.current ? this.round(this.current) : null;
     return {
       song: songCard(this.song, this.progress), mode: this.mode, round, score: { hits: this.hits, tries: this.tries },
-      feedback: this.feedback, finished: this.done, ...(this.summary ? { summary: this.summary } : {}),
+      feedback: this.feedback, finished: this.done, weak: this.weakLines().map((w) => `line ${w.index + 1} "${w.text}"`),
+      ...(this.summary ? { summary: this.summary } : {}),
     };
   }
 

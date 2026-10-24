@@ -4,7 +4,7 @@ import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
   type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
-  type TakeMessage, type PlayMessage, type PlayedMessage,
+  type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
@@ -124,6 +124,7 @@ function wire(room: Room<LocationStateView>) {
     playTokens(msg.instrument, msg.tokens, { at: pose ? [pose.x, pose.y + 1.2, pose.z] : undefined, step: 0.12 });
     useStore.getState().setBubble(msg.name, `♪ ${msg.tokens.join(' ')}`);
   });
+  room.onMessage<LessonStateMessage>(MSG.lessonState, (msg) => useStore.getState().setLesson(msg));
   room.onMessage<DeniedMessage>(MSG.denied, (msg) => useStore.getState().setToast(msg.reason));
   room.onMessage<AiMessage>(MSG.ai, (msg) => {
     const before = useStore.getState().ai;
@@ -234,6 +235,11 @@ export function takeItem(id: string) {
 
 export function dropItem() {
   current?.send(MSG.drop, {});
+}
+
+/** A lesson command for the practice room: start a song, answer with words, hint, skip, stop. */
+export function sendLesson(cmd: LessonCommand) {
+  current?.send(MSG.lesson, cmd);
 }
 
 /** Chords or hits just played on the carried instrument (already heard locally). */
