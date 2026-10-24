@@ -4,7 +4,7 @@
 import { appendFile, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-export type MetricEventKind = 'enter' | 'join' | 'leave' | 'message';
+export type MetricEventKind = 'enter' | 'join' | 'leave' | 'message' | 'item' | 'music';
 
 export interface MetricEvent {
   /** ISO timestamp, filled in by record() */
@@ -24,6 +24,12 @@ export interface MetricEvent {
   moving?: boolean;
   /** on `message`: how many characters the message named */
   mentions?: number;
+  /** on `item`: which one, and whether it was picked up (true) or put down (false) */
+  item?: string;
+  take?: boolean;
+  /** on `music`: the instrument and how many chords the phrase had */
+  instrument?: string;
+  tokens?: number;
 }
 
 const target = process.env.METRICS_FILE ?? join(process.cwd(), 'data', 'events.jsonl');

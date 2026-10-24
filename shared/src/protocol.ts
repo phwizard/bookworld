@@ -1,5 +1,6 @@
 // Wire protocol between the 3D client and the world service (Colyseus), plus the HTTP enter flow.
 import type { Direction, World } from './world.js';
+import type { Instrument } from './music.js';
 
 export const COLYSEUS_ROOM_NAME = 'location';
 
@@ -117,11 +118,23 @@ export interface CharacterView {
   anim: string;
 }
 
+export interface ItemView {
+  id: string;
+  instrument: Instrument;
+  name: string;
+  x: number;
+  y: number;
+  z: number;
+  /** session id of the player carrying it, empty while it lies in the room */
+  heldBy: string;
+}
+
 export interface LocationStateView {
   world: string;
   location: string;
   players: Map<string, PlayerView>;
   characters: Map<string, CharacterView>;
+  items: Map<string, ItemView>;
 }
 
 export const MSG = {
@@ -139,6 +152,14 @@ export const MSG = {
   ai: 'ai',
   /** client -> server: idle state; `gone` announces a leave caused by inactivity */
   away: 'away',
+  /** client -> server: pick up the item `id` (must lie within reach) */
+  take: 'take',
+  /** client -> server: put the carried item down where the player stands */
+  drop: 'drop',
+  /** client -> server: chords or drum hits played on the carried instrument, in order */
+  play: 'play',
+  /** server -> the others in the room: what a player just played (the player heard it locally already) */
+  played: 'played',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -148,6 +169,9 @@ export interface DeniedMessage { reason: string }
 export interface SaidMessage { characters: string[] }
 export type AiMessage = AiState;
 export interface AwayMessage { away: boolean; gone?: boolean }
+export interface TakeMessage { id: string }
+export interface PlayMessage { tokens: string[] }
+export interface PlayedMessage { sessionId: string; name: string; instrument: Instrument; tokens: string[] }
 
 /**
  * Narration lines (joins, leaves) are posted by the world service through the app's broadcast sender.

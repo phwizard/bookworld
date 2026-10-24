@@ -3,8 +3,9 @@
 import { Room, type Client } from '@colyseus/core';
 import { schema, t, type SchemaType } from '@colyseus/schema';
 import {
-  MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp,
+  MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp, musicLine, validToken,
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
+  type TakeMessage, type PlayMessage, type PlayedMessage,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -13,7 +14,7 @@ import { budgetFor, ethoraFor, simFor } from '../services.ts';
 import type { AiBudget } from '../budget.ts';
 import { record } from '../metrics.ts';
 import * as presence from '../presence.ts';
-import type { CharState, WorldSim } from '../world/sim.ts';
+import type { CharState, ItemState, WorldSim } from '../world/sim.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -38,11 +39,24 @@ export const Character = schema({
 }, 'Character');
 export type Character = SchemaType<typeof Character>;
 
+export const Item = schema({
+  id: t.string(),
+  instrument: t.string(),
+  name: t.string(),
+  x: t.number(),
+  y: t.number(),
+  z: t.number(),
+  /** session id of the carrier in this room, '' on the floor */
+  heldBy: t.string(),
+}, 'Item');
+export type Item = SchemaType<typeof Item>;
+
 export const LocationState = schema({
   world: t.string(),
   location: t.string(),
   players: t.map(Player),
   characters: t.map(Character),
+  items: t.map(Item),
 }, 'LocationState');
 export type LocationState = SchemaType<typeof LocationState>;
 
@@ -53,7 +67,16 @@ interface UserData {
   gone: boolean;
   /** the open reconnection window of a dropped seat, so a newer seat of the same player can close it */
   reconnection?: { reject: Function } | null;
+  /** chords played since the last line went into the chat */
+  phrase: string[];
+  phraseTimer: NodeJS.Timeout | null;
 }
+
+/** how far (metres) a player may stand from an item to pick it up */
+const REACH = 2.2;
+/** a phrase goes into the chat this long after the last chord, or when it reaches PHRASE_MAX tokens */
+const PHRASE_GAP_MS = 4000;
+const PHRASE_MAX = 24;
 
 /** close code for a seat a newer seat of the same player took over (a reload, a second tab) */
 const CLOSE_REPLACED = 4001;
@@ -74,6 +97,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   /** reconnection windows of dropped seats, by session id */
   private ghosts = new Map<string, { reject: Function }>();
   private unsubscribe: (() => void) | null = null;
+  private unsubscribeItems: (() => void) | null = null;
   private unsubscribeBudget: (() => void) | null = null;
 
   onCreate(options: CreateOptions) {
@@ -93,6 +117,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
     this.sim = simFor(options.world);
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
+    this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
     this.budget = budgetFor(options.world);
     this.unsubscribeBudget = this.budget.subscribe(() => {
       for (const c of this.clients) c.send(MSG.ai, this.budget.snapshot((c.userData as UserData | undefined)?.session.visitor) satisfies AiMessage);
@@ -132,7 +157,62 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       // Only the fact of a message and whether it named a character is kept; never the text.
       record({ ev: 'message', world: this.world.slug, pid: data.session.pid, location: this.room.id, mentions: named.length });
     });
+
+    // Instruments: pick up within reach, put down where you stand, play what you carry.
+    this.onMessage(MSG.take, (client, msg: TakeMessage) => {
+      const p = this.state.players.get(client.sessionId);
+      const data = client.userData as UserData | undefined;
+      const it = typeof msg?.id === 'string' ? this.sim.items.get(msg.id) : undefined;
+      if (!p || !data || !it) return;
+      if (it.location !== this.room.id || it.heldBy) return client.send(MSG.denied, { reason: 'that is not here any more' });
+      if (this.sim.carriedBy(data.session.pid)) return client.send(MSG.denied, { reason: 'your hands are full' });
+      if (Math.hypot(it.x - p.x, it.z - p.z) > REACH) return client.send(MSG.denied, { reason: 'too far away' });
+      if (this.sim.take(it.id, data.session.pid, this.room.id)) {
+        void tryEthora('narrate take', () => this.ethora.narrate(this.room.id, `${data.session.name} picks up ${it.name}`));
+        record({ ev: 'item', world: this.world.slug, pid: data.session.pid, location: this.room.id, item: it.id, take: true });
+      }
+    });
+    this.onMessage(MSG.drop, (client) => {
+      const p = this.state.players.get(client.sessionId);
+      const data = client.userData as UserData | undefined;
+      if (!p || !data) return;
+      this.flushPhrase(client);
+      const it = this.sim.drop(data.session.pid, this.room.id, p.x, p.z);
+      if (it) {
+        void tryEthora('narrate drop', () => this.ethora.narrate(this.room.id, `${data.session.name} puts down ${it.name}`));
+        record({ ev: 'item', world: this.world.slug, pid: data.session.pid, location: this.room.id, item: it.id, take: false });
+      }
+    });
+    this.onMessage(MSG.play, (client, msg: PlayMessage) => {
+      const p = this.state.players.get(client.sessionId);
+      const data = client.userData as UserData | undefined;
+      if (!p || !data || !Array.isArray(msg?.tokens)) return;
+      const it = this.sim.carriedBy(data.session.pid);
+      if (!it || it.location !== this.room.id) return;
+      const tokens = msg.tokens.filter((tk) => typeof tk === 'string' && tk.length <= 8 && validToken(it.instrument, tk)).slice(0, 8);
+      if (!tokens.length) return;
+      this.broadcast(MSG.played, { sessionId: client.sessionId, name: data.session.name, instrument: it.instrument, tokens } satisfies PlayedMessage, { except: client });
+      data.phrase.push(...tokens);
+      if (data.phraseTimer) clearTimeout(data.phraseTimer);
+      if (data.phrase.length >= PHRASE_MAX) this.flushPhrase(client);
+      else data.phraseTimer = setTimeout(() => this.flushPhrase(client), PHRASE_GAP_MS);
+    });
     console.log(`[room] created ${options.world}/${options.location}`);
+  }
+
+  /** The chords played so far go into the room's chat as one line, for the people reading and the characters. */
+  private flushPhrase(client: Client) {
+    const data = client.userData as UserData | undefined;
+    if (!data) return;
+    if (data.phraseTimer) clearTimeout(data.phraseTimer);
+    data.phraseTimer = null;
+    if (!data.phrase.length) return;
+    const it = this.sim.carriedBy(data.session.pid);
+    const tokens = data.phrase.splice(0);
+    if (!it) return;
+    presence.message(this.world.slug);
+    record({ ev: 'music', world: this.world.slug, pid: data.session.pid, location: this.room.id, instrument: it.instrument, tokens: tokens.length });
+    void tryEthora('post music', () => this.ethora.narrate(this.room.id, musicLine(data.session.name, it.instrument, tokens)));
   }
 
   onAuth(_client: Client, options: JoinOptions) {
@@ -143,7 +223,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   onJoin(client: Client, options: JoinOptions, auth: Session) {
     const session = auth ?? (client.auth as Session);
-    client.userData = { session, moving: false, gone: false } satisfies UserData;
+    client.userData = { session, moving: false, gone: false, phrase: [], phraseTimer: null } satisfies UserData;
     const enterFrom = options.enterFrom && DIRECTIONS.includes(options.enterFrom) ? options.enterFrom : undefined;
     const [w, , d] = roomSize(this.room);
     const at = options.at;
@@ -166,6 +246,9 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const p = new Player();
     p.id = session.pid; p.name = session.name; p.x = pose.x; p.y = pose.y; p.z = pose.z; p.ry = pose.rotY; p.anim = 'idle'; p.away = false;
     this.state.players.set(client.sessionId, p);
+    // whatever they carry arrives with them (and shows in their hands once the items sync runs)
+    this.sim.carry(session.pid, this.room.id);
+    this.syncItems(this.sim.itemsIn(this.room.id));
 
     record({ ev: 'join', world: this.world.slug, pid: session.pid, location: this.room.id, from: enterFrom ?? null, with: others });
     presence.joined(this.world.slug, client.sessionId, this.room.id);
@@ -200,9 +283,11 @@ export class LocationRoom extends Room<{ state: LocationState }> {
         // the window expired, or a newer seat of the same player closed it
       }
     }
+    const last = p ? { x: p.x, z: p.z } : null;
     this.state.players.delete(client.sessionId);
     presence.left(this.world.slug, client.sessionId);
     if (!data) return;
+    this.flushPhrase(client);
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     // The same person on another seat in this room (a reload, a second tab) keeps the chat membership and the narration quiet;
     // revoking here used to cut the chat of the live seat a minute after every reload.
@@ -211,13 +296,39 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       const line = data.gone ? `${data.session.name} has wandered off` : `${data.session.name} has left`;
       void tryEthora('narrate leave', () => this.ethora.narrate(this.room.id, line));
       void tryEthora('revoke on leave', () => this.ethora.revoke(this.room.id, data.session.uid));
+      // an instrument does not leave the world with its player: it stays where they stood (a door takes it along)
+      const dropped = this.sim.drop(data.session.pid, this.room.id, last?.x ?? 0, last?.z ?? 0);
+      if (dropped) void tryEthora('narrate drop', () => this.ethora.narrate(this.room.id, `${data.session.name} left ${dropped.name} behind`));
+    } else {
+      // the seat is gone but the player is not: the item sync must stop pointing at this session
+      this.syncItems(this.sim.itemsIn(this.room.id));
     }
     console.log(`[room ${this.room.id}] - ${data.session.name}${data.gone ? ' (wandered off)' : code === CLOSE_REPLACED ? ' (replaced)' : stillHere ? ' (still here on another seat)' : consented ? '' : ' (connection lost)'}`);
   }
 
   onDispose() {
     this.unsubscribe?.();
+    this.unsubscribeItems?.();
     this.unsubscribeBudget?.();
+  }
+
+  /** Mirrors the sim's items of this location; carried ones are tagged with the carrier's seat in this room. */
+  private syncItems(items: ItemState[]) {
+    const seen = new Set<string>();
+    for (const it of items) {
+      seen.add(it.id);
+      let s = this.state.items.get(it.id);
+      if (!s) {
+        s = new Item();
+        s.id = it.id; s.instrument = it.instrument; s.name = it.name;
+        this.state.items.set(it.id, s);
+      }
+      let heldBy = '';
+      if (it.heldBy) for (const [sid, p] of this.state.players.entries()) if (p.id === it.heldBy) heldBy = sid;
+      s.heldBy = heldBy;
+      s.x = it.x; s.y = it.y; s.z = it.z;
+    }
+    for (const id of [...this.state.items.keys()]) if (!seen.has(id)) this.state.items.delete(id);
   }
 
   private syncCharacters(chars: CharState[]) {

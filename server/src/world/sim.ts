@@ -3,8 +3,8 @@
 // Location rooms subscribe to it and mirror the characters in their location into Colyseus state.
 import { Cron } from 'croner';
 import {
-  DIRECTIONS, DIRECTION_LABEL, OPPOSITE, characterLine, characterPose, roomById, roomSize, clamp,
-  type Anim, type World, type WorldCharacter, type WorldRoom, type WorldScript,
+  DIRECTIONS, DIRECTION_LABEL, OPPOSITE, characterLine, characterPose, itemPose, roomById, roomSize, clamp,
+  type Anim, type Instrument, type World, type WorldCharacter, type WorldRoom, type WorldScript,
 } from '@bookworld/shared';
 import type { LoadedWorld } from './load.ts';
 import { tryEthora, type EthoraWorldService } from '../ethora.ts';
@@ -28,14 +28,33 @@ export interface CharState {
   holdUntil: number;
 }
 
+/** An instrument: lying somewhere in a room, or carried by a player (then it follows them from room to room). */
+export interface ItemState {
+  id: string;
+  instrument: Instrument;
+  name: string;
+  location: string;
+  x: number;
+  y: number;
+  z: number;
+  /** player id (stable across rooms) of the carrier, null while it lies on the floor */
+  heldBy: string | null;
+}
+
 type Listener = (chars: CharState[]) => void;
+type ItemListener = (items: ItemState[]) => void;
+
+/** item label when the world file gives none; reads well after "picks up" */
+const DEFAULT_ITEM_NAME: Record<Instrument, string> = { guitar: "a guitar", bass: "a bass guitar", drums: "a drum", piano: "a piano" };
 
 const TICK_MS = 100;
 const WALK_SPEED = 0.9;
 
 export class WorldSim {
   readonly chars = new Map<string, CharState>();
+  readonly items = new Map<string, ItemState>();
   private listeners = new Map<string, Set<Listener>>();
+  private itemListeners = new Map<string, Set<ItemListener>>();
   private lastScriptRun = new Map<string, number>();
   private crons: Cron[] = [];
   private timer: NodeJS.Timeout | null = null;
@@ -55,7 +74,76 @@ export class WorldSim {
         nextDecisionAt: Date.now() + 2000 + Math.random() * 5000, holdUntil: 0,
       });
     }
+    const itemsPerRoom = new Map<string, number>();
+    for (const it of this.world.items ?? []) {
+      const room = roomById(this.world, it.room)!;
+      const i = itemsPerRoom.get(it.room) ?? 0;
+      itemsPerRoom.set(it.room, i + 1);
+      const pose = itemPose(room, it, i);
+      this.items.set(it.id, { id: it.id, instrument: it.instrument, name: it.name ?? DEFAULT_ITEM_NAME[it.instrument], location: it.room, x: pose.x, y: pose.y, z: pose.z, heldBy: null });
+    }
   }
+
+  // ---- items -------------------------------------------------------------------------------------------------
+
+  subscribeItems(location: string, cb: ItemListener): () => void {
+    let set = this.itemListeners.get(location);
+    if (!set) this.itemListeners.set(location, (set = new Set()));
+    set.add(cb);
+    cb(this.itemsIn(location));
+    return () => { set!.delete(cb); };
+  }
+
+  itemsIn(location: string): ItemState[] {
+    return [...this.items.values()].filter((it) => it.location === location);
+  }
+
+  /** The instrument a player carries, if any. */
+  carriedBy(pid: string): ItemState | null {
+    return [...this.items.values()].find((it) => it.heldBy === pid) ?? null;
+  }
+
+  /** A player arrived in a room: whatever they carry comes along. */
+  carry(pid: string, location: string) {
+    const it = this.carriedBy(pid);
+    if (!it || it.location === location) return;
+    const from = it.location;
+    it.location = location;
+    this.notifyItems(from);
+    this.notifyItems(location);
+  }
+
+  /** Picks the item up; false when it is not here, already carried, or the player has their hands full. */
+  take(id: string, pid: string, location: string): boolean {
+    const it = this.items.get(id);
+    if (!it || it.location !== location || it.heldBy || this.carriedBy(pid)) return false;
+    it.heldBy = pid;
+    this.notifyItems(location);
+    return true;
+  }
+
+  /** Puts the carried item down at the spot given (room-local metres); returns it, or null if nothing was carried. */
+  drop(pid: string, location: string, x: number, z: number): ItemState | null {
+    const it = this.carriedBy(pid);
+    if (!it) return null;
+    const room = roomById(this.world, location);
+    const [w, , d] = room ? roomSize(room) : [12, 4, 12];
+    const from = it.location;
+    it.heldBy = null; it.location = location;
+    it.x = clamp(x, -w / 2 + 0.6, w / 2 - 0.6); it.y = 0; it.z = clamp(z, -d / 2 + 0.6, d / 2 - 0.6);
+    if (from !== location) this.notifyItems(from);
+    this.notifyItems(location);
+    return it;
+  }
+
+  private notifyItems(location: string) {
+    const set = this.itemListeners.get(location);
+    if (!set) return;
+    const items = this.itemsIn(location);
+    for (const cb of set) cb(items);
+  }
+
+  // ---- characters --------------------------------------------------------------------------------------------
 
   start() {
     if (this.timer) return;

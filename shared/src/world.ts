@@ -1,5 +1,6 @@
 // World file types and helpers shared by the server, the clients and the generator.
 // Schema reference: docs/WORLD-FILE.md
+import { INSTRUMENTS, type WorldItem } from './music.js';
 
 export type Direction = 'n' | 'e' | 's' | 'w';
 export const DIRECTIONS: Direction[] = ['n', 'e', 's', 'w'];
@@ -144,6 +145,8 @@ export interface World {
   rooms: WorldRoom[];
   characters: WorldCharacter[];
   scripts?: WorldScript[];
+  /** things visitors can pick up and carry (instruments), see shared/src/music.ts */
+  items?: WorldItem[];
 }
 
 export const DEFAULT_ROOM_SIZE: [number, number, number] = [12, 4, 12];
@@ -210,6 +213,16 @@ export function validateWorld(input: unknown): string[] {
   for (const sc of w.scripts ?? []) {
     if (!byId.has(sc.room)) errors.push(`script ${sc.id}: room ${sc.room} is not a room id`);
     for (const l of sc.lines ?? []) if (!charIds.has(l.who)) errors.push(`script ${sc.id}: unknown character ${l.who}`);
+  }
+  const itemIds = new Set<string>();
+  for (const it of w.items ?? []) {
+    if (!it.id || !SLUG.test(it.id)) errors.push(`item id ${JSON.stringify(it.id)} must be a slug`);
+    if (itemIds.has(it.id)) errors.push(`duplicate item id ${it.id}`);
+    itemIds.add(it.id);
+    if (it.kind !== 'instrument') errors.push(`item ${it.id}: kind must be "instrument"`);
+    if (!INSTRUMENTS.includes(it.instrument)) errors.push(`item ${it.id}: unknown instrument ${JSON.stringify(it.instrument)}`);
+    if (!byId.has(it.room)) errors.push(`item ${it.id}: room ${it.room} is not a room id`);
+    if (it.pos && (!Array.isArray(it.pos) || it.pos.length !== 3)) errors.push(`item ${it.id}: pos must be [x,y,z]`);
   }
   const grid = layoutGrid(w as World);
   const seen = new Map<string, string>();
@@ -285,6 +298,13 @@ export function entryPose(room: WorldRoom, enterFrom: Direction, inset = 1.8, si
 
 export function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
+}
+
+/** Where an item lies in its room when the world file gives no spot: by the south-west corner, one per metre eastwards. */
+export function itemPose(room: WorldRoom, item: WorldItem, index = 0): { x: number; y: number; z: number } {
+  if (item.pos) return { x: item.pos[0], y: item.pos[1], z: item.pos[2] };
+  const [w, , d] = roomSize(room);
+  return { x: clamp(-w / 2 + 2 + index * 1.2, -w / 2 + 1, w / 2 - 1), y: 0, z: d / 2 - 2 };
 }
 
 /** Default standing spot for a character in its home room: by the north wall, a little to the left. */
