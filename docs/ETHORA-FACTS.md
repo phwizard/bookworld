@@ -30,3 +30,5 @@ Related: Claude Code skill `dappros/chat-ethora-skill` (adds the chat component 
 
 ## Legacy, do not use
 `models/room.js` with `ownerNavLinks`/`userNavLinks` (N/E/S/W), `/v1/rooms`, `RoomFactory` contract, `scripts/linkRooms.js` ("Agora (Start here)"). Web3-era prototype of the same idea; unused by current clients.
+
+- Calls (26.10.4, seen in the bundle 25 Oct 2026): the chat component has voice and video calls built on LiveKit. Signalling goes over XMPP as messages whose body is `call-invite`, `call-token`, `call-state`, `call-ringing`, `call-ended`, `call-declined`, `call-cancelled`, `call-timeout`, `call-rejected` (the component filters them out of the message list, ids `calllog-*` for the log entries); the client receives a `livekitToken` (also `callToken`) and `livekitUrl` with a `callKind` of audio or video and mounts `VideoCallOverlay`. No call config keys in `IConfig`; the MCP docs say calls and media live in the clients only (gap 24).
