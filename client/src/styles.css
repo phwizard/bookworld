@@ -98,3 +98,15 @@ button, input { font: inherit; }
 .menu .keys td { padding: 3px 10px 3px 0; vertical-align: top; }
 .menu .keys td:first-child { white-space: nowrap; opacity: .8; }
 .menu .muted { margin: 0; font-size: 13px; opacity: .75; line-height: 1.4; }
+
+/* the chord bar, shown while an instrument is carried */
+.chordbar { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); display: grid; gap: 6px; justify-items: center; pointer-events: none; z-index: 5; }
+.chordbar .keys { display: flex; gap: 6px; pointer-events: auto; }
+.chordbar .keys button { display: grid; justify-items: center; gap: 2px; min-width: 52px; padding: 6px 8px; border-radius: 8px; border: 1px solid #c9a961; background: rgba(40, 28, 14, .8); color: #f3e6c4; font: 14px Georgia, serif; cursor: pointer; transition: background .08s, transform .08s; }
+.chordbar .keys button .num { font-size: 11px; opacity: .6; }
+.chordbar .keys button.lit, .chordbar .keys button:active { background: #c9a961; color: #1a140f; transform: translateY(1px); }
+.chordbar .who { font-size: 12px; opacity: .75; text-shadow: 0 1px 3px #000; pointer-events: auto; }
+.chordbar .who .link { background: none; border: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; padding: 0; }
+.item-label { font: 13px system-ui, sans-serif; color: #ffd98a; text-shadow: 0 1px 2px #000; white-space: nowrap; pointer-events: none; transform: translate(-50%, -100%); opacity: .8; }
+.item-label.near { color: #fff; opacity: 1; font-weight: bold; }
+@media (max-width: 700px) { .chordbar .keys button { min-width: 36px; padding: 5px 4px; font-size: 12px; } }

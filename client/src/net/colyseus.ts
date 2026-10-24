@@ -3,11 +3,13 @@
 import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
-  type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type LocationStateView,
+  type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
+  type TakeMessage, type PlayMessage, type PlayedMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
 import { clearSession, updateSession } from '../session.ts';
+import { playTokens } from '../audio/instruments.ts';
 
 const client = new Client(SERVER_URL);
 let current: Room<LocationStateView> | null = null;
@@ -98,8 +100,29 @@ function wire(room: Room<LocationStateView>) {
     publishCharacters();
   });
 
+  const items: Record<string, ItemView> = {};
+  const publishItems = () => useStore.getState().setItems({ ...items });
+  $(room.state).items.onAdd((it, id) => {
+    items[id] = { id: it.id, instrument: it.instrument as ItemView['instrument'], name: it.name, x: it.x, y: it.y, z: it.z, heldBy: it.heldBy };
+    publishItems();
+    $(it).onChange(() => {
+      items[id] = { ...items[id]!, x: it.x, y: it.y, z: it.z, heldBy: it.heldBy };
+      publishItems();
+    });
+  });
+  $(room.state).items.onRemove((_it, id) => {
+    delete items[id];
+    publishItems();
+  });
+
   room.onMessage<MovedMessage>(MSG.moved, (msg) => {
     void joinLocation(msg.to, msg.enterFrom);
+  });
+  // Someone else played: hear it from where they stand, and see it over their head.
+  room.onMessage<PlayedMessage>(MSG.played, (msg) => {
+    const pose = poses.get(msg.sessionId);
+    playTokens(msg.instrument, msg.tokens, { at: pose ? [pose.x, pose.y + 1.2, pose.z] : undefined, step: 0.12 });
+    useStore.getState().setBubble(msg.name, `♪ ${msg.tokens.join(' ')}`);
   });
   room.onMessage<DeniedMessage>(MSG.denied, (msg) => useStore.getState().setToast(msg.reason));
   room.onMessage<AiMessage>(MSG.ai, (msg) => {
@@ -203,6 +226,19 @@ export function sendPos(msg: PosMessage) {
 /** The player sent a chat message; `characterIds` are the characters named in it (they turn to face the player). */
 export function reportSaid(characterIds: string[]) {
   current?.send(MSG.said, { characters: characterIds } satisfies SaidMessage);
+}
+
+export function takeItem(id: string) {
+  current?.send(MSG.take, { id } satisfies TakeMessage);
+}
+
+export function dropItem() {
+  current?.send(MSG.drop, {});
+}
+
+/** Chords or hits just played on the carried instrument (already heard locally). */
+export function sendPlayed(tokens: string[]) {
+  current?.send(MSG.play, { tokens } satisfies PlayMessage);
 }
 
 let moveLock = 0;

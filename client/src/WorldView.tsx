@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { roomById } from '@bookworld/shared';
 import { useStore } from './store.ts';
-import { joinLocation } from './net/colyseus.ts';
+import { dropItem, joinLocation, takeItem } from './net/colyseus.ts';
+import { selectHolding } from './store.ts';
+import { ChordBar } from './ui/ChordBar.tsx';
 import { loadSession } from './session.ts';
 import { Menu } from './ui/Menu.tsx';
 import { Scene } from './scene/Scene.tsx';
@@ -33,6 +35,13 @@ export function WorldView() {
       if (e.code === 'Escape' && s.menuOpen) { s.setMenuOpen(false); return; }
       if (typing) return;
       if (e.code === 'KeyM') { e.preventDefault(); s.setMenuOpen(!s.menuOpen); if (!s.menuOpen) document.exitPointerLock?.(); return; }
+      // E: pick up what is within reach, or put down what you carry
+      if (e.code === 'KeyE' && !e.repeat) {
+        e.preventDefault();
+        if (selectHolding(s)) dropItem();
+        else if (s.nearItem) takeItem(s.nearItem);
+        return;
+      }
       if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
     };
     window.addEventListener('keydown', onKey);
@@ -44,6 +53,7 @@ export function WorldView() {
     <div className="world">
       <Scene room={room} enterFrom={enterFrom} />
       <Hud room={room} />
+      <ChordBar />
       <ChatPanel />
       <Music />
       <SoundFx room={room} />

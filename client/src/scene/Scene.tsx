@@ -12,6 +12,7 @@ import { BoxRoom } from './BoxRoom.tsx';
 import { PlayerController, type Controls } from './PlayerController.tsx';
 import { CharacterAvatar, RemotePlayer } from './Avatar.tsx';
 import { Props } from './Props.tsx';
+import { Items } from './Items.tsx';
 
 const keyboardMap: { name: Controls; keys: string[] }[] = [
   { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
@@ -60,6 +61,7 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
             <group key={room.id}>
               <BoxRoom world={world} room={room} />
               <Props room={room} />
+              <Items />
               <PlayerController room={room} enterFrom={enterFrom} at={at} />
             </group>
             {/* inside Physics: other people and characters have bodies you cannot walk through */}
@@ -85,11 +87,13 @@ function ListenerSync() {
 function Others() {
   const players = useStore((s) => s.players);
   const me = useStore((s) => s.mySessionId);
+  const items = useStore((s) => s.items);
+  const holding = (sid: string) => Object.values(items).find((it) => it.heldBy === sid)?.instrument ?? null;
   return (
     <>
       {Object.entries(players)
         .filter(([sid]) => sid !== me)
-        .map(([sid, p]) => <RemotePlayer key={sid} sessionId={sid} name={p.name} away={p.away} />)}
+        .map(([sid, p]) => <RemotePlayer key={sid} sessionId={sid} name={p.name} away={p.away} holding={holding(sid)} />)}
     </>
   );
 }

@@ -18,6 +18,9 @@ const FLOAT = 0.2;
 const EYE_ABOVE_CENTER = 0.6;
 const DOOR_MARGIN = 0.25;
 
+/** Where this player stands, updated every frame (read by the items for the pick-up prompt; never React state). */
+export const myPose = { x: 0, y: 0, z: 0, ry: 0 };
+
 export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; enterFrom: Direction | null; at?: { x: number; z: number; ry: number } | null }) {
   const ecctrl = useRef<EcctrlHandle>(null);
   const camera = useThree((s) => s.camera);
@@ -51,6 +54,7 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
 
     const p = h.currPos;
     camera.position.set(p.x, p.y + EYE_ABOVE_CENTER, p.z);
+    myPose.x = p.x; myPose.y = p.y - (CAPSULE_HALF + CAPSULE_RADIUS + FLOAT); myPose.z = p.z; myPose.ry = euler.current.y;
     if (import.meta.env.DEV) (window as unknown as { __bw: unknown }).__bw = { x: p.x, y: p.y, z: p.z, ry: euler.current.y, keys, moving: h.isMoving, speed: h.moveSpeed, ground: h.isOnGround };
     euler.current.setFromQuaternion(camera.quaternion, 'YXZ');
     const moving = h.isMoving && h.moveSpeed > 0.3;

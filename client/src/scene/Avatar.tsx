@@ -7,7 +7,8 @@ import * as THREE from 'three';
 import { poses, useStore } from '../store.ts';
 import { CharacterModel, avatarFile } from './CharacterModel.tsx';
 import { Stepper, surfaceFor } from '../audio/footsteps.ts';
-import { roomById, type Anim } from '@bookworld/shared';
+import { roomById, type Anim, type Instrument } from '@bookworld/shared';
+import { InstrumentInHand } from './Items.tsx';
 
 const BUBBLE_MS = 8000;
 
@@ -101,7 +102,7 @@ function useCurrentSurface() {
 }
 
 /** Another player; follows the server pose with a short lerp and plays the animation the server reports. */
-export function RemotePlayer({ sessionId, name, away = false }: { sessionId: string; name: string; away?: boolean }) {
+export function RemotePlayer({ sessionId, name, away = false, holding = null }: { sessionId: string; name: string; away?: boolean; holding?: Instrument | null }) {
   const group = useRef<THREE.Group>(null);
   const body = useRef<RapierRigidBody>(null);
   const initial = poses.get(sessionId);
@@ -132,6 +133,7 @@ export function RemotePlayer({ sessionId, name, away = false }: { sessionId: str
           <CharacterModel file={avatarFile(null, name)} anim={anim} />
           <AvatarLabels name={name} away={away} />
         </Suspense>
+        {holding && <InstrumentInHand instrument={holding} />}
       </group>
     </>
   );

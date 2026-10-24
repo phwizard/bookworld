@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AiState, Direction, EnterResponse, PlayerView, CharacterView } from '@bookworld/shared';
+import type { AiState, Direction, EnterResponse, PlayerView, CharacterView, ItemView } from '@bookworld/shared';
 
 export interface RemotePose { x: number; y: number; z: number; ry: number; anim: string }
 
@@ -14,6 +14,12 @@ interface State {
   players: Record<string, PlayerView>;
   mySessionId: string | null;
   characters: Record<string, CharacterView>;
+  /** instruments in this room, on the floor or in someone's hands */
+  items: Record<string, ItemView>;
+  setItems(items: Record<string, ItemView>): void;
+  /** the item within reach of the player right now (the E prompt), set from the render loop */
+  nearItem: string | null;
+  setNearItem(id: string | null): void;
   chatOpen: boolean;
   pointerLocked: boolean;
   toast: string | null;
@@ -59,6 +65,10 @@ export const useStore = create<State>((set) => ({
   players: {},
   mySessionId: null,
   characters: {},
+  items: {},
+  setItems: (items) => set({ items }),
+  nearItem: null,
+  setNearItem: (nearItem) => set((s) => (s.nearItem === nearItem ? s : { nearItem })),
   chatOpen: false,
   pointerLocked: false,
   toast: null,
@@ -78,7 +88,7 @@ export const useStore = create<State>((set) => ({
   chatTyping: false,
   setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, resume: enterFrom ? null : s.resume })),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),
@@ -89,5 +99,12 @@ export const useStore = create<State>((set) => ({
   setToast: (toast) => set({ toast }),
   setBubble: (name, text) => set((s) => ({ bubbles: { ...s.bubbles, [name]: { text, at: Date.now() } } })),
 }));
+
+/** The instrument this player carries, if any. */
+export function selectHolding(s: State): ItemView | null {
+  if (!s.mySessionId) return null;
+  for (const it of Object.values(s.items)) if (it.heldBy === s.mySessionId) return it;
+  return null;
+}
 
 if (import.meta.env.DEV) (window as unknown as { __store: unknown }).__store = useStore;

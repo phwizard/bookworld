@@ -2,10 +2,11 @@
 // and narration lines ("Alice has joined (E)") render as quiet system lines instead of chat bubbles.
 import { useEffect, useRef } from 'react';
 import type { CustomScrollableAreaProps, IMessage } from '@ethora/chat-component';
-import { isNarration, narrationText, parseCharacterLine } from '@bookworld/shared';
-import { useStore } from '../store.ts';
+import { isNarration, narrationText, parseCharacterLine, parseMusicLine } from '@bookworld/shared';
+import { poses, useStore } from '../store.ts';
 import { playSound } from '../audio/engine.ts';
 import { speak } from '../audio/voice.ts';
+import { playTokens } from '../audio/instruments.ts';
 
 const BUBBLE_MAX_AGE_MS = 15000;
 const seen = new Set<string>();
@@ -53,11 +54,24 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
         }
         continue;
       }
+      // A player's phrase comes back from the server as narration (everyone heard it live); a character's or a
+      // visitor's own music line in a normal message is played here, from where they stand.
       if (isNarration(m.body)) continue;
       if (now - messageTime(m) > BUBBLE_MAX_AGE_MS) { if (import.meta.env.DEV) console.log('[bubbles] too old', now - messageTime(m), m.body.slice(0, 30)); continue; }
       const who = speakerName(m);
       if (import.meta.env.DEV) console.log('[bubbles] candidate', { who, me, age: now - messageTime(m), body: m.body.slice(0, 40) });
       if (!who || who === me) continue;
+      const music = parseMusicLine(m.body);
+      if (music) {
+        const player = music.who ?? who;
+        const character = Object.values(useStore.getState().characters).find((c) => c.name === player || c.name === who);
+        const pose = character ? poses.get(`c:${character.id}`) : null;
+        playTokens(music.instrument, music.tokens, { at: pose ? [pose.x, pose.y + 1.2, pose.z] : undefined });
+        useStore.getState().setBubble(who, `♪ ${music.tokens.join(' ')}`);
+        const words = m.body.split(/\r?\n/).filter((l) => !l.includes('♪')).join(' ').trim();
+        if (words && isCharacter(who)) speak(who, words);
+        continue;
+      }
       useStore.getState().setBubble(who, m.body);
       playSound('message', { volume: 0.3 });
       if (isCharacter(who)) speak(who, m.body);

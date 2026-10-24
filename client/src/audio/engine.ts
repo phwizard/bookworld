@@ -7,10 +7,12 @@ import { assetUrl } from '../assets.ts';
 let ctx: AudioContext | null = null;
 let effectsBus: GainNode | null = null;
 let ambienceBus: GainNode | null = null;
+let instrumentBus: GainNode | null = null;
 const buffers = new Map<string, Promise<AudioBuffer>>();
 
 const EFFECTS_LEVEL = 0.8;
 const AMBIENCE_LEVEL = 0.7;
+const INSTRUMENT_LEVEL = 0.9;
 
 export function audioContext(): AudioContext {
   if (ctx) return ctx;
@@ -19,6 +21,13 @@ export function audioContext(): AudioContext {
   effectsBus.connect(ctx.destination);
   ambienceBus = ctx.createGain();
   ambienceBus.connect(ctx.destination);
+  // the instruments people play: a compressor keeps a drummer and two guitars from clipping
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -12; limiter.ratio.value = 6; limiter.attack.value = 0.003; limiter.release.value = 0.2;
+  limiter.connect(ctx.destination);
+  instrumentBus = ctx.createGain();
+  instrumentBus.gain.value = INSTRUMENT_LEVEL;
+  instrumentBus.connect(limiter);
   applyEffectsSwitch(useStore.getState().sfxOn, true);
   const unlock = () => {
     if (ctx && ctx.state === 'suspended') void ctx.resume();
@@ -40,6 +49,28 @@ export function audioReady(): boolean {
 export function ambienceOut(): GainNode {
   audioContext();
   return ambienceBus!;
+}
+
+/** The bus the instruments play into (not on the effects switch: a jam is music). */
+export function instrumentsOut(): GainNode {
+  audioContext();
+  return instrumentBus!;
+}
+
+/** A positional node for a sound that comes from somewhere in the room, wired into `out`. */
+export function pannerAt(at: [number, number, number], out: AudioNode): PannerNode {
+  const c = audioContext();
+  const panner = c.createPanner();
+  panner.panningModel = 'HRTF';
+  panner.distanceModel = 'inverse';
+  panner.refDistance = 2;
+  panner.rolloffFactor = 0.8;
+  panner.maxDistance = 60;
+  setParam(panner.positionX, at[0], c);
+  setParam(panner.positionY, at[1], c);
+  setParam(panner.positionZ, at[2], c);
+  panner.connect(out);
+  return panner;
 }
 
 /** Effects and ambience follow one switch (F); music has its own (N). */
