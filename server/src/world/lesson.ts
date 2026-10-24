@@ -62,7 +62,7 @@ export interface LessonIO {
 interface Step { line: number; task: LessonTask }
 
 /** after a chord the player gets this long to add the next one before the answer is judged */
-const CHORD_SETTLE_MS = 2500;
+const CHORD_SETTLE_MS = 6000;
 /** how long a verdict stays on screen before the next round */
 const AFTER_HIT_MS = 1800;
 const AFTER_MISS_MS = 4200;
@@ -151,18 +151,20 @@ export class Lesson {
 
   /** Chords the player struck on the carried instrument. Judged when the line's count is reached, or after a pause. */
   onChords(tokens: string[]) {
-    if (!this.current || this.current.task !== 'chords' || this.done) return;
+    // while the verdict is on screen the next round is on its timer; chords played then are not an answer
+    if (!this.current || this.current.task !== 'chords' || this.done || this.feedback) return;
     this.buffer.push(...tokens);
     const line = this.lines[this.current.line]!;
     const expected = progression(line.chords).length;
     this.clearTimer();
     if (progression(this.buffer).length >= expected) return this.judge(sameChords(line.chords, this.buffer), progression(this.buffer).join(' '));
     this.timer = this.schedule(() => { if (this.buffer.length) this.judge(sameChords(line.chords, this.buffer), progression(this.buffer).join(' ')); }, CHORD_SETTLE_MS);
+    this.push();
   }
 
   /** The words the player typed into the panel. */
   onAnswer(text: string) {
-    if (!this.current || this.current.task !== 'words' || this.done) return;
+    if (!this.current || this.current.task !== 'words' || this.done || this.feedback) return;
     const line = this.lines[this.current.line]!;
     this.judge(lyricSimilarity(line.lyric, text) >= LYRIC_PASS, text.trim());
   }
@@ -276,7 +278,7 @@ export class Lesson {
       cue: cue ? { lyric: cue.lyric, chords: cue.chords } : null,
       task: step.task, count: progression(line.chords).length,
     };
-    if (step.task === 'chords') r.lyric = line.lyric;
+    if (step.task === 'chords') { r.lyric = line.lyric; r.played = progression(this.buffer); }
     if (this.hint) r.hint = this.hint;
     return r;
   }

@@ -3,7 +3,6 @@
 // phrases (a line from the chat) on a beat, placed in the room where the player stands.
 import { DRUM_KEYS, noteHz, parseChord, type Instrument } from '@bookworld/shared';
 import { audioContext, instrumentsOut, pannerAt } from './engine.ts';
-import { useStore } from '../store.ts';
 
 /** seconds per token in a phrase */
 export const CHORD_STEP = 0.6;
@@ -165,11 +164,11 @@ export interface PlayOpts {
 const recent: string[] = [];
 if (import.meta.env.DEV) (window as unknown as { __music: unknown }).__music = recent;
 
-/** Plays the tokens in order on the beat. Silent while the music switch (N) is off or audio is not unlocked yet. */
+/** Plays the tokens in order on the beat. The instruments do not follow the music switch (N): a chord you strike always sounds. Silent only until a click or key press has unlocked audio. */
 export function playTokens(instrument: Instrument, tokens: string[], opts: PlayOpts = {}): number {
   const c = audioContext();
   if (import.meta.env.DEV) { recent.push(`${instrument}:${tokens.join(' ')}`); if (recent.length > 30) recent.shift(); }
-  if (!useStore.getState().musicOn || c.state !== 'running') return 0;
+  if (c.state !== 'running') { void c.resume().catch(() => undefined); return 0; }
   const step = opts.step ?? (instrument === 'drums' ? DRUM_STEP : CHORD_STEP);
   const out: AudioNode = opts.at ? pannerAt(opts.at, instrumentsOut()) : instrumentsOut();
   const t0 = c.currentTime + 0.02;

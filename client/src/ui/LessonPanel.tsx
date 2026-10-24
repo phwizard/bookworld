@@ -90,6 +90,12 @@ export function LessonPanel() {
           {active.round.task === 'chords' ? (
             <div className="task">
               Now the chords for <q>{active.round.lyric || 'the instrumental line'}</q>: {active.round.count} {active.round.count === 1 ? 'chord' : 'changes'}.
+              {!active.feedback && (
+                <div className="played">
+                  {active.round.played?.length ? <>So far: <span className="chords">{active.round.played.join(' ')}</span></> : 'Play them on your instrument'}
+                  <span className="muted"> · judged after {active.round.count} {active.round.count === 1 ? 'chord' : 'changes'}, or a few seconds after your last one</span>
+                </div>
+              )}
               {chordInstrument ? null : <div className="warn">Pick up the guitar or the piano (E) first.</div>}
             </div>
           ) : (
@@ -108,6 +114,7 @@ export function LessonPanel() {
           {active.feedback && (
             <div className={active.feedback.ok ? 'verdict ok' : 'verdict miss'}>
               {active.feedback.ok ? <>Right: <q>{active.feedback.expected}</q></> : <>It goes <q>{active.feedback.expected}</q>. You: <q>{active.feedback.given || '(nothing)'}</q></>}
+              <div className="muted">Next line in a moment...</div>
             </div>
           )}
           <div className="actions">

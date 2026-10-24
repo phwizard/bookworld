@@ -31,7 +31,7 @@ export function Menu() {
           <button onClick={() => void leaveWorld()}>Leave to the list of worlds</button>
         </div>
         <div className="toggles">
-          <label><input type="checkbox" checked={musicOn} onChange={(e) => setMusicOn(e.target.checked)} /> Music (N)</label>
+          <label><input type="checkbox" checked={musicOn} onChange={(e) => setMusicOn(e.target.checked)} /> Background music (N); instruments always sound</label>
           <label><input type="checkbox" checked={sfxOn} onChange={(e) => setSfxOn(e.target.checked)} /> Sound effects (F)</label>
           <label><input type="checkbox" checked={voiceOn} onChange={(e) => setVoiceOn(e.target.checked)} /> Characters speak aloud (V)</label>
         </div>

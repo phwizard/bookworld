@@ -87,6 +87,23 @@ test('a miss resets the box, brings the line back soon, and shows the right answ
   assert.equal(h.last().round?.lyric, lines[1]!.lyric);
 });
 
+test('chords played while the verdict shows do not stall the next round', () => {
+  const h = harness();
+  const lesson = new Lesson(song, 'chords', 'Taras', progressFor(song), h.io);
+  lesson.start();
+  lesson.onChords(['C']);
+  assert.deepEqual(h.last().round?.played, ['C']);
+  h.fire(); // the pause: judged as a miss
+  assert.equal(h.last().feedback?.ok, false);
+  assert.equal(h.timers.length, 1, 'the next round is on its timer');
+  lesson.onChords(['G', 'C', 'G', 'D']); // played too early: ignored
+  assert.equal(h.timers.length, 1);
+  assert.equal(h.last().feedback?.ok, false);
+  h.fire();
+  assert.equal(h.last().round?.n, 2);
+  assert.deepEqual(h.last().round?.played, []);
+});
+
 test('a short wrong answer is judged after the pause', () => {
   const h = harness();
   const lesson = new Lesson(song, 'chords', 'Taras', progressFor(song), h.io);

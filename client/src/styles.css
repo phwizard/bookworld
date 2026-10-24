@@ -136,6 +136,8 @@ button, input { font: inherit; }
 .lesson .task { line-height: 1.45; }
 .lesson .task form { display: flex; gap: 6px; margin-top: 6px; }
 .lesson .task input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #5a4630; background: rgba(0, 0, 0, .35); color: #f3e6c4; font: 14px Georgia, serif; }
+.lesson .played { margin-top: 4px; font-size: 13px; }
+.lesson .played .muted { display: inline; }
 .lesson .warn { color: #ffb0a0; font-size: 13px; margin-top: 4px; }
 .lesson .hint { color: #9fd0f0; font-size: 13px; }
 .lesson .verdict { padding: 6px 10px; border-radius: 6px; font-size: 14px; line-height: 1.45; }

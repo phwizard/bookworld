@@ -297,8 +297,9 @@ export interface LessonRound {
   task: LessonTask;
   /** chords round: the words of the line whose chords are asked for */
   lyric?: string;
-  /** chords round: how many chord changes the line has */
+  /** chords round: how many chord changes the line has, and the changes played so far this round */
   count: number;
+  played?: string[];
   /** after the player asked for one */
   hint?: string;
 }
