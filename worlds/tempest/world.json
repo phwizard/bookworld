@@ -1614,5 +1614,35 @@
         }
       ]
     }
+  ],
+  "items": [
+    {
+      "id": "sands-guitar",
+      "kind": "instrument",
+      "instrument": "guitar",
+      "name": "Ariel's guitar",
+      "room": "sands"
+    },
+    {
+      "id": "cell-piano",
+      "kind": "instrument",
+      "instrument": "piano",
+      "name": "Prospero's piano",
+      "room": "cell"
+    },
+    {
+      "id": "rock-drums",
+      "kind": "instrument",
+      "instrument": "drums",
+      "name": "Caliban's drum",
+      "room": "rock"
+    },
+    {
+      "id": "grove-bass",
+      "kind": "instrument",
+      "instrument": "bass",
+      "name": "a bass guitar",
+      "room": "grove"
+    }
   ]
 }

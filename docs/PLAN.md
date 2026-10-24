@@ -40,3 +40,5 @@ Generator (text -> world.json -> provisioning), panorama rooms, music, two world
 2D/mobile client on the same world file; claiming and building (fields reserved); voice; self-hosted Ethora Core guide.
 
 Added 21 Oct 2026 (owner's request): two more worlds, `dracula` (Stoker, Gutenberg 345, seven rooms in Transylvania, Dracula, Jonathan, Mina, Van Helsing) and `king-arthur` (Howard Pyle, Gutenberg 60184, seven rooms, Arthur, Merlin, Guinevere, Gawaine), generated with the CLI backend and provisioned by hand over the MCP. Chat waits on their App Secrets (gap 8).
+
+Added 24 Oct 2026 (owner's request): items and music. Instruments in the world file (`items`), pick up with E, a chord bar (keys 1 to 8) with browser-synthesised guitar, bass, drums and piano heard by the room, the phrase posted into the chat as "♪ Name (guitar): C G Am F", and the agents taught the notation so a character asked to join answers with chords the clients play. Five worlds carry instruments. Next ideas: more chords per instrument (a second row), a simple beat loop for the drums, and a character that plays on its own schedule.

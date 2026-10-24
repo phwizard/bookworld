@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-10-18T05:55:24.628Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 6,
+    "characters": 3,
+    "notes": null
+  },
+  "source": {
+    "title": "Alice's Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "text": "gutenberg:11",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "CHAPTER I. Down the Rabbit-Hole",
+      "chars": 11551
+    },
+    {
+      "index": 2,
+      "title": "CHAPTER II. The Pool of Tears",
+      "chars": 10953
+    },
+    {
+      "index": 3,
+      "title": "CHAPTER III. A Caucus-Race and a Long Tale",
+      "chars": 9261
+    },
+    {
+      "index": 4,
+      "title": "CHAPTER IV. The Rabbit Sends in a Little Bill",
+      "chars": 13884
+    },
+    {
+      "index": 5,
+      "title": "CHAPTER V. Advice from a Caterpillar",
+      "chars": 12011
+    },
+    {
+      "index": 6,
+      "title": "CHAPTER VI. Pig and Pepper",
+      "chars": 13844
+    },
+    {
+      "index": 7,
+      "title": "CHAPTER VII. A Mad Tea-Party",
+      "chars": 12703
+    },
+    {
+      "index": 8,
+      "title": "CHAPTER VIII. The Queen’s Croquet-Ground",
+      "chars": 13670
+    },
+    {
+      "index": 9,
+      "title": "CHAPTER IX. The Mock Turtle’s Story",
+      "chars": 12631
+    },
+    {
+      "index": 10,
+      "title": "CHAPTER X. The Lobster Quadrille",
+      "chars": 11411
+    },
+    {
+      "index": 11,
+      "title": "CHAPTER XI. Who Stole the Tarts?",
+      "chars": 10387
+    },
+    {
+      "index": 12,
+      "title": "CHAPTER XII. Alice’s Evidence",
+      "chars": 11654
+    }
+  ],
+  "warnings": []
+}

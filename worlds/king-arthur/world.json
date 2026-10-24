@@ -1440,5 +1440,35 @@
         }
       ]
     }
+  ],
+  "items": [
+    {
+      "id": "hall-piano",
+      "kind": "instrument",
+      "instrument": "piano",
+      "name": "the minstrel's piano",
+      "room": "great-hall"
+    },
+    {
+      "id": "field-drums",
+      "kind": "instrument",
+      "instrument": "drums",
+      "name": "the tournament drum",
+      "room": "tournament-field"
+    },
+    {
+      "id": "garden-guitar",
+      "kind": "instrument",
+      "instrument": "guitar",
+      "name": "Guinevere's guitar",
+      "room": "cameliard-garden"
+    },
+    {
+      "id": "forest-bass",
+      "kind": "instrument",
+      "instrument": "bass",
+      "name": "a bass guitar",
+      "room": "forest-of-adventure"
+    }
   ]
 }

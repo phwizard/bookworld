@@ -1,0 +1,1292 @@
+{
+  "schema": "bookworld/0",
+  "slug": "alice-gen",
+  "title": "Alice's Adventures in Wonderland",
+  "source": {
+    "title": "Alice's Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "text": "gutenberg:11",
+    "license": "public-domain"
+  },
+  "start": "rabbit-hole",
+  "rooms": [
+    {
+      "id": "rabbit-hole",
+      "name": "The Rabbit-Hole",
+      "description": "You land with a thump on a heap of sticks and dry leaves at the bottom of a very deep well. It is all dark overhead, and the earthen sides are filled with cupboards and book-shelves, with maps and pictures hung upon pegs; a jar labelled ORANGE MARMALADE stands empty on a shelf. Somewhere ahead a white rabbit mutters about his ears and whiskers. A long, low passage leads east.",
+      "exits": {
+        "n": null,
+        "e": "long-hall",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4,
+          10
+        ],
+        "palette": {
+          "wall": "#5a3f2b",
+          "floor": "#3e2f1f",
+          "ceiling": "#1a130d",
+          "trim": "#7a5a3a"
+        },
+        "props": [
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "rotY": 0,
+            "scale": 1.4,
+            "flat": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -4.6,
+              0,
+              -2
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -2,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              3,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "table",
+            "pos": [
+              -2.5,
+              0,
+              2.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "honey",
+            "pos": [
+              -2.5,
+              0.76,
+              2.5
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2,
+              0.76,
+              2.2
+            ],
+            "rotY": 0.4,
+            "onTop": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              3.8,
+              0,
+              3.8
+            ],
+            "rotY": 0.3
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.2,
+              0,
+              -4.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.3,
+              0,
+              -4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4.3,
+              0,
+              4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.5,
+              0,
+              2.8
+            ],
+            "rotY": 0,
+            "scale": 0.8
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -1,
+              0,
+              4.2
+            ],
+            "rotY": 1,
+            "scale": 0.6
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "long-hall",
+      "name": "The Long Hall",
+      "description": "A long, low hall lit by a row of lamps hanging from the roof. There are doors all round it, but they are all locked, and in the middle stands a little three-legged table made of solid glass, with a tiny golden key and a bottle labelled DRINK ME upon it. The air is hot and the floor is damp, as if someone has been crying gallons of tears. The rabbit-hole lies west, a thick wood is east, and behind a low curtain to the south a little door opens on the loveliest garden you ever saw.",
+      "exits": {
+        "n": null,
+        "e": "mushroom-wood",
+        "s": "croquet-ground",
+        "w": "rabbit-hole"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "box",
+        "size": [
+          16,
+          4,
+          8
+        ],
+        "palette": {
+          "wall": "#d9c9a8",
+          "floor": "#111111",
+          "ceiling": "#4a3a2a",
+          "trim": "#8b6b3a"
+        },
+        "props": [
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -6,
+              0,
+              -3.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -2,
+              0,
+              -3.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              2,
+              0,
+              -3.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              6,
+              0,
+              -3.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "door",
+            "pos": [
+              -4,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "door",
+            "pos": [
+              4,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "door",
+            "pos": [
+              -5,
+              0,
+              3.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "door",
+            "pos": [
+              5,
+              0,
+              3.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "door-open",
+            "pos": [
+              2.5,
+              0,
+              3.6
+            ],
+            "rotY": 0,
+            "scale": 0.4
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              0,
+              0,
+              -1.8
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              0,
+              0.53,
+              -1.8
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              0.45,
+              0.53,
+              -1.6
+            ],
+            "rotY": 0,
+            "scale": 0.7,
+            "onTop": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3,
+              0,
+              2.6
+            ],
+            "rotY": 0,
+            "scale": 0.6
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              7.3,
+              0,
+              -3.3
+            ],
+            "rotY": 0
+          }
+        ],
+        "spawn": [
+          -5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "mushroom-wood",
+      "name": "The Mushroom Wood",
+      "description": "A thick wood where the grass and the trees tower over you, for you are only three inches high. A large mushroom grows here about the same height as yourself, and on top of it sits a large blue caterpillar with its arms folded, quietly smoking a long hookah and taking not the smallest notice of anything. One side of the mushroom will make you grow taller and the other side shorter. The long hall lies west; the way east leads towards a house with chimneys shaped like ears.",
+      "exits": {
+        "n": null,
+        "e": "tea-party",
+        "s": null,
+        "w": "long-hall"
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          5,
+          14
+        ],
+        "palette": {
+          "wall": "#2f5a2a",
+          "floor": "#4f7a3a",
+          "ceiling": "#1f3a1a",
+          "trim": "#6b4a2a"
+        },
+        "props": [
+          {
+            "id": "mushroom",
+            "pos": [
+              1,
+              0,
+              -3.5
+            ],
+            "rotY": 0,
+            "scale": 2.6
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -4,
+              0,
+              3.5
+            ],
+            "rotY": 0.8,
+            "scale": 1.4
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              4.5,
+              0,
+              4
+            ],
+            "rotY": 2.1,
+            "scale": 1.2
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -3.5,
+              0,
+              -4.5
+            ],
+            "rotY": 1.3,
+            "scale": 1.6
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              4.5,
+              0,
+              -2
+            ],
+            "rotY": 0,
+            "scale": 0.9
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ],
+            "rotY": 0,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ],
+            "rotY": 0.5,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              6
+            ],
+            "rotY": 1,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6
+            ],
+            "rotY": 2,
+            "scale": 1.6
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -2,
+              0,
+              5.5
+            ],
+            "rotY": 0,
+            "scale": 1.5
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              2.5,
+              0,
+              -5.5
+            ],
+            "rotY": 0,
+            "scale": 1.5
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              0,
+              0,
+              5.8
+            ],
+            "rotY": 0,
+            "scale": 1.4
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -1.5,
+              0,
+              3.2
+            ],
+            "rotY": 0
+          }
+        ],
+        "spawn": [
+          -4,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "tea-party",
+      "name": "The Mad Tea-Party",
+      "description": "A table is set out under a tree in front of the March Hare's house, laid for a great many more than three. The Hatter and the March Hare are having tea at one corner, using a sleeping Dormouse as a cushion, and the Hatter's watch tells the day of the month but not what o'clock it is. It is always six o'clock here, so it is always tea-time, and nobody has time to wash the things between whiles. The wood with the great mushroom lies west.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": null,
+        "w": "mushroom-wood"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          5,
+          18
+        ],
+        "palette": {
+          "wall": "#9fc27a",
+          "floor": "#5f8a3a",
+          "ceiling": "#bfe0ff",
+          "trim": "#7a5a3a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              2,
+              0,
+              0
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "teapot",
+            "pos": [
+              2,
+              0.76,
+              0
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              1.5,
+              0.76,
+              -0.4
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              2.6,
+              0.76,
+              0.3
+            ],
+            "rotY": 0.5,
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              1.4,
+              0.76,
+              0.5
+            ],
+            "rotY": 1,
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2.7,
+              0.76,
+              -0.4
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.2,
+              0.76,
+              0.6
+            ],
+            "rotY": 0.3,
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              1.3,
+              0.76,
+              0
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              2.5,
+              0.76,
+              -0.1
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              1.7,
+              0.76,
+              -0.6
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2,
+              0,
+              -1.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1,
+              0,
+              -1.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              2,
+              0,
+              1.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              3.6,
+              0,
+              0
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              -5
+            ],
+            "rotY": 0,
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -4,
+              0,
+              -6
+            ],
+            "rotY": 0.7,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              5.5
+            ],
+            "rotY": 1.4,
+            "scale": 1.6
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -4,
+              0,
+              5
+            ],
+            "rotY": 0,
+            "scale": 1.3
+          }
+        ],
+        "spawn": [
+          -5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "croquet-ground",
+      "name": "The Queen's Croquet-Ground",
+      "description": "The beautiful garden at last, with bright flower-beds and cool fountains. Near the entrance stands a large rose-tree whose white roses three gardeners are hastily painting red before the Queen comes. The croquet-ground itself is all ridges and furrows, the balls are live hedgehogs, the mallets live flamingoes, and the soldiers double themselves up to make the arches. The little door back into the long hall is north; the court of justice is south.",
+      "exits": {
+        "n": "long-hall",
+        "e": null,
+        "s": "court",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          5,
+          18
+        ],
+        "palette": {
+          "wall": "#9fc27a",
+          "floor": "#5f8a3a",
+          "ceiling": "#bfe0ff",
+          "trim": "#a0102a"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -3.5,
+              0,
+              -6
+            ],
+            "rotY": 0,
+            "scale": 1.8
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5,
+              0,
+              -5
+            ],
+            "rotY": 0.4
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.5,
+              0,
+              -6
+            ],
+            "rotY": 0,
+            "scale": 1.3
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.5,
+              0,
+              -6.5
+            ],
+            "rotY": 0.8,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.5,
+              0,
+              -6.5
+            ],
+            "rotY": 1.6,
+            "scale": 1.6
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -6.5,
+              0,
+              0
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              6.5,
+              0,
+              0
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.5,
+              0,
+              6.5
+            ],
+            "rotY": 2.4,
+            "scale": 1.6
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.5,
+              0,
+              6.5
+            ],
+            "rotY": 0.2,
+            "scale": 1.6
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -3,
+              0,
+              3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              3,
+              0,
+              -2.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              4,
+              0,
+              3.5
+            ],
+            "rotY": 0,
+            "scale": 0.7
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          -5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "court",
+      "name": "The Court of Justice",
+      "description": "The King and Queen of Hearts sit on their throne with a great crowd of little birds and beasts and the whole pack of cards about them. The Knave stands in chains, the White Rabbit holds a trumpet and a scroll of parchment, and twelve creatures in the jury-box write busily on squeaking slates. In the very middle of the court is a table with a large dish of tarts upon it, so good that they make you quite hungry. The croquet-ground is north.",
+      "exits": {
+        "n": "croquet-ground",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          6,
+          12
+        ],
+        "palette": {
+          "wall": "#e8dcc0",
+          "floor": "#111111",
+          "ceiling": "#8a1a2a",
+          "trim": "#c8a040"
+        },
+        "props": [
+          {
+            "id": "armchair",
+            "pos": [
+              -0.9,
+              0,
+              5.2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              0.9,
+              0,
+              5.2
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              3.6
+            ],
+            "rotY": 0,
+            "flat": true
+          },
+          {
+            "id": "table",
+            "pos": [
+              0,
+              0,
+              0.8
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "cake",
+            "pos": [
+              0,
+              0.76,
+              0.8
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              0.5,
+              0.76,
+              0.6
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              -0.5,
+              0.76,
+              1
+            ],
+            "rotY": 0,
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              6,
+              0,
+              -2.4
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              6,
+              0,
+              -0.8
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              6,
+              0,
+              0.8
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              6,
+              0,
+              2.4
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "desk",
+            "pos": [
+              -4,
+              0,
+              3.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "books",
+            "pos": [
+              -4,
+              0.76,
+              3.5
+            ],
+            "rotY": 0.3,
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -5.1,
+              0,
+              3.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -6.3,
+              0,
+              -1
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -6.4,
+              0,
+              5.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              6.4,
+              0,
+              5.4
+            ],
+            "rotY": 0
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          -3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "hatter",
+      "name": "Hatter",
+      "home": "tea-party",
+      "persona": "You are the Hatter from Alice's Adventures in Wonderland. You sit at a long tea-table set out under a tree in front of the March Hare's house, laid for a great many more than three. Beside you the March Hare and a Dormouse fast asleep between you, used as a cushion. Your watch tells the day of the month but not what o'clock it is, because you quarrelled with Time last March at the Queen of Hearts' concert, when you sang Twinkle, twinkle, little bat and the Queen bawled He is murdering the time, off with his head. Ever since it is always six o'clock, always tea-time, and you all move round one place when the cups are used up.\n\nYou talk in short, abrupt, confident nonsense. You make personal remarks (Your hair wants cutting). You ask riddles with no answers (Why is a raven like a writing-desk?) and freely admit you have not the slightest idea. You correct people's logic sharply: saying what you mean is not the same as meaning what you say. You offer tea and bread-and-butter, blame the March Hare for buttering the works of your watch, and pour tea on the Dormouse to wake it. You keep hats to sell and have none of your own. You fear the Queen of Hearts and the trial.\n\nYou know nothing outside Wonderland and the year of the book. Greet strangers with No room! No room! and then let them sit anyway. Call visitors by the name they give.\n\nRules: stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 25,
+      "knowledgeTags": [
+        "alice-ch7",
+        "alice-ch11"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 1,
+      "pos": [
+        4.5,
+        0,
+        -3
+      ],
+      "rotY": -2.45,
+      "schedule": [
+        {
+          "at": "10 */2 * * *",
+          "do": "move",
+          "to": "court"
+        },
+        {
+          "at": "30 */2 * * *",
+          "do": "move",
+          "to": "tea-party"
+        },
+        {
+          "at": "50 * * * *",
+          "do": "say",
+          "text": "I want a clean cup. Let's all move one place on."
+        }
+      ]
+    },
+    {
+      "id": "caterpillar",
+      "name": "Caterpillar",
+      "home": "mushroom-wood",
+      "persona": "You are the Caterpillar from Alice's Adventures in Wonderland, a large blue caterpillar exactly three inches high. You sit on top of a large mushroom in a thick wood with your arms folded, quietly smoking a long hookah and taking not the smallest notice of anyone until you choose to. The wood is full of tall grass and towering flowers; a long hall of locked doors lies to the west and the March Hare's house to the east.\n\nYou speak in a languid, sleepy voice and make very short remarks. Your favourite question is Who are you? and you ask it more than once. You contradict almost everything (It isn't. Not a bit. I don't know.) and demand Explain yourself! You consider three inches a very good height indeed and grow angry if anyone calls it wretched. You give one piece of important advice: Keep your temper. You like to have people repeat You are old, Father William and then declare it wrong from beginning to end. You know the secret of the mushroom: one side makes you grow taller and the other side shorter, and you tell it only when you are ready, usually as a parting remark.\n\nYou are not troubled by the thought of becoming a chrysalis or a butterfly. You know nothing of the world beyond Wonderland and the time of the book. Treat strangers with sleepy contempt that slowly softens into stern advice. Pause with puffs of the hookah.\n\nRules: stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 40,
+      "knowledgeTags": [
+        "alice-ch4",
+        "alice-ch5"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 0,
+      "pos": [
+        -1.5,
+        0,
+        -2
+      ],
+      "rotY": 2.6,
+      "schedule": [
+        {
+          "at": "20 * * * *",
+          "do": "say",
+          "text": "Who are you?"
+        }
+      ]
+    },
+    {
+      "id": "queen",
+      "name": "Queen",
+      "home": "croquet-ground",
+      "persona": "You are the Queen of Hearts from Alice's Adventures in Wonderland. You stand on your croquet-ground in the beautiful garden, among bright flower-beds, cool fountains and a rose-tree your gardeners have been painting red. Your soldiers are living playing cards, the balls are hedgehogs, the mallets are flamingoes, and the King, your timid husband, trails after you. Your court of justice lies to the south, where the Knave of Hearts is to be tried for stealing your tarts. You have only one way of settling all difficulties, great or small: Off with his head! or Off with her head! You shout it about once a minute.\n\nYou speak in a shrill, loud, furious voice, in short commands: Who is this? What's your name, child? Get to your places! Can you play croquet? Come on, then! You turn crimson with fury when contradicted, yet fall silent if someone says Nonsense! loudly and firmly. You accuse the Duchess of boxing your ears. You believe sentence should come first and verdict afterwards. You never execute anybody in fact, as the Gryphon says, but you must never admit that.\n\nYou know nothing outside Wonderland and the time of the book. Treat strangers as subjects who must bow, play croquet and lose. Call visitors by the name they give and threaten their heads often.\n\nRules: stay in character always. Never say you are an AI or a program. Reply in at most 80 words. Speak to visitors by the name they use. Use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "alice-ch8",
+        "alice-ch9",
+        "alice-ch11",
+        "alice-ch12"
+      ],
+      "avatar": "kaykit:Knight",
+      "wander": 1.5,
+      "pos": [
+        3,
+        0,
+        2
+      ],
+      "rotY": -0.9,
+      "schedule": [
+        {
+          "at": "0 */2 * * *",
+          "do": "move",
+          "to": "court"
+        },
+        {
+          "at": "40 */2 * * *",
+          "do": "move",
+          "to": "croquet-ground"
+        },
+        {
+          "at": "45 * * * *",
+          "do": "say",
+          "text": "Off with their heads!"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "hatter-welcome",
+      "room": "tea-party",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "hatter",
+          "text": "No room! No room!",
+          "waitMs": 0
+        },
+        {
+          "who": "hatter",
+          "text": "Oh, very well, {player}, sit down. Why is a raven like a writing-desk?",
+          "waitMs": 2500
+        },
+        {
+          "who": "hatter",
+          "text": "Have some tea. It is always six o'clock here, you know.",
+          "waitMs": 3000
+        }
+      ]
+    },
+    {
+      "id": "caterpillar-welcome",
+      "room": "mushroom-wood",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "caterpillar",
+          "text": "Who are you?",
+          "waitMs": 1500
+        },
+        {
+          "who": "caterpillar",
+          "text": "Explain yourself, {player}. And keep your temper.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "queen-welcome",
+      "room": "croquet-ground",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "queen",
+          "text": "Who is this? What's your name, child?",
+          "waitMs": 0
+        },
+        {
+          "who": "queen",
+          "text": "Can you play croquet, {player}? Come on, then! Get to your places!",
+          "waitMs": 3000
+        }
+      ]
+    }
+  ]
+}

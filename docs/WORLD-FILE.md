@@ -54,11 +54,17 @@
       "cooldownSec": 180,                                                           // minimum gap between runs
       "lines": [ { "who": "hatter", "text": "Why is a raven like a writing-desk, {player}?", "waitMs": 6000 } ], // {player} = the name of who walked in
       "onInterrupt": "improvise-then-resume" }
+  ],
+  "items": [                                                                        // optional: things visitors can pick up and carry
+    { "id": "sands-guitar", "kind": "instrument", "instrument": "guitar",           // instrument: guitar | bass | drums | piano
+      "name": "Ariel's guitar", "room": "sands", "pos": [-7, 0, 7] }                // name shows on the label and in the narration; pos is optional (default: by the south-west corner)
   ]
 }
 ```
 
 3D convention: a room is centred on the origin, floor at y = 0, north wall at z = -depth/2, east wall at x = +width/2. A doorway sits in the middle of each wall that has an exit; you arrive 1.8 m inside the door you came through, facing into the room. Helpers in `shared/src/world.ts` (`doorPose`, `entryPose`, `layoutGrid`, `validateWorld`).
+
+Instruments: a visitor who stands next to one presses E to pick it up (the world service checks the reach and that nobody else holds it), carries it through doors, and puts it down with E; a dropped connection leaves it where they stood. Keys 1 to 8 play chords (C, Dm, Em, F, G, Am, E7, G7) or drum hits (kick, snare, hat, ohat, tom1, tom2, crash, ride), synthesised in the browser and heard by everyone in the room from where the player stands. The run of chords goes into the chat a few seconds after the last one as a narrator line, `♪ Name (guitar): C G Am F`. A character (or a visitor typing by hand) answers with a line in the same form and every client in the room plays it; the provisioner adds the notation to each character's prompt (`musicPrompt` in `shared/src/music.ts`).
 
 Character lines from scripts and schedules are posted by the world service as `**Name:** text`; clients show them as the character speaking (a bubble over the avatar). Narration ("X has joined (E)") is posted as `_italic_`. A player who names a character in chat makes it turn to face them for 30 s.
 

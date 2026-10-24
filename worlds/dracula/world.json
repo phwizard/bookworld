@@ -1417,5 +1417,35 @@
         }
       ]
     }
+  ],
+  "items": [
+    {
+      "id": "inn-guitar",
+      "kind": "instrument",
+      "instrument": "guitar",
+      "name": "the innkeeper's guitar",
+      "room": "inn-bistritz"
+    },
+    {
+      "id": "library-piano",
+      "kind": "instrument",
+      "instrument": "piano",
+      "name": "the Count's piano",
+      "room": "castle-library"
+    },
+    {
+      "id": "courtyard-drums",
+      "kind": "instrument",
+      "instrument": "drums",
+      "name": "a Szekely drum",
+      "room": "castle-courtyard"
+    },
+    {
+      "id": "chapel-bass",
+      "kind": "instrument",
+      "instrument": "bass",
+      "name": "a bass guitar",
+      "room": "ruined-chapel"
+    }
   ]
 }

@@ -1172,5 +1172,21 @@
         }
       ]
     }
+  ],
+  "items": [
+    {
+      "id": "fezziwig-piano",
+      "kind": "instrument",
+      "instrument": "piano",
+      "name": "Fezziwig's piano",
+      "room": "fezziwig-warehouse"
+    },
+    {
+      "id": "fezziwig-guitar",
+      "kind": "instrument",
+      "instrument": "guitar",
+      "name": "the fiddler's guitar",
+      "room": "fezziwig-warehouse"
+    }
   ]
 }

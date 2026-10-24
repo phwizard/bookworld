@@ -96,14 +96,14 @@
             "pos": [
               -4.4,
               0,
-              1.0
+              1
             ],
             "rotY": 1.5708
           },
           {
             "id": "desk",
             "pos": [
-              3.0,
+              3,
               0,
               3.4
             ],
@@ -589,7 +589,7 @@
             "pos": [
               -0.97,
               0,
-              -1.0
+              -1
             ]
           },
           {
@@ -597,7 +597,7 @@
             "pos": [
               0.97,
               0,
-              -1.0
+              -1
             ]
           },
           {
@@ -673,7 +673,7 @@
             "pos": [
               2.9,
               0,
-              -1.0
+              -1
             ],
             "rotY": -1.5708
           },
@@ -682,7 +682,7 @@
             "pos": [
               0,
               0.76,
-              -1.0
+              -1
             ],
             "onTop": true
           },
@@ -691,7 +691,7 @@
             "pos": [
               -1.2,
               0.76,
-              -1.0
+              -1
             ],
             "onTop": true
           },
@@ -743,9 +743,9 @@
           {
             "id": "cupcake",
             "pos": [
-              1.0,
+              1,
               0.76,
-              -1.0
+              -1
             ],
             "onTop": true
           },
@@ -835,12 +835,12 @@
         }
       ],
       "pos": [
-        1.0,
+        1,
         0,
         -2.6
       ],
       "rotY": 3.1416,
-      "wander": 1.0
+      "wander": 1
     }
   ],
   "scripts": [
@@ -863,6 +863,22 @@
           "waitMs": 4000
         }
       ]
+    }
+  ],
+  "items": [
+    {
+      "id": "tea-party-piano",
+      "kind": "instrument",
+      "instrument": "piano",
+      "name": "the Hatter's piano",
+      "room": "tea-party"
+    },
+    {
+      "id": "garden-guitar",
+      "kind": "instrument",
+      "instrument": "guitar",
+      "name": "a guitar",
+      "room": "garden"
     }
   ]
 }
