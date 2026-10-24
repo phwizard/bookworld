@@ -12,8 +12,10 @@ worlds/*/secrets.json
 # per-world Ethora ids and tokens (filled by provisioning)
 worlds/*/ethora.json
 
-# usage event log (server/data/events.jsonl) stays local
+# usage event log (server/data/events.jsonl) and players' lesson progress (server/data/progress) stay local
 server/data/
+# song files whose words are in copyright stay on your machine (pnpm song -- --private)
+worlds/*/songs/private/
 
 # generator working files: the book text, the knowledge chunks and the model's raw draft are reproducible from world.json's source field
 worlds/*/source/

@@ -4,9 +4,9 @@
 //
 //   pnpm provision -- --world alice [--app <existing appId>] [--dry-run] [--skip-knowledge] [--smoke]
 // Needs ETHORA_API_KEY (a user API key for the hosted Ethora MCP) in .env; see docs/GENERATOR.md.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { musicPrompt, type World, type WorldCharacter } from '@bookworld/shared';
+import { lessonPrompt, musicPrompt, type World, type WorldCharacter } from '@bookworld/shared';
 import { bool, parseArgs, str } from './args.ts';
 import { DEFAULT_MCP_URL, EthoraMcp, dig } from './mcp.ts';
 import { repoRoot, worldDir } from './paths.ts';
@@ -69,6 +69,10 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
     }
   }
 
+  // A trainer (world.lessons) gets the song files as knowledge, so it can quote a line's chords or words when asked.
+  const songFiles = listSongs(opts.dir);
+  const isTrainer = (c: WorldCharacter) => Boolean(world.lessons?.some((l) => l.trainer === c.id));
+
   const plan: string[] = [];
   const need = (s: string) => plan.push(s);
   if (!ids.appId) need(`create app "Bookworld ${world.title}"`);
@@ -83,6 +87,10 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
       for (const t of missing.filter((t) => !knowledge.has(t))) log(`warning: knowledge file for ${t} not found, skipped`);
       const uploadable = missing.filter((t) => knowledge.has(t));
       if (!opts.skipKnowledge && uploadable.length) need(`upload ${uploadable.length} knowledge file(s) to "${c.name}": ${uploadable.join(', ')}`);
+    }
+    if (isTrainer(c)) {
+      const missing = [...songFiles.keys()].filter((t) => !a?.knowledge?.includes(t));
+      if (!opts.skipKnowledge && missing.length) need(`upload ${missing.length} song file(s) to "${c.name}": ${missing.join(', ')}`);
     }
     if (a?.visibility !== 'unlisted') need(`set "${c.name}" visibility to unlisted (so the world service can move it between rooms)`);
     if (!a?.invited) need(`invite "${c.name}" into "${c.home}"`);
@@ -131,7 +139,7 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
           prompt: agentPrompt(world, c, room.name, room.description),
           responseMode: c.responseMode === 'always' ? 'smart' : c.responseMode,
           cooldownSec: Math.max(20, c.cooldownSec),
-          isRAG: Boolean(c.knowledgeTags?.length),
+          isRAG: Boolean(c.knowledgeTags?.length) || (isTrainer(c) && songFiles.size > 0),
           categories: ['persona', 'entertainment'],
           visibility: 'private',
         });
@@ -165,6 +173,20 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
           a.knowledge = [...(a.knowledge ?? []), ...batch.map((f) => f.tag)];
           save();
           log(`knowledge for ${c.id}: ${batch.map((f) => f.tag).join(', ')}`);
+        }
+      }
+      if (!opts.skipKnowledge && isTrainer(c)) {
+        const files = [...songFiles.entries()].filter(([tag]) => !a!.knowledge?.includes(tag));
+        for (let i = 0; i < files.length; i += 5) {
+          const batch = files.slice(i, i + 5);
+          await mcp.call('ethora-source-doc-upload', {
+            appId: ids.appId,
+            agentId: a.agentId,
+            files: batch.map(([tag, path]) => ({ name: `${tag.replace(/^song:/, '')}.txt`, mimeType: 'text/plain', base64: readFileSync(path).toString('base64') })),
+          });
+          a.knowledge = [...(a.knowledge ?? []), ...batch.map(([tag]) => tag)];
+          save();
+          log(`songs for ${c.id}: ${batch.map(([tag]) => tag.replace(/^song:/, '')).join(', ')}`);
         }
       }
       if (a.visibility !== 'unlisted') {
@@ -203,6 +225,19 @@ export async function provisionWorld(opts: ProvisionOptions): Promise<EthoraIds>
   return ids;
 }
 
+/** "song:<id>" -> path for every song file of the world (songs/ and songs/private/). */
+function listSongs(dir: string): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const folder of [join(dir, 'songs'), join(dir, 'songs', 'private')]) {
+    if (!existsSync(folder)) continue;
+    for (const f of readdirSync(folder).sort()) {
+      if (!/\.(cho|chordpro|crd|txt)$/i.test(f)) continue;
+      out.set(`song:${f.replace(/\.[^.]+$/, '')}`, join(folder, f));
+    }
+  }
+  return out;
+}
+
 function summaryOf(c: WorldCharacter): string {
   const first = c.persona.split(/(?<=[.!?])\s+/)[0] ?? c.name;
   return first.length > 200 ? first.slice(0, 197) + '...' : first;
@@ -216,6 +251,7 @@ export function agentPrompt(world: World, c: WorldCharacter, roomName: string, r
     `Setting: you are in "${roomName}", a place in "${world.title}" by ${world.source.author}. ${roomDescription}`,
     'Visitors walk in and out of this place and talk to you and to each other; messages in italics are the narrator describing who comes and goes.',
     musicPrompt(c.name),
+    ...(world.lessons?.some((l) => l.trainer === c.id) ? [lessonPrompt(c.name)] : []),
     'Rules: stay in character at all times. Never say you are an AI, a bot or a program. Reply in at most 80 words. Address visitors by the name they use. Use plain hyphens, never long dashes. If asked about things outside the book, answer as the character would.',
   ].join('\n');
 }

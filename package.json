@@ -19,6 +19,7 @@
     "metrics": "pnpm --filter @bookworld/server run metrics",
     "test": "pnpm -r run test",
     "generate": "pnpm --filter @bookworld/generator run generate",
-    "provision": "pnpm --filter @bookworld/generator run provision"
+    "provision": "pnpm --filter @bookworld/generator run provision",
+    "song": "pnpm --filter @bookworld/generator song"
   }
 }
