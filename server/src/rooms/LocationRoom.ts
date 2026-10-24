@@ -6,7 +6,7 @@ import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp, musicLine, validToken,
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
-  characterLine, characterSeat, LESSON_MODES,
+  type ChatSeenMessage, characterLine, characterSeat, LESSON_MODES,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -14,10 +14,11 @@ import { tryEthora, type EthoraWorldService } from '../ethora.ts';
 import { budgetFor, ethoraFor, simFor } from '../services.ts';
 import type { AiBudget } from '../budget.ts';
 import { record } from '../metrics.ts';
+import { debug, debugOn, firstSighting } from '../debuglog.ts';
 import * as presence from '../presence.ts';
 import type { CharState, ItemState, WorldSim } from '../world/sim.ts';
-import { Lesson, songCard } from '../world/lesson.ts';
-import { progressOn, saveProgress, songById, songsFor } from '../world/songs.ts';
+import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
+import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -150,12 +151,14 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       p.away = Boolean(msg?.away);
       presence.setAway(this.world.slug, client.sessionId, p.away);
       if (msg?.gone) data.gone = true;
+      this.log('away', data, { away: p.away, gone: Boolean(msg?.gone) });
     });
     this.onMessage(MSG.said, (client, msg: SaidMessage) => {
       const p = this.state.players.get(client.sessionId);
       const data = client.userData as UserData | undefined;
       if (!p || !data || !Array.isArray(msg?.characters)) return;
       const named = msg.characters.filter((id) => typeof id === 'string' && this.state.characters.has(id)).slice(0, 8);
+      this.log('said', data, { mentions: named, text: typeof msg.text === 'string' ? msg.text.slice(0, 4000) : undefined });
       // Paid replies: count them against the daily budget; a sleeping or rationed character does not turn round.
       const verdict = this.budget.spend(data.session.visitor, named.length);
       if (named.length && !verdict.allowed) client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
@@ -178,6 +181,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       if (this.sim.take(it.id, data.session.pid, this.room.id)) {
         void tryEthora('narrate take', () => this.ethora.narrate(this.room.id, `${data.session.name} picks up ${it.name}`));
         record({ ev: 'item', world: this.world.slug, pid: data.session.pid, location: this.room.id, item: it.id, take: true });
+        this.log('take', data, { item: it.id });
       }
     });
     this.onMessage(MSG.drop, (client) => {
@@ -189,6 +193,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       if (it) {
         void tryEthora('narrate drop', () => this.ethora.narrate(this.room.id, `${data.session.name} puts down ${it.name}`));
         record({ ev: 'item', world: this.world.slug, pid: data.session.pid, location: this.room.id, item: it.id, take: false });
+        this.log('drop', data, { item: it.id });
       }
     });
     this.onMessage(MSG.play, (client, msg: PlayMessage) => {
@@ -200,6 +205,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       const tokens = msg.tokens.filter((tk) => typeof tk === 'string' && tk.length <= 8 && validToken(it.instrument, tk)).slice(0, 8);
       if (!tokens.length) return;
       this.broadcast(MSG.played, { sessionId: client.sessionId, name: data.session.name, instrument: it.instrument, tokens } satisfies PlayedMessage, { except: client });
+      this.log('play', data, { instrument: it.instrument, tokens });
       if (it.instrument !== 'drums') data.lesson?.onChords(tokens);
       data.phrase.push(...tokens);
       if (data.phraseTimer) clearTimeout(data.phraseTimer);
@@ -210,6 +216,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.onMessage(MSG.lesson, (client, msg: LessonCommand) => {
       const data = client.userData as UserData | undefined;
       if (!data || !this.lessonDef || !msg || typeof msg.do !== 'string') return;
+      this.log('lesson.cmd', data, { cmd: msg });
       switch (msg.do) {
         case 'start': {
           const song = typeof msg.song === 'string' ? songById(this.world.slug, msg.song) : undefined;
@@ -218,12 +225,35 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           break;
         }
         case 'answer': if (typeof msg.text === 'string') data.lesson?.onAnswer(msg.text.slice(0, 300)); break;
+        case 'heard': if (typeof msg.text === 'string') data.lesson?.onHeard(msg.text.slice(0, 600), Boolean(msg.final)); break;
         case 'hint': data.lesson?.askHint(); break;
         case 'skip': data.lesson?.skip(); break;
         case 'stop': data.lesson?.stop(); data.lesson = null; this.sendLesson(client, data, null); break;
+        case 'plan': {
+          const patch: { list?: string[]; goal?: string } = {};
+          if (Array.isArray(msg.list)) patch.list = msg.list.filter((x): x is string => typeof x === 'string' && Boolean(songById(this.world.slug, x)));
+          if (typeof msg.goal === 'string') patch.goal = msg.goal;
+          savePlan(this.world.slug, data.session.uid, patch);
+          this.sendLesson(client, data, data.lesson && !data.lesson.finished ? data.lesson.active() : null);
+          break;
+        }
       }
     });
+    // While the operator's debug log is on, the clients mirror the room's chat (humans and characters) into it:
+    // the service cannot read a room's history itself (ETHORA-GAPS #23). Each message is written once per room.
+    this.onMessage(MSG.chat, (client, msg: ChatSeenMessage) => {
+      const data = client.userData as UserData | undefined;
+      if (!debugOn || !data || !msg || typeof msg.id !== 'string' || typeof msg.text !== 'string') return;
+      if (!firstSighting(`${this.world.slug}/${this.room.id}`, msg.id.slice(0, 80))) return;
+      debug(this.world.slug, 'chat', { room: this.room.id, id: msg.id.slice(0, 80), from: String(msg.from ?? '').slice(0, 80), text: msg.text.slice(0, 4000), at: typeof msg.at === 'number' ? new Date(msg.at).toISOString() : undefined, seenBy: data.session.name });
+    });
     console.log(`[room] created ${options.world}/${options.location}`);
+  }
+
+  /** One line of the operator's debug log for something this player did (no-op unless DEBUG_LOG is on). */
+  private log(kind: string, data: UserData, fields: Record<string, unknown> = {}) {
+    if (!debugOn) return;
+    debug(this.world.slug, kind, { room: this.room.id, name: data.session.name, pid: data.session.pid, ...fields });
   }
 
   private trainer(): { id: string; name: string } | null {
@@ -232,12 +262,44 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     return c ? { id: c.id, name: c.name } : null;
   }
 
-  /** The shelf of songs with this player's progress, and the lesson under way. */
+  /** The shelf of songs with this player's progress, the lesson under way, and the plan the trainer keeps for them. */
   private sendLesson(client: Client, data: UserData, active: LessonActive | null) {
     const trainer = this.trainer();
     if (!trainer) return;
-    const songs = songsFor(this.world.slug, this.lessonDef?.songs).map((s) => songCard(s, progressOn(this.world.slug, data.session.uid, s)));
-    client.send(MSG.lessonState, { trainer: trainer.name, songs, active } satisfies LessonStateMessage);
+    const plan = loadPlan(this.world.slug, data.session.uid);
+    const songs = songsFor(this.world.slug, this.lessonDef?.songs).map((s) => songCard(s, progressOn(this.world.slug, data.session.uid, s), plan.list.includes(s.id)));
+    client.send(MSG.lessonState, { trainer: trainer.name, songs, active, plan } satisfies LessonStateMessage);
+  }
+
+  /**
+   * A returning player: the trainer picks up where they stopped (the last song and mode, the list, the goal) in a
+   * line of its own instead of the room's generic greeting. False when there is nothing to pick up.
+   */
+  private welcomeBack(data: UserData): boolean {
+    const trainer = this.trainer();
+    if (!trainer) return false;
+    const { slug } = this.world;
+    const uid = data.session.uid;
+    const plan = loadPlan(slug, uid);
+    const songs = songsFor(slug, this.lessonDef?.songs);
+    const last = plan.song ? songs.find((s) => s.id === plan.song) : undefined;
+    const listed = plan.list.map((id) => songs.find((s) => s.id === id)).filter((s): s is Song => Boolean(s) && s!.id !== last?.id);
+    if (!last && !listed.length && !plan.goal) return false;
+    const parts = [`Welcome back, ${data.session.name}.`];
+    if (last) {
+      const card = songCard(last, progressOn(slug, uid, last));
+      const whole = card.learned >= card.lines;
+      parts.push(`Last time${plan.last ? `, ${daysAgo(plan.last)},` : ''} we worked on "${last.title}" (${plan.mode ?? 'both'}); ${whole ? 'you have the whole song' : `${card.learned} of ${card.lines} lines are yours`}.`);
+      if (whole) parts.push('It is ready for the stage.');
+    }
+    if (listed.length) parts.push(`Still on your list: ${listed.map((s) => `"${s.title}"`).join(', ')}.`);
+    if (plan.goal) parts.push(`Your goal: ${plan.goal}.`);
+    parts.push(last && !lineCountDone(last, slug, uid) ? 'Pick up the guitar and press L; Continue takes us on from where we stopped.' : 'Pick up the guitar and press L to choose a song.');
+    this.log('welcome-back', data, { song: last?.id ?? null, listed: listed.map((s) => s.id), goal: plan.goal ?? null });
+    void tryEthora('welcome back', () => this.ethora.post(this.room.id, characterLine(trainer.name, parts.join(' '))));
+    return true;
+
+    function lineCountDone(song: Song, w: string, u: string): boolean { const c = songCard(song, progressOn(w, u, song)); return c.learned >= c.lines; }
   }
 
   private startLesson(client: Client, data: UserData, song: Song, mode: LessonMode) {
@@ -247,18 +309,23 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const instrument = this.lessonDef?.instrument ?? 'guitar';
     const { slug } = this.world;
     const uid = data.session.uid;
+    const plan = savePlan(slug, uid, { song: song.id, mode });
     const lesson = new Lesson(song, mode, data.session.name, progressOn(slug, uid, song), {
-      state: (active) => { if (data.lesson === lesson) this.sendLesson(client, data, active); },
+      state: (active) => {
+        if (data.lesson !== lesson) return;
+        this.sendLesson(client, data, active);
+        this.log('lesson.state', data, { song: song.id, round: active.round?.n ?? null, task: active.round?.task ?? null, played: active.round?.played, heard: active.round?.heard, feedback: active.feedback, score: active.score, finished: active.finished });
+      },
       sing: (text) => void tryEthora('trainer line', () => this.ethora.post(this.room.id, characterLine(trainer.name, text))),
       play: (chords) => this.broadcast(MSG.played, { sessionId: characterSeat(trainer.id), name: trainer.name, instrument, tokens: chords } satisfies PlayedMessage),
       narrate: (text) => void tryEthora('lesson score', () => this.ethora.narrate(this.room.id, text)),
       save: (p) => saveProgress(slug, uid, song.id, p),
       finished: (note, p) => {
         record({ ev: 'lesson', world: slug, pid: data.session.pid, location: this.room.id, song: song.id, mode, hits: lesson.active().score.hits, tries: lesson.active().score.tries });
+        savePlan(slug, uid, { song: song.id, mode, last: p.last, sessions: plan.sessions + 1 });
         void tryEthora('trainer memory', () => this.ethora.remember(trainer.id, note));
-        void p;
       },
-    });
+    }, plan.goal);
     data.lesson = lesson;
     presence.message(slug);
     void tryEthora('narrate lesson', () => this.ethora.narrate(this.room.id, `${data.session.name} asks ${trainer.name} for a lesson on "${song.title}" (${mode})`));
@@ -321,7 +388,10 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     if (this.lessonDef) this.sendLesson(client, client.userData as UserData, null);
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
-    setTimeout(() => this.sim.playerEntered(this.room.id, session.name), 2500);
+    // a returning player hears the trainer pick up their plan instead of the room's greeting (not after a reload)
+    const data = client.userData as UserData;
+    setTimeout(() => { if (at || !this.lessonDef || !this.welcomeBack(data)) this.sim.playerEntered(this.room.id, session.name); }, 2500);
+    this.log('join', data, { from: enterFrom ?? null, reload: Boolean(at), with: others.length });
     console.log(`[room ${this.room.id}] + ${session.name} (${client.sessionId})${enterFrom ? ' from ' + enterFrom : ''}`);
   }
 
@@ -357,6 +427,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     data.lesson?.stop();
     data.lesson = null;
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
+    this.log('leave', data, { moving: data.moving, gone: data.gone, code: code ?? null });
     // The same person on another seat in this room (a reload, a second tab) keeps the chat membership and the narration quiet;
     // revoking here used to cut the chat of the live seat a minute after every reload.
     const stillHere = this.clients.some((c) => c !== client && (c.userData as UserData | undefined)?.session.uid === data.session.uid);
@@ -424,6 +495,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     data.moving = true;
     const { uid, name } = data.session;
     const enterFrom = OPPOSITE[dir];
+    this.log('move', data, { dir, to: target });
 
     // Chat side: the player must be able to read the next room before the client switches to it.
     await tryEthora('grant next room', () => this.ethora.grant(target, uid));

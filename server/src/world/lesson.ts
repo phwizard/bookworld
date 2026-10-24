@@ -2,7 +2,7 @@
 // one with chords or words, the room judges exactly (no model call), misses come back sooner, and the score
 // goes to the player's panel, into the chat for the people and the trainer agent, and to disk for next time.
 import {
-  LYRIC_PASS, firstWords, lyricSimilarity, progression, sameChords, songChords, songLines,
+  LYRIC_PASS, firstWords, heardCoverage, lyricSimilarity, progression, sameChords, songChords, songLines, speechLang,
   type FlatLine, type LessonActive, type LessonMode, type LessonRound, type LessonTask, type Song, type SongCard,
 } from '@bookworld/shared';
 
@@ -33,12 +33,13 @@ export function lineLearned(line: FlatLine, p: SongProgress): boolean {
   return chordsOk && wordsOk;
 }
 
-export function songCard(song: Song, p?: SongProgress): SongCard {
+export function songCard(song: Song, p?: SongProgress, listed = false): SongCard {
   const lines = songLines(song);
   const prog = p ?? progressFor(song);
-  const card: SongCard = { id: song.id, title: song.title, chords: songChords(song), lines: lines.length, learned: lines.filter((l) => lineLearned(l, prog)).length };
+  const card: SongCard = { id: song.id, title: song.title, chords: songChords(song), lines: lines.length, learned: lines.filter((l) => lineLearned(l, prog)).length, lang: speechLang(song.lang) };
   if (song.artist) card.artist = song.artist;
   if (prog.last) card.last = prog.last;
+  if (listed) card.listed = true;
   return card;
 }
 
@@ -63,6 +64,8 @@ interface Step { line: number; task: LessonTask }
 
 /** after a chord the player gets this long to add the next one before the answer is judged */
 const CHORD_SETTLE_MS = 6000;
+/** a sung line is judged when the words match, or this long after the recogniser's last settled words */
+const HEARD_SETTLE_MS = 5000;
 /** how long a verdict stays on screen before the next round */
 const AFTER_HIT_MS = 1800;
 const AFTER_MISS_MS = 4200;
@@ -77,6 +80,9 @@ export class Lesson {
   private hits = 0;
   private tries = 0;
   private buffer: string[] = [];
+  /** the words heard sung this round: settled text, and the recogniser's current guess after it */
+  private heard = '';
+  private heardInterim = '';
   private hinted = false;
   private hint: string | undefined;
   private feedback: LessonActive['feedback'] = null;
@@ -84,7 +90,7 @@ export class Lesson {
   private done = false;
   private timer: unknown = null;
 
-  constructor(readonly song: Song, readonly mode: LessonMode, readonly player: string, readonly progress: SongProgress, private io: LessonIO) {
+  constructor(readonly song: Song, readonly mode: LessonMode, readonly player: string, readonly progress: SongProgress, private io: LessonIO, readonly goal?: string) {
     this.lines = songLines(song);
   }
 
@@ -129,6 +135,8 @@ export class Lesson {
     this.current = step;
     this.roundNo++;
     this.buffer = [];
+    this.heard = '';
+    this.heardInterim = '';
     this.hinted = false;
     this.hint = undefined;
     this.feedback = null;
@@ -169,6 +177,25 @@ export class Lesson {
     this.judge(lyricSimilarity(line.lyric, text) >= LYRIC_PASS, text.trim());
   }
 
+  /**
+   * Words the microphone heard the player sing, as the browser's recogniser reports them: interim guesses while
+   * they sing, a final text when it settles. A hit is judged as soon as the words match; otherwise the round is
+   * judged a few seconds after the last settled words, on everything heard.
+   */
+  onHeard(text: string, final: boolean) {
+    if (!this.current || this.current.task !== 'words' || this.done || this.feedback) return;
+    const clean = text.replace(/\s+/g, ' ').trim();
+    if (!clean) return;
+    if (final) { this.heard = `${this.heard} ${clean}`.trim().slice(-600); this.heardInterim = ''; } else this.heardInterim = clean.slice(0, 300);
+    const line = this.lines[this.current.line]!;
+    const all = `${this.heard} ${this.heardInterim}`.trim();
+    // the recogniser may hear the cue, or an earlier line, before the one asked for: the best window of the right length counts
+    if (bestWindowSimilarity(line.lyric, all) >= LYRIC_PASS) return this.judge(true, all);
+    this.clearTimer();
+    if (final) this.timer = this.schedule(() => { if (this.heard) this.judge(false, this.heard); }, HEARD_SETTLE_MS);
+    this.push();
+  }
+
   /** The first chord, or the first two words. Costs the line its promotion this round. */
   askHint() {
     if (!this.current || this.done || this.feedback) return;
@@ -207,8 +234,17 @@ export class Lesson {
     this.io.save(this.progress);
     // the scoreboard goes into the chat after a miss (what the trainer needs to know) and every fifth round
     if (!ok || this.roundNo % 5 === 0) this.io.narrate(this.scoreLine());
+    // after a miss the trainer shows the line: plays the chords that were asked for, or sings the words
+    let pause = ok ? AFTER_HIT_MS : AFTER_MISS_MS;
+    if (!ok && step.task === 'chords' && line.chords.length) {
+      this.sing(`It goes ${progression(line.chords).join(' ')}. Listen.`);
+      this.io.play(line.chords);
+      pause = Math.max(pause, line.chords.length * CHORD_SECONDS * 1000 + 2500);
+    } else if (!ok && step.task === 'words') {
+      this.sing(`It goes: "${line.lyric}"`);
+    }
     this.push();
-    this.timer = this.schedule(() => this.next(), ok ? AFTER_HIT_MS : AFTER_MISS_MS);
+    this.timer = this.schedule(() => this.next(), pause);
   }
 
   /** The player left or stopped: the session counts if anything was answered. */
@@ -258,7 +294,7 @@ export class Lesson {
   private memoryNote(learned: number): string {
     const weak = this.weakLines();
     const day = new Date().toISOString().slice(0, 10);
-    return `- ${day}: ${this.player} practised "${this.song.title}" (${this.mode}): ${this.hits} of ${this.tries} right, ${learned} of ${this.lines.length} lines learned, session ${this.progress.sessions}${weak.length ? `. Keeps missing ${weak.map((w) => `line ${w.index + 1} "${w.text}"`).join(', ')}` : ''}.`;
+    return `- ${day}: ${this.player} practised "${this.song.title}" (${this.mode}): ${this.hits} of ${this.tries} right, ${learned} of ${this.lines.length} lines learned, session ${this.progress.sessions}${weak.length ? `. Keeps missing ${weak.map((w) => `line ${w.index + 1} "${w.text}"`).join(', ')}` : ''}.${this.goal ? ` Their goal: ${this.goal}.` : ''}`;
   }
 
   active(): LessonActive {
@@ -279,6 +315,7 @@ export class Lesson {
       task: step.task, count: progression(line.chords).length,
     };
     if (step.task === 'chords') { r.lyric = line.lyric; r.played = progression(this.buffer); }
+    if (step.task === 'words' && (this.heard || this.heardInterim)) r.heard = `${this.heard} ${this.heardInterim}`.trim();
     if (this.hint) r.hint = this.hint;
     return r;
   }
@@ -291,4 +328,23 @@ export class Lesson {
     (this.io.cancel ?? ((h) => clearTimeout(h as NodeJS.Timeout)))(this.timer);
     this.timer = null;
   }
+}
+
+/** "today", "yesterday", "3 days ago" */
+export function daysAgo(iso: string, now = Date.now()): string {
+  const days = Math.floor((now - new Date(iso).getTime()) / 86400000);
+  return days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+}
+
+/** The similarity of the expected line to the best-matching run of words in what was heard (the line may sit after the cue). */
+export function bestWindowSimilarity(expected: string, heard: string): number {
+  const words = heard.split(/\s+/).filter(Boolean);
+  const n = expected.split(/\s+/).filter(Boolean).length;
+  if (!words.length || !n) return 0;
+  let best = heardCoverage(expected, heard);
+  for (const len of [n - 1, n, n + 1, n + 2]) {
+    if (len < 1 || len > words.length) continue;
+    for (let i = 0; i + len <= words.length; i++) best = Math.max(best, heardCoverage(expected, words.slice(i, i + len).join(' ')));
+  }
+  return best;
 }

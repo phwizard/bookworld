@@ -181,3 +181,47 @@ test('both mode asks each line in its weaker round, and stopping mid-way keeps t
   assert.equal(card.lines, 12);
   assert.ok(card.last);
 });
+
+test('a sung line is judged on the words heard, with the cue allowed in front', () => {
+  const h = harness();
+  const lesson = new Lesson(song, 'words', 'Taras', progressFor(song), h.io);
+  lesson.start();
+  assert.equal(h.last().round?.task, 'words');
+  // the recogniser's interim guesses show in the panel and judge nothing on their own
+  lesson.onHeard('the water', false);
+  assert.equal(h.last().round?.heard, 'the water');
+  assert.equal(h.last().feedback, null);
+  // the final text: the cue was heard too, then the line asked for, roughly
+  lesson.onHeard('the water is wide i cannot get over', true);
+  assert.equal(h.last().feedback?.ok, true, JSON.stringify(h.last().feedback));
+  h.fire();
+  assert.equal(h.last().round?.n, 2);
+  lesson.onHeard('neither have I', true);
+  assert.equal(h.last().feedback, null, 'half a line waits for more');
+  assert.equal(h.timers.length, 1);
+  h.fire(); // the pause: judged on what was heard
+  assert.equal(h.last().feedback?.ok, false);
+  assert.equal(h.last().feedback?.given, 'neither have I');
+  assert.match(h.sung[h.sung.length - 1]!, /^It goes: "Neither have I wings/);
+});
+
+test('after a missed chords line the trainer plays it and waits long enough', () => {
+  const h = harness();
+  const lesson = new Lesson(song, 'chords', 'Taras', progressFor(song), h.io);
+  lesson.start();
+  lesson.onChords(['C']);
+  h.fire(); // judged after the pause: a miss
+  assert.equal(h.last().feedback?.ok, false);
+  assert.deepEqual(h.played[h.played.length - 1], lines[0]!.chords, 'the trainer plays the line that was missed');
+  assert.match(h.sung[h.sung.length - 1]!, /^It goes G C G D\. Listen\./);
+  assert.ok(h.timers[0]!.ms >= 4 * 600 + 2500, `the pause covers the playing: ${h.timers[0]!.ms}`);
+});
+
+test('the goal goes into the Memory note', () => {
+  const h = harness();
+  const lesson = new Lesson(song, 'chords', 'Taras', progressFor(song), h.io, 'play it on the stage by Christmas');
+  lesson.start();
+  lesson.onChords(['G', 'C', 'G', 'D']);
+  lesson.stop();
+  assert.match(h.notes[0]!, /Their goal: play it on the stage by Christmas\./);
+});

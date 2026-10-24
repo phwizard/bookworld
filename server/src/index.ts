@@ -17,6 +17,7 @@ import { tryEthora } from './ethora.ts';
 import { cleanVisitor, record, readEvents } from './metrics.ts';
 import { buildReport } from './metrics-report.ts';
 import { budgetConfigFromEnv } from './budget.ts';
+import { debug, debugOn } from './debuglog.ts';
 import { existsSync, readFileSync } from 'node:fs';
 
 const PORT = Number(process.env.PORT ?? 2567);
@@ -168,10 +169,11 @@ const server = new Server({
       }
       const token = signSession({ pid: playerId, uid, name, world: loaded.world.slug, ...(visitor ? { visitor } : {}) });
       record({ ev: 'enter', world: loaded.world.slug, pid: playerId, visitor });
+      debug(loaded.world.slug, 'enter', { name, pid: playerId, uid });
       visited(loaded.world.slug);
       const body: EnterResponse = {
         token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, uid),
-        ai: budgetFor(loaded.world.slug).snapshot(visitor),
+        ai: budgetFor(loaded.world.slug).snapshot(visitor), ...(debugOn ? { debug: true } : {}),
       };
       res.json(body);
     });
@@ -192,7 +194,7 @@ const server = new Server({
       const token = signSession(session);
       const body: EnterResponse = {
         token, playerId: session.pid, name: session.name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, session.uid),
-        ai: budgetFor(loaded.world.slug).snapshot(session.visitor),
+        ai: budgetFor(loaded.world.slug).snapshot(session.visitor), ...(debugOn ? { debug: true } : {}),
       };
       res.json(body);
     });

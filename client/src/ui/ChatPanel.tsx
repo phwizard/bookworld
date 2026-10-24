@@ -39,7 +39,8 @@ function scoreboard(l: LessonStateMessage): string {
   const a = l.active!;
   const learned = `${a.song.learned} of ${a.song.lines} lines learned`;
   const weak = a.weak?.length ? `, keeps missing ${a.weak.join(', ')}` : '';
-  return `Lesson: "${a.song.title}" (${a.mode}), round ${a.round?.n ?? a.score.tries}, ${a.score.hits} of ${a.score.tries} right, ${learned}${weak}`;
+  const goal = l.plan?.goal ? `; goal: ${l.plan.goal}` : '';
+  return `Lesson: "${a.song.title}" (${a.mode}), round ${a.round?.n ?? a.score.tries}, ${a.score.hits} of ${a.score.tries} right, ${learned}${weak}${goal}`;
 }
 
 export function ChatPanel() {
@@ -120,7 +121,7 @@ export function ChatPanel() {
         // Characters named in the message turn to face the speaker; the server also counts the message.
         const text = message.toLowerCase();
         const named = Object.values(useStore.getState().characters).filter((c) => text.includes(c.name.toLowerCase()));
-        reportSaid(named.map((c) => c.id));
+        reportSaid(named.map((c) => c.id), message);
       },
     },
   }), [ethora.apiBaseUrl, ethora.appId, ethora.chatToken, ethora.xmppDomain]);

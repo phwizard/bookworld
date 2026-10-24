@@ -30,6 +30,9 @@ interface State {
   setMicOn(on: boolean): void;
   micLevel: number;
   setMicLevel(v: number): void;
+  /** singing into the microphone answers a words round (the browser's speech recognition) */
+  singOn: boolean;
+  setSingOn(on: boolean): void;
   chatOpen: boolean;
   pointerLocked: boolean;
   toast: string | null;
@@ -87,6 +90,8 @@ export const useStore = create<State>((set) => ({
   setMicOn: (micOn) => set({ micOn }),
   micLevel: 0,
   setMicLevel: (micLevel) => set((s) => (Math.abs(s.micLevel - micLevel) < 0.03 ? s : { micLevel })),
+  singOn: false,
+  setSingOn: (singOn) => set({ singOn }),
   chatOpen: false,
   pointerLocked: false,
   toast: null,

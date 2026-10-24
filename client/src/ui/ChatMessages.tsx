@@ -7,6 +7,7 @@ import { poses, useStore } from '../store.ts';
 import { playSound } from '../audio/engine.ts';
 import { speak } from '../audio/voice.ts';
 import { playTokens } from '../audio/instruments.ts';
+import { reportChatSeen } from '../net/colyseus.ts';
 
 const BUBBLE_MAX_AGE_MS = 15000;
 const seen = new Set<string>();
@@ -45,6 +46,8 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
       seen.add(m.id);
       // (the app's broadcasts are flagged as system messages; narration and character lines are exactly those)
       if (!m.body) continue;
+      // the operator's debug log, when on, gets every message of the room from the clients (the server cannot read the history)
+      if (useStore.getState().session?.debug && now - messageTime(m) <= 120000) reportChatSeen({ id: m.id, from: speakerName(m) || 'app', text: m.body, at: messageTime(m) || undefined });
       const line = parseCharacterLine(narrationText(m.body));
       if (line) {
         if (import.meta.env.DEV) console.log('[bubbles] line', { who: line.name, age: now - messageTime(m), date: m.date, ts: m.timestamp, tsMs: m.messageTimestampMs });

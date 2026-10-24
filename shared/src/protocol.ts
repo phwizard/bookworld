@@ -78,6 +78,8 @@ export interface EnterResponse {
   world: World;
   ethora: EthoraPublicInfo;
   ai: AiState;
+  /** the operator's debug log is on: the client mirrors the room's chat and its own message text to the server (DEBUG_LOG) */
+  debug?: boolean;
 }
 
 /** Colyseus join options */
@@ -165,13 +167,16 @@ export const MSG = {
   lesson: 'lesson',
   /** server -> one player: the practice room's songs and the lesson under way */
   lessonState: 'lessonState',
+  /** client -> server, only while the debug log is on: a chat message seen in the room (human or character), for the log */
+  chat: 'chat',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
 export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
-export interface SaidMessage { characters: string[] }
+export interface SaidMessage { characters: string[]; /** the text, only while the debug log is on */ text?: string }
+export interface ChatSeenMessage { id: string; from: string; text: string; at?: number }
 export type AiMessage = AiState;
 export interface AwayMessage { away: boolean; gone?: boolean }
 export interface TakeMessage { id: string }

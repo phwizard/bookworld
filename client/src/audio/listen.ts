@@ -4,7 +4,8 @@ import { chromaFromSpectrum, matchChord, MATCH_MIN_MARGIN, MATCH_MIN_SCORE } fro
 import { audioContext } from './engine.ts';
 import { useStore } from '../store.ts';
 
-const FFT_SIZE = 8192;
+/** 16384 at 48 kHz is a 2.9 Hz bin: the low E string's neighbours are 4.9 Hz apart */
+const FFT_SIZE = 16384;
 const FRAME_MS = 50;
 /** frames in a row the same chord must win before it counts */
 const STABLE_FRAMES = 3;

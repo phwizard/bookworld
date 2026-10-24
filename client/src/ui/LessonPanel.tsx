@@ -1,9 +1,10 @@
 // The practice room's panel (L): the shelf of songs with your progress, and the lesson under way: what the
 // trainer just sang, what is asked for, your answer, the verdict. The chords themselves go through the chord bar.
 import { useEffect, useRef, useState } from 'react';
-import { LESSON_MODES, type LessonMode, type SongCard } from '@bookworld/shared';
+import { GOAL_MAX, LESSON_MODES, type LessonMode, type SongCard } from '@bookworld/shared';
 import { selectHolding, useStore } from '../store.ts';
 import { sendLesson } from '../net/colyseus.ts';
+import { hearing, setHearingLang, speechSupported, startHearing, stopHearing } from '../audio/speech.ts';
 
 const MODE_LABEL: Record<LessonMode, string> = { chords: 'chords', words: 'words', both: 'both' };
 
@@ -20,11 +21,26 @@ export function LessonPanel() {
   const setOpen = useStore((s) => s.setLessonOpen);
   const holding = useStore(selectHolding);
   const setTyping = useStore((s) => s.setChatTyping);
+  const singOn = useStore((s) => s.singOn);
+  const setSingOn = useStore((s) => s.setSingOn);
+  const setToast = useStore((s) => s.setToast);
   const [mode, setMode] = useState<LessonMode>('both');
   const [answer, setAnswer] = useState('');
+  const [goal, setGoal] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const active = lesson?.active ?? null;
   const roundNo = active?.round?.n;
+  const plan = lesson?.plan;
+
+  // singing: the recogniser runs while the switch is on and a lesson is under way, in the song's language
+  useEffect(() => {
+    const lang = active?.song.lang ?? 'en-US';
+    if (!singOn || !active || active.finished) { if (hearing()) stopHearing(); return; }
+    if (hearing()) { setHearingLang(lang); return; }
+    const ok = startHearing(lang, (text, final) => sendLesson({ do: 'heard', text, final }), (reason) => { setSingOn(false); setToast(reason); });
+    if (!ok) { setSingOn(false); setToast('This browser has no speech recognition (Chrome, Edge and Safari do)'); }
+    return () => { if (hearing()) stopHearing(); };
+  }, [singOn, active?.song.id, active?.song.lang, active?.finished]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // a new round: clear the answer box and put the cursor in it for a words round
   useEffect(() => {
@@ -41,13 +57,20 @@ export function LessonPanel() {
   }
   const chordInstrument = holding && holding.instrument !== 'drums' ? holding : null;
 
-  const start = (song: SongCard) => sendLesson({ do: 'start', song: song.id, mode });
+  const start = (song: SongCard, m: LessonMode = mode) => sendLesson({ do: 'start', song: song.id, mode: m });
   const submit = () => {
     const text = answer.trim();
     if (!text) return;
     sendLesson({ do: 'answer', text });
     setAnswer('');
   };
+  const toggleListed = (song: SongCard) => {
+    const list = plan?.list ?? [];
+    sendLesson({ do: 'plan', list: list.includes(song.id) ? list.filter((id) => id !== song.id) : [...list, song.id] });
+  };
+  const saveGoal = () => { if (goal !== null) { sendLesson({ do: 'plan', goal }); setGoal(null); } };
+  const lastSong = plan?.song ? lesson.songs.find((s) => s.id === plan.song) : undefined;
+  const canContinue = lastSong && lastSong.learned < lastSong.lines;
 
   return (
     <div className="lesson">
@@ -57,21 +80,46 @@ export function LessonPanel() {
       </div>
       {!active && (
         <>
+          {canContinue && (
+            <div className="resume">
+              Last time{plan?.last ? ` (${when(plan.last)})` : ''}: <q>{lastSong!.title}</q> ({plan?.mode ?? 'both'}), {lastSong!.learned} of {lastSong!.lines} lines learned.{' '}
+              <button onClick={() => start(lastSong!, plan?.mode ?? 'both')}>Continue</button>
+            </div>
+          )}
           <div className="modes">
             {LESSON_MODES.map((m) => (
               <button key={m} className={m === mode ? 'on' : ''} onClick={() => setMode(m)}>{MODE_LABEL[m]}</button>
             ))}
           </div>
           <ul className="songs">
-            {lesson.songs.map((s) => (
-              <li key={s.id}>
-                <div className="title">{s.title}{s.artist ? <span className="artist"> · {s.artist}</span> : null}</div>
-                <div className="meta">{s.chords.join(' ')} · {s.learned} of {s.lines} lines learned · last {when(s.last)}</div>
+            {[...lesson.songs].sort((a, b) => Number(Boolean(b.listed)) - Number(Boolean(a.listed))).map((s) => (
+              <li key={s.id} className={s.listed ? 'listed' : ''}>
+                <div className="title">
+                  <button className={s.listed ? 'star on' : 'star'} onClick={() => toggleListed(s)} title={s.listed ? 'on your list; click to take it off' : 'put it on your list'}>{s.listed ? '★' : '☆'}</button>
+                  {s.title}{s.artist ? <span className="artist"> · {s.artist}</span> : null}
+                </div>
+                <div className="meta">{s.chords.join(' ')} · {s.learned} of {s.lines} lines learned · last {when(s.last)}{s.lang !== 'en-US' ? ` · ${s.lang}` : ''}</div>
                 <button onClick={() => start(s)}>Start</button>
               </li>
             ))}
             {!lesson.songs.length && <li className="muted">No songs on the shelf yet. Add song files to this world's songs folder.</li>}
           </ul>
+          <div className="goal">
+            {goal === null ? (
+              <>
+                <span className="meta">Goal: {plan?.goal ? <q>{plan.goal}</q> : 'none set'}</span>{' '}
+                <button className="link" onClick={() => setGoal(plan?.goal ?? '')}>{plan?.goal ? 'change' : 'set a goal'}</button>
+              </>
+            ) : (
+              <form onSubmit={(e) => { e.preventDefault(); saveGoal(); }}>
+                <input
+                  value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="play it through on the stage by Christmas" maxLength={GOAL_MAX} autoFocus
+                  onFocus={() => setTyping(true)} onBlur={() => setTyping(false)}
+                />
+                <button type="submit">Save</button>
+              </form>
+            )}
+          </div>
           <p className="muted">
             {mode === 'words' ? `${lesson.trainer} sings a line and plays the next one; you type its words.` : chordInstrument
               ? `${lesson.trainer} sings a line; you answer with the next line's chords on ${holding!.name}${mode === 'both' ? ', or type its words' : ''}. Keys 1 to 8 are the song's chords, or switch the microphone on and play your own instrument.`
@@ -103,11 +151,14 @@ export function LessonPanel() {
               And the next line goes...
               <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
                 <input
-                  ref={input} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="type the words of the next line"
+                  ref={input} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={singOn ? 'sing it, or type it' : 'type the words of the next line'}
                   onFocus={() => setTyping(true)} onBlur={() => setTyping(false)} disabled={!!active.feedback} autoComplete="off" maxLength={300}
                 />
                 <button type="submit" disabled={!!active.feedback || !answer.trim()}>Answer</button>
               </form>
+              {singOn && !active.feedback && (
+                <div className="played">{active.round.heard ? <>Heard: <q>{active.round.heard}</q></> : 'Sing the line into the microphone'}<span className="muted"> · judged when the words match, or a few seconds after you stop</span></div>
+              )}
             </div>
           )}
           {active.round.hint && !active.feedback && <div className="hint">Hint: {active.round.hint}</div>}
@@ -121,6 +172,11 @@ export function LessonPanel() {
             <button onClick={() => sendLesson({ do: 'hint' })} disabled={!!active.feedback || !!active.round.hint}>Hint</button>
             <button onClick={() => sendLesson({ do: 'skip' })} disabled={!!active.feedback}>Skip</button>
             <button onClick={() => sendLesson({ do: 'stop' })}>Stop</button>
+            {active.mode !== 'chords' && speechSupported() && (
+              <button className={singOn ? 'link mic on' : 'link mic'} onClick={() => setSingOn(!singOn)} title={`hear you sing the words (speech recognition, ${active.song.lang})`}>
+                {singOn ? 'hearing you sing' : 'sing (mic)'}
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -143,7 +143,17 @@ button, input { font: inherit; }
 .lesson .verdict { padding: 6px 10px; border-radius: 6px; font-size: 14px; line-height: 1.45; }
 .lesson .verdict.ok { background: rgba(60, 120, 60, .35); }
 .lesson .verdict.miss { background: rgba(140, 50, 40, .35); }
-.lesson .actions { display: flex; gap: 6px; }
+.lesson .actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lesson .actions .mic { margin-left: auto; }
+.lesson .actions .mic.on { color: #ffd98a; opacity: 1; }
+.lesson .resume { padding: 8px 10px; margin-bottom: 8px; border-radius: 8px; background: rgba(201, 169, 97, .18); line-height: 1.45; font-size: 13px; }
+.lesson .resume button { margin-left: 4px; padding: 4px 10px; border-radius: 6px; border: 1px solid #c9a961; background: #c9a961; color: #1a140f; font: 13px Georgia, serif; cursor: pointer; }
+.lesson .songs li.listed { outline: 1px solid rgba(201, 169, 97, .5); }
+.lesson .star { background: none; border: none; padding: 0 6px 0 0; color: #c9a961; font-size: 15px; cursor: pointer; opacity: .55; }
+.lesson .star.on { opacity: 1; }
+.lesson .goal { font-size: 13px; line-height: 1.45; }
+.lesson .goal form { display: flex; gap: 6px; margin-top: 4px; }
+.lesson .goal input { flex: 1; padding: 5px 8px; border-radius: 6px; border: 1px solid #5a4630; background: rgba(0, 0, 0, .35); color: #f3e6c4; font: 13px Georgia, serif; }
 .chordbar .who .mic.on { color: #ffd98a; }
 .chordbar .who .level { display: inline-block; width: 50px; height: 6px; margin-left: 6px; vertical-align: middle; border-radius: 3px; background: rgba(255, 255, 255, .15); overflow: hidden; }
 .chordbar .who .level span { display: block; height: 100%; background: #c9a961; transition: width .05s; }

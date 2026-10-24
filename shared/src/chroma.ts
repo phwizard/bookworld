@@ -13,9 +13,16 @@ export function chromaFromSpectrum(mags: ArrayLike<number>, sampleRate: number, 
     if (!(m > 0)) continue;
     const hz = i * binHz;
     const semis = 12 * Math.log2(hz / 16.3516);
-    const pc = ((Math.round(semis) % 12) + 12) % 12;
-    // lower notes carry the chord; the spectrum's upper partials get a lighter weight
-    out[pc] = out[pc]! + m * m * (hz < 400 ? 1 : 400 / hz);
+    const nearest = Math.round(semis);
+    // a bin between two semitones (the low strings, where bins are coarse) is shared between them
+    const off = semis - nearest;
+    const pc = ((nearest % 12) + 12) % 12;
+    const other = ((nearest + (off > 0 ? 1 : -1)) % 12 + 12) % 12;
+    // lower notes carry the chord; the spectrum's upper partials get a lighter weight. Amplitude is
+    // compressed (square root) so the loudest string does not drown the others
+    const w = Math.sqrt(m) * (hz < 400 ? 1 : 400 / hz);
+    out[pc] = out[pc]! + w * (1 - Math.abs(off));
+    out[other] = out[other]! + w * Math.abs(off);
   }
   const sum = out.reduce((a, b) => a + b, 0);
   return sum > 0 ? out.map((v) => v / sum) : out;
@@ -56,6 +63,10 @@ export function matchChord(chroma: number[], candidates: string[]): ChordMatch |
   return best;
 }
 
-/** A chord is accepted from the microphone from this similarity and lead over the runner-up. */
+/**
+ * A chord is accepted from the microphone from this similarity and lead over the runner-up. The lead is small
+ * because a seventh and its triad (G7 and G, E7 and E) differ by one string out of six; the client asks for a
+ * few frames in a row on top of it.
+ */
 export const MATCH_MIN_SCORE = 0.6;
-export const MATCH_MIN_MARGIN = 0.05;
+export const MATCH_MIN_MARGIN = 0.03;

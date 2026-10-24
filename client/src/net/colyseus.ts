@@ -4,7 +4,7 @@ import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
   type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
-  type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage,
+  type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type ChatSeenMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
@@ -225,8 +225,16 @@ export function sendPos(msg: PosMessage) {
 }
 
 /** The player sent a chat message; `characterIds` are the characters named in it (they turn to face the player). */
-export function reportSaid(characterIds: string[]) {
-  current?.send(MSG.said, { characters: characterIds } satisfies SaidMessage);
+export function reportSaid(characterIds: string[], text?: string) {
+  // the text travels only while the operator's debug log is on (the enter response says so)
+  const debug = useStore.getState().session?.debug === true;
+  current?.send(MSG.said, { characters: characterIds, ...(debug && text ? { text } : {}) } satisfies SaidMessage);
+}
+
+/** A chat message seen in the room, for the operator's debug log; sent only while that log is on. */
+export function reportChatSeen(m: ChatSeenMessage) {
+  if (useStore.getState().session?.debug !== true) return;
+  current?.send(MSG.chat, m);
 }
 
 export function takeItem(id: string) {
@@ -246,6 +254,9 @@ export function sendLesson(cmd: LessonCommand) {
 export function sendPlayed(tokens: string[]) {
   current?.send(MSG.play, { tokens } satisfies PlayMessage);
 }
+
+// a hand on the wire for the browser console while developing (the lesson commands, the debug chat mirror)
+if (import.meta.env.DEV) (window as unknown as { __net: unknown }).__net = { sendLesson, sendPlayed, reportChatSeen };
 
 let moveLock = 0;
 export function requestMove(dir: Direction) {

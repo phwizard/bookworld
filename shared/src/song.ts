@@ -24,7 +24,24 @@ export interface Song {
   capo?: number;
   /** who may hear it: a traditional or public-domain song can be hosted, anything else stays private */
   license?: string;
+  /** language of the words as a BCP 47 tag ("en", "uk", "ru-RU"); the client's speech recognition listens in it */
+  lang?: string;
   sections: SongSection[];
+}
+
+/** "ukrainian" or "uk" -> "uk-UA": the tag the browser's speech recognition wants. Unknown input is passed through. */
+export function speechLang(lang?: string): string {
+  if (!lang) return 'en-US';
+  const l = lang.trim().toLowerCase();
+  const table: Record<string, string> = {
+    en: 'en-US', english: 'en-US', uk: 'uk-UA', ukrainian: 'uk-UA', ukr: 'uk-UA', ru: 'ru-RU', russian: 'ru-RU', rus: 'ru-RU',
+    de: 'de-DE', german: 'de-DE', fr: 'fr-FR', french: 'fr-FR', es: 'es-ES', spanish: 'es-ES', it: 'it-IT', italian: 'it-IT',
+    pt: 'pt-PT', portuguese: 'pt-PT', pl: 'pl-PL', polish: 'pl-PL', nl: 'nl-NL', dutch: 'nl-NL', sv: 'sv-SE', swedish: 'sv-SE',
+    ga: 'ga-IE', irish: 'ga-IE', cs: 'cs-CZ', czech: 'cs-CZ', tr: 'tr-TR', turkish: 'tr-TR', ja: 'ja-JP', japanese: 'ja-JP',
+  };
+  if (table[l]) return table[l]!;
+  const m = /^([a-z]{2,3})[-_]([a-z]{2})$/.exec(l);
+  return m ? `${m[1]}-${m[2]!.toUpperCase()}` : lang.trim();
 }
 
 export interface FlatLine extends SongLine {
@@ -81,7 +98,15 @@ export function sameChords(expected: string[], played: string[]): boolean {
 
 /** Lower case, letters and digits only, apostrophes dropped, one space between words. */
 export function normalizeLyric(s: string): string {
-  return s.toLowerCase().replace(/['’]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  // ё and е, ґ and г are one letter for the drill: speech recognition and typists use either
+  return s.toLowerCase().replace(/['’ʼ]/g, '').replace(/ё/g, 'е').replace(/ґ/g, 'г').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+/** How much of the expected line the heard text covers so far: the similarity of its best-matching prefix. */
+export function heardCoverage(expected: string, heard: string): number {
+  const a = normalizeLyric(expected), b = normalizeLyric(heard);
+  if (!a || !b) return 0;
+  return 1 - levenshtein(a, b) / Math.max(a.length, b.length);
 }
 
 /** 0..1, by edit distance over the normalised words; 1 is a perfect match. */
@@ -160,6 +185,7 @@ function parseChordPro(lines: string[], song: Song) {
       else if (name === 'key') song.key = value;
       else if (name === 'capo') song.capo = Number(value) || undefined;
       else if (name === 'license') song.license = value;
+      else if (name === 'language' || name === 'lang') song.lang = value;
       else if (name === 'start_of_chorus' || name === 'soc') open(value || 'Chorus');
       else if (name === 'start_of_bridge' || name === 'sob') open(value || 'Bridge');
       else if (name === 'start_of_verse' || name === 'sov') open(value || `Verse ${++verses}`);
@@ -199,11 +225,11 @@ function parseOverLyrics(lines: string[], song: Song) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!.trim();
     if (!line) { flushInstrumental(); if (cur.section?.lines.length) cur.section = null; continue; }
-    const meta = /^(title|artist|by|key|capo|license)\s*:\s*(.+)$/i.exec(line);
+    const meta = /^(title|artist|by|key|capo|license|language|lang)\s*:\s*(.+)$/i.exec(line);
     if (meta && !cur.section) {
       const k = meta[1]!.toLowerCase(), v = meta[2]!.trim();
       if (k === 'title') song.title = v; else if (k === 'artist' || k === 'by') song.artist = v; else if (k === 'key') song.key = v;
-      else if (k === 'capo') song.capo = Number(v) || undefined; else song.license = v;
+      else if (k === 'capo') song.capo = Number(v) || undefined; else if (k === 'language' || k === 'lang') song.lang = v; else song.license = v;
       continue;
     }
     const header = SECTION_HEADER.exec(line);
@@ -233,6 +259,7 @@ export function songToChordPro(song: Song): string {
   if (song.key) out.push(`{key: ${song.key}}`);
   if (song.capo) out.push(`{capo: ${song.capo}}`);
   if (song.license) out.push(`{license: ${song.license}}`);
+  if (song.lang) out.push(`{language: ${song.lang}}`);
   for (const s of song.sections) {
     out.push('');
     const chorus = /chorus|refrain/i.test(s.name);
@@ -285,6 +312,24 @@ export interface SongCard {
   learned: number;
   /** ISO time of the last session on it, if any */
   last?: string;
+  /** speech recognition tag for the words ("uk-UA"); en-US when the file says nothing */
+  lang: string;
+  /** on the player's own list */
+  listed?: boolean;
+}
+
+/** What the trainer keeps for one player between visits: the songs on their list, the goal they set, where they left off. */
+export interface LessonPlan {
+  /** song ids the player marked */
+  list: string[];
+  /** a line in the player's words ("play Clementine on the stage by Christmas"), at most 140 characters */
+  goal?: string;
+  /** the last song and mode practised */
+  song?: string;
+  mode?: LessonMode;
+  /** ISO time of the last session */
+  last?: string;
+  sessions: number;
 }
 
 export interface LessonRound {
@@ -300,6 +345,8 @@ export interface LessonRound {
   /** chords round: how many chord changes the line has, and the changes played so far this round */
   count: number;
   played?: string[];
+  /** words round: what the microphone has heard sung so far this round */
+  heard?: string;
   /** after the player asked for one */
   hint?: string;
 }
@@ -329,14 +376,22 @@ export interface LessonStateMessage {
   trainer: string;
   songs: SongCard[];
   active: LessonActive | null;
+  /** this player's list, goal and last session, kept by the room between visits */
+  plan: LessonPlan;
 }
 
 export type LessonCommand =
   | { do: 'start'; song: string; mode: LessonMode }
   | { do: 'answer'; text: string }
+  /** words sung into the microphone, as the browser's speech recognition heard them; `final` when it settled on them */
+  | { do: 'heard'; text: string; final: boolean }
   | { do: 'hint' }
   | { do: 'skip' }
-  | { do: 'stop' };
+  | { do: 'stop' }
+  /** the player's list and goal */
+  | { do: 'plan'; list?: string[]; goal?: string };
+
+export const GOAL_MAX = 140;
 
 /** The paragraph the provisioner adds to a trainer's prompt. The drill itself runs in the world service. */
 export function lessonPrompt(name: string): string {

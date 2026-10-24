@@ -29,7 +29,7 @@ export function keysFor(instrument: Instrument): string[] {
   return instrument === 'drums' ? DRUM_KEYS : CHORD_KEYS;
 }
 
-const NOTE_INDEX: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const NOTE_INDEX: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11, H: 11 };
 const QUALITY: Record<string, number[]> = {
   '': [0, 4, 7],
   maj: [0, 4, 7],
@@ -63,9 +63,12 @@ export interface Chord {
   intervals: number[];
 }
 
-/** "Am7" -> root 9, [0,3,7,10]; null for anything that is not a chord name. A "/" bass note is ignored. */
+/**
+ * "Am7" -> root 9, [0,3,7,10]; null for anything that is not a chord name. A "/" bass note is ignored.
+ * "H" is B, as on German, Ukrainian and Russian chord sheets.
+ */
 export function parseChord(token: string): Chord | null {
-  const m = /^([A-G])([#b]?)([A-Za-z0-9+]*)(?:\/[A-G][#b]?)?$/.exec(token.trim());
+  const m = /^([A-H])([#b]?)([A-Za-z0-9+]*)(?:\/[A-H][#b]?)?$/.exec(token.trim());
   if (!m) return null;
   const quality = QUALITY[m[3]!];
   if (!quality) return null;

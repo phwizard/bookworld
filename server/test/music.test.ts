@@ -9,7 +9,8 @@ test('chord names parse to roots and intervals', () => {
   assert.deepEqual(parseChord('Bb'), { name: 'Bb', root: 10, intervals: [0, 4, 7] });
   assert.equal(parseChord('G7/B')?.root, 7);
   assert.equal(parseChord('hello'), null);
-  assert.equal(parseChord('H'), null);
+  assert.equal(parseChord('H')?.root, 11); // German, Ukrainian and Russian sheets write B as H
+  assert.equal(parseChord('H7')?.intervals.length, 4);
   assert.equal(parseChord('Cxyz'), null);
 });
 

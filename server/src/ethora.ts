@@ -6,6 +6,7 @@ import { EthoraSDKService, createServerToken } from '@ethora/sdk-backend';
 import { narrationBody, NARRATOR_NAME } from '@bookworld/shared';
 import { listWorlds, type WorldEthoraIds } from './world/load.ts';
 import { ethoraMcpAvailable, withEthoraMcp } from './ethora-mcp.ts';
+import { debug } from './debuglog.ts';
 
 const apiBaseUrl = process.env.ETHORA_API_BASE_URL ?? 'https://api.chat.ethora.com/v1';
 const xmppDomain = process.env.ETHORA_XMPP_DOMAIN ?? 'xmpp.chat.ethora.com';
@@ -118,6 +119,7 @@ export class EthoraWorldService {
   async remember(characterId: string, note: string): Promise<boolean> {
     const agent = this.ids?.agents?.[characterId];
     if (!agent) return false;
+    debug(this.slug ?? '-', 'memory', { character: characterId, text: note, written: ethoraMcpAvailable });
     if (!ethoraMcpAvailable) {
       console.log(`[memory:${characterId}] (no ETHORA_API_KEY, not written) ${note}`);
       return false;
@@ -134,6 +136,7 @@ export class EthoraWorldService {
   /** Posts a raw body (a character's scripted line, already formatted) into the room. */
   async post(roomId: string, body: string, kind: 'narration' | 'line' = 'line'): Promise<void> {
     const r = this.ids?.rooms[roomId];
+    debug(this.slug ?? '-', 'post', { room: roomId, kind, text: body, sent: Boolean(this.sdk && r) });
     if (!this.sdk || !r || !this.appId) {
       console.log(`[${kind}:${roomId}] ${body}`);
       return;
@@ -168,6 +171,7 @@ export async function tryEthora(label: string, fn: () => Promise<unknown>): Prom
   } catch (e) {
     const err = e as { response?: { status?: number; data?: unknown }; message?: string };
     console.error(`[ethora] ${label} failed:`, err.response?.status ?? '', err.response?.data ?? err.message);
+    debug('-', 'ethora.error', { label, status: err.response?.status ?? null, detail: typeof err.response?.data === 'string' ? err.response.data : err.message ?? null });
     return false;
   }
 }

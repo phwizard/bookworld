@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseSong, songLines, songChords, sameChords, progression, lyricSimilarity, LYRIC_PASS, songToChordPro, validateSong, validateWorld, firstWords } from '@bookworld/shared';
+import { parseSong, songLines, songChords, sameChords, progression, lyricSimilarity, LYRIC_PASS, songToChordPro, validateSong, validateWorld, firstWords, speechLang, chordKey } from '@bookworld/shared';
 
 const waterIsWide = readFileSync(new URL('../../worlds/songbook/songs/the-water-is-wide.cho', import.meta.url), 'utf8');
 
@@ -86,4 +86,28 @@ test('a world may name a practice room with a trainer', () => {
   assert.deepEqual(validateWorld({ ...base, lessons: [{ room: 'a', trainer: 'rosie' }] }), []);
   const errors = validateWorld({ ...base, lessons: [{ room: 'b', trainer: 'nobody', instrument: 'harp' }] });
   assert.equal(errors.length, 3);
+});
+
+test('a song in Ukrainian: Cyrillic words, H for B, the language tag, and lenient matching', () => {
+  const text = [
+    '{title: Ой у лузі червона калина}',
+    '{language: uk}',
+    '{license: public-domain}',
+    '',
+    '[Am]Ой у лузі червона ка[Dm]лина похили[E]лася,',
+    '[Am]Чогось наша славна Укра[Dm]їна зажури[H7]лася.',
+  ].join('\n');
+  const song = parseSong(text, 'kalyna');
+  assert.equal(song.lang, 'uk');
+  assert.equal(speechLang(song.lang), 'uk-UA');
+  assert.equal(speechLang('Russian'), 'ru-RU');
+  assert.equal(speechLang(undefined), 'en-US');
+  assert.equal(speechLang('pt-br'), 'pt-BR');
+  const lines = songLines(song);
+  assert.deepEqual(lines[1]!.chords, ['Am', 'Dm', 'H7']);
+  assert.equal(chordKey('H7'), chordKey('B7'));
+  assert.ok(lyricSimilarity(lines[0]!.lyric, 'ой у лузі червона калина похилилася') >= LYRIC_PASS);
+  assert.ok(lyricSimilarity('Ёлка горит', 'елка горит') >= LYRIC_PASS);
+  assert.deepEqual(validateSong(song), []);
+  assert.match(songToChordPro(song), /\{language: uk\}/);
 });
