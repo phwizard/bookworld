@@ -110,6 +110,7 @@ def sing_word(x: np.ndarray, notes: list, tempo: float, vib_cents: float, vib_hz
         f0_t[pos:pos + n] = midi_hz(midi) if midi >= 0 else 0.0
         edges.append(pos)
         pos += n
+    pos = min(pos, n_tgt)  # the rounded note lengths can add up to a frame more than the target
     f0_t[pos:] = f0_t[pos - 1] if pos > 0 else 0.0
     # portamento: smooth the log pitch over 60 ms around each change
     logf = np.where(f0_t > 0, np.log(np.maximum(f0_t, 1.0)), 0.0)
