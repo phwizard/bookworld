@@ -6,7 +6,7 @@ import { Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import express from 'express';
 import cors from 'cors';
-import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo, type StatsResponse, type WorldCard } from '@bookworld/shared';
+import { COLYSEUS_ROOM_NAME, type EnterResponse, type EthoraPublicInfo, type StatsResponse, type WhereResponse, type WorldCard } from '@bookworld/shared';
 import { getJob, makeStatus, submit, validateRequest } from './make.ts';
 import { stats as presenceStats, visited } from './presence.ts';
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
@@ -185,6 +185,19 @@ const server = new Server({
         if (status === 500) console.error('[voice]', err.message);
         res.status(status).json({ error: err.message });
       }
+    });
+
+    // Who is where, for the mini-map: humans per room (presence) and each character's room (the simulation).
+    app.get('/api/worlds/:slug/where', (req, res) => {
+      const loaded = getWorld(req.params.slug);
+      if (!loaded) return res.status(404).json({ error: 'unknown world' });
+      res.setHeader('cache-control', 'public, max-age=2');
+      const sim = simFor(loaded.world.slug);
+      const body: WhereResponse = {
+        humans: presenceStats(loaded.world.slug).byRoom,
+        characters: [...sim.chars.values()].map((c) => ({ id: c.id, name: c.name, at: c.location })),
+      };
+      res.json(body);
     });
 
     app.get('/api/worlds/:slug', (req, res) => {

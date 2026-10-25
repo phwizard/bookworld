@@ -23,7 +23,9 @@ button, input { font: inherit; }
 .hud .click { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; background: rgba(0,0,0,.35); }
 .world canvas { cursor: pointer; }
 .hud .click div { padding: 14px 22px; background: rgba(0,0,0,.6); border: 1px solid #c9a961; border-radius: 8px; }
-.minimap { position: absolute; right: 16px; top: 16px; background: rgba(0,0,0,.45); border: 1px solid #5a4630; border-radius: 6px; padding: 6px; }
+.minimap { position: absolute; right: 12px; top: 52px; pointer-events: auto; }
+.minimap text { user-select: none; }
+@media (max-width: 700px) { .minimap { transform: scale(.68); transform-origin: top right; } }
 .chat { position: absolute; right: 0; top: 0; bottom: 0; width: min(420px, 100vw); background: rgba(246, 241, 231, .62); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); color: #222; box-shadow: -6px 0 24px rgba(0,0,0,.35); display: flex; flex-direction: column; font-family: system-ui, sans-serif; }
 .chat header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #3a2d1c; color: #f3e6c4; font-family: Georgia, serif; }
 .chat header button { background: none; border: 1px solid #c9a961; color: inherit; border-radius: 4px; padding: 2px 8px; cursor: pointer; }

@@ -1,4 +1,4 @@
-import type { EnterRequest, EnterResponse, ResumeRequest, WorldCard } from '@bookworld/shared';
+import type { EnterRequest, EnterResponse, ResumeRequest, WhereResponse, WorldCard } from '@bookworld/shared';
 
 /** The world service. Unset, it is the host that served this page on port 2567, so another device on the same
  *  network (http://192.168.x.x:5173) reaches the right server without configuration. */
@@ -90,4 +90,11 @@ function visitorId(): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** Who is in which room right now (mini-map); polled every few seconds while in a world. */
+export async function whereIsEveryone(slug: string): Promise<WhereResponse> {
+  const res = await fetch(`${SERVER_URL}/api/worlds/${slug}/where`);
+  if (!res.ok) throw new Error(`cannot read presence (${res.status})`);
+  return (await res.json()) as WhereResponse;
 }

@@ -49,6 +49,14 @@ export interface WorldCard {
   story: { scenes: number; next: number; running: boolean };
 }
 
+/** GET /api/worlds/:slug/where: who is in which room right now, for the mini-map (polled every few seconds). */
+export interface WhereResponse {
+  /** humans per room id, active only */
+  humans: Record<string, number>;
+  /** every character and the room it is in now */
+  characters: { id: string; name: string; at: string }[];
+}
+
 /** GET /api/stats: the numbers a home page shows. */
 export interface StatsResponse {
   generatedAt: string;
