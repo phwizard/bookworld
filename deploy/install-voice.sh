@@ -12,7 +12,10 @@ VENV=$HOME_DIR/voice-venv
 MODELS=$HOME_DIR/piper-models
 KOKORO=$HOME_DIR/kokoro-models
 KOKORO_URL=https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0
-run() { sudo -u bookworld -H env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$PATH" UV_PYTHON_INSTALL_DIR="$HOME_DIR/.local/share/uv/python" "$@"; }
+run() { sudo -u bookworld -H env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$PATH" UV_PYTHON_INSTALL_DIR="$HOME_DIR/.local/share/uv/python" UV_NO_CONFIG=1 "$@"; }
+# uv looks for uv.toml and a project in the working directory and above; install.sh runs from /root, which the
+# service user cannot read ("failed to open file /root/uv.toml: Permission denied"), so work from its home instead
+mkdir -p "$HOME_DIR" && cd "$HOME_DIR"
 
 if ! run test -x "$HOME_DIR/.local/bin/uv"; then
   echo "voice: installing uv into $HOME_DIR/.local/bin"
