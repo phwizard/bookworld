@@ -310,7 +310,7 @@ export class Lesson {
     const line = this.lines[step.line]!;
     const cue = step.line > 0 ? this.lines[step.line - 1]! : null;
     const r: LessonRound = {
-      n: this.roundNo, left: this.queue.length + 1, section: line.section,
+      n: this.roundNo, left: this.queue.length + 1, line: step.line, section: line.section,
       cue: cue ? { lyric: cue.lyric, chords: cue.chords } : null,
       task: step.task, count: progression(line.chords).length,
     };

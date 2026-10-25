@@ -19,6 +19,7 @@ import * as presence from '../presence.ts';
 import type { CharState, ItemState, WorldSim } from '../world/sim.ts';
 import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
 import { Band } from '../world/band.ts';
+import { canSing, prerenderSung, sungUrl, voicedCharacters } from '../voice.ts';
 import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
 
 export const Player = schema({
@@ -332,9 +333,14 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     const { slug } = this.world;
     const uid = data.session.uid;
     const plan = savePlan(slug, uid, { song: song.id, mode });
+    const sings = canSing && voicedCharacters(this.world).includes(trainer.id);
+    if (sings) prerenderSung(slug, trainer.id, song);
     const lesson = new Lesson(song, mode, data.session.name, progressOn(slug, uid, song), {
       state: (active) => {
         if (data.lesson !== lesson) return;
+        // the cue line sung in the trainer's voice, when the song has a melody for it and the server can sing
+        const r = active.round;
+        if (r && r.line > 0 && sings && lesson.lines[r.line - 1]?.melody) r.cueAudio = sungUrl(slug, trainer.id, song.id, r.line - 1);
         this.sendLesson(client, data, active);
         this.log('lesson.state', data, { song: song.id, round: active.round?.n ?? null, task: active.round?.task ?? null, played: active.round?.played, heard: active.round?.heard, feedback: active.feedback, score: active.score, finished: active.finished });
       },

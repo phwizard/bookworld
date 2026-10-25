@@ -8,6 +8,55 @@ export interface SongLine {
   chords: string[];
   /** the words; empty for an instrumental line */
   lyric: string;
+  /** the tune of the words, one group per word: "C4:1 C4:0.5 C4:1+G3:1.5" (note:beats, several notes joined with +); see parseMelody */
+  melody?: string;
+}
+
+/** One note of a melody: MIDI number (C4 = 60) and length in beats. */
+export interface MelodyNote { midi: number; beats: number }
+/** The notes of one word of a line. */
+export interface MelodyWord { word: string; notes: MelodyNote[] }
+
+const NOTE_SEMI: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11, H: 11 };
+
+/** "G3" -> 55, "F#4" -> 66, "Bb3" -> 58; null for anything else. */
+export function noteMidi(name: string): number | null {
+  const m = /^([A-H])([#b]?)(-?\d)?$/.exec(name.trim());
+  if (!m) return null;
+  const octave = m[3] === undefined ? 4 : Number(m[3]);
+  return (octave + 1) * 12 + NOTE_SEMI[m[1]!]! + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+}
+
+/** The words of a lyric as sung: punctuation off, hyphenated words kept whole. */
+export function lyricWords(lyric: string): string[] {
+  return lyric.split(/\s+/).map((w) => w.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, '')).filter(Boolean);
+}
+
+/**
+ * Reads a melody line against its words: one group per word, groups separated by spaces, the notes of a word
+ * joined with "+", each note "name:beats" ("C4:1", "G3:1.5", "-:0.5" for a rest inside the word). Throws with a
+ * reason when the groups do not match the words or a note does not parse.
+ */
+export function parseMelody(melody: string, lyric: string): MelodyWord[] {
+  const words = lyricWords(lyric);
+  const groups = melody.trim().split(/\s+/).filter(Boolean);
+  if (groups.length !== words.length) throw new Error(`melody has ${groups.length} groups for ${words.length} words`);
+  return groups.map((g, i) => ({
+    word: words[i]!,
+    notes: g.split('+').map((n) => {
+      const [name, beatsStr] = n.split(':');
+      const beats = Number(beatsStr);
+      if (!name || !(beats > 0)) throw new Error(`bad note "${n}" at word ${i + 1} "${words[i]}"`);
+      const midi = name === '-' ? -1 : noteMidi(name);
+      if (midi === null) throw new Error(`unknown note "${name}" at word ${i + 1} "${words[i]}"`);
+      return { midi, beats };
+    }),
+  }));
+}
+
+/** Total beats of a melody. */
+export function melodyBeats(words: MelodyWord[]): number {
+  return words.reduce((n, w) => n + w.notes.reduce((m, x) => m + x.beats, 0), 0);
 }
 
 export interface SongSection {
@@ -174,6 +223,7 @@ function isChordProLyric(line: string): boolean {
 function parseChordPro(lines: string[], song: Song) {
   const cur: { section: SongSection | null } = { section: null };
   let verses = 0;
+  let melody: string | undefined;
   const open = (name: string) => { cur.section = { name, lines: [] }; song.sections.push(cur.section); };
   for (const raw of lines) {
     const line = raw.trim();
@@ -189,6 +239,7 @@ function parseChordPro(lines: string[], song: Song) {
       else if (name === 'license') song.license = value;
       else if (name === 'language' || name === 'lang') song.lang = value;
       else if (name === 'tempo') song.tempo = Number(value) || undefined;
+      else if (name === 'melody' || name === 'm') melody = value;
       else if (name === 'start_of_chorus' || name === 'soc') open(value || 'Chorus');
       else if (name === 'start_of_bridge' || name === 'sob') open(value || 'Bridge');
       else if (name === 'start_of_verse' || name === 'sov') open(value || `Verse ${++verses}`);
@@ -202,7 +253,10 @@ function parseChordPro(lines: string[], song: Song) {
     const lyric = line.replace(INLINE_CHORD, '').replace(/\s+/g, ' ').trim();
     if (!chords.length && !lyric) continue;
     if (!cur.section) open(`Verse ${++verses}`);
-    cur.section!.lines.push({ chords, lyric });
+    const sl: SongLine = { chords, lyric };
+    if (melody && lyric) sl.melody = melody;
+    melody = undefined;
+    cur.section!.lines.push(sl);
   }
 }
 
@@ -269,7 +323,7 @@ export function songToChordPro(song: Song): string {
     out.push('');
     const chorus = /chorus|refrain/i.test(s.name);
     out.push(chorus ? `{start_of_chorus: ${s.name}}` : `{start_of_verse: ${s.name}}`);
-    for (const l of s.lines) out.push(chordProLine(l));
+    for (const l of s.lines) { if (l.melody) out.push(`{melody: ${l.melody}}`); out.push(chordProLine(l)); }
     out.push(chorus ? '{end_of_chorus}' : '{end_of_verse}');
   }
   return out.join('\n') + '\n';
@@ -297,6 +351,10 @@ export function validateSong(song: Song): string[] {
   if (!lines.length) errors.push('no lines');
   if (!lines.some((l) => l.chords.length)) errors.push('no chords on any line');
   for (const l of lines) for (const c of l.chords) if (!parseChord(c)) errors.push(`line ${l.index + 1}: unknown chord ${c}`);
+  for (const l of songLines(song)) {
+    if (!l.melody) continue;
+    try { parseMelody(l.melody, l.lyric); } catch (e) { errors.push(`line ${l.index + 1}: ${(e as Error).message}`); }
+  }
   return errors;
 }
 
@@ -343,7 +401,11 @@ export interface LessonRound {
   /** 1-based round number and how many rounds the session has left including this one */
   n: number;
   left: number;
+  /** index of the line asked for (into songLines) */
+  line: number;
   section: string;
+  /** the cue line sung in the trainer's voice (a rendered file, docs/VOICES.md) when the song has a melody and the server can sing */
+  cueAudio?: string;
   /** the line before the one asked for, sung and played by the trainer; null at the start of a section */
   cue: { lyric: string; chords: string[] } | null;
   task: LessonTask;

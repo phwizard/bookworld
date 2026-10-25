@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseSong, songLines, songChords, sameChords, progression, lyricSimilarity, LYRIC_PASS, songToChordPro, validateSong, validateWorld, firstWords, speechLang, chordKey } from '@bookworld/shared';
+import { parseSong, songLines, songChords, sameChords, progression, lyricSimilarity, LYRIC_PASS, songToChordPro, validateSong, validateWorld, firstWords, speechLang, chordKey, parseMelody, melodyBeats, noteMidi } from '@bookworld/shared';
 
 const waterIsWide = readFileSync(new URL('../../worlds/songbook/songs/the-water-is-wide.cho', import.meta.url), 'utf8');
 
@@ -110,4 +110,24 @@ test('a song in Ukrainian: Cyrillic words, H for B, the language tag, and lenien
   assert.ok(lyricSimilarity('Ёлка горит', 'елка горит') >= LYRIC_PASS);
   assert.deepEqual(validateSong(song), []);
   assert.match(songToChordPro(song), /\{language: uk\}/);
+});
+
+test('a melody line is read against its words and round-trips', () => {
+  const text = readFileSync(new URL('../../worlds/songbook/songs/clementine.cho', import.meta.url), 'utf8');
+  const song = parseSong(text, 'clementine');
+  const lines = songLines(song);
+  assert.ok(lines[0]!.melody, 'verse 1 line 1 has a melody');
+  const words = parseMelody(lines[0]!.melody!, lines[0]!.lyric);
+  assert.equal(words.length, 10);
+  assert.deepEqual(words[2], { word: 'cavern', notes: [{ midi: 60, beats: 1 }, { midi: 55, beats: 1.5 }] });
+  assert.equal(melodyBeats(words), 14);
+  assert.deepEqual(validateSong(song), []);
+  assert.match(songToChordPro(song), /\{melody: C4:1 C4:0\.5/);
+  assert.equal(noteMidi('F#4'), 66);
+  assert.equal(noteMidi('Bb3'), 58);
+  assert.equal(noteMidi('H3'), 59);
+  assert.throws(() => parseMelody('C4:1 C4:1', 'three little words'), /2 groups for 3 words/);
+  assert.throws(() => parseMelody('C4:1 X4:1', 'two words'), /unknown note "X4"/);
+  const bad = parseSong('{title: T}\n{melody: C4:1}\n[C]two words\n', 't');
+  assert.match(validateSong(bad)[0]!, /line 1: melody has 1 groups for 2 words/);
 });

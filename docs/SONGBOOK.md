@@ -40,6 +40,15 @@ Song files live in `worlds/<slug>/songs/` as ChordPro:
 {end_of_verse}
 ```
 
+A `{melody: ...}` line before a lyric line gives its tune for the singing renderer (`docs/VOICES.md`): one group per word of the line, each note as `name:beats` (`C4:1`, `G3:1.5`, `F#4:0.5`; `-:0.5` a rest), the notes of one word joined with `+`:
+
+```
+{melody: C4:1 C4:0.5 C4:1+G3:1.5 E4:1 E4:0.5 E4:1+C4:1.5 C4:1+E4:0.5+G4:1+G4:0.5 F4:1 E4:0.5 D4:1.5}
+[C]In a cavern, in a [G7]canyon, exca[C]vating for a [G7]mine
+```
+
+The validator checks that the groups match the words. With the renderer on, the trainer sings such a cue in its own voice instead of reading it. The Clementine melodies are a sketch to be corrected by ear.
+
 `pnpm song -- --world songbook --file song.pdf` (or `.txt`) converts a file into that form. It reads ChordPro, or the common layout with a line of chord names above each line of words and section names like `[Chorus]` or `Verse 2:` on their own line; PDFs go through `pdftotext -layout` (poppler). `--id`, `--title` and `--artist` override what the file says. Check the result by eye: the drill asks exactly what the file says.
 
 Licence (rule 5 in `CLAUDE.md`): the hosted world carries traditional and public-domain songs only. For songs whose words are in copyright use `--private`: the file goes to `songs/private/`, which is gitignored, and is read by your own server only. A `license` line in the file is shown nowhere but kept for the record.

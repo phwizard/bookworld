@@ -6,6 +6,7 @@ import { selectHolding, useStore } from '../store.ts';
 import { sendLesson } from '../net/colyseus.ts';
 import { hearing, setHearingLang, speechSupported, startHearing, stopHearing } from '../audio/speech.ts';
 import { sayInChat } from './ChatPanel.tsx';
+import { muteNext, playSung } from '../audio/voice.ts';
 
 const MODE_LABEL: Record<LessonMode, string> = { chords: 'chords', words: 'words', both: 'both' };
 
@@ -48,6 +49,14 @@ export function LessonPanel() {
     setAnswer('');
     if (active?.round?.task === 'words' && !active.feedback && open) setTimeout(() => input.current?.focus(), 50);
   }, [roundNo, active?.round?.task, active?.feedback, open]);
+
+  // a round whose cue the trainer sings for real: play the rendered line, and keep the chat line's voice quiet
+  const cueAudio = active?.round?.cueAudio;
+  useEffect(() => {
+    if (!cueAudio || !lesson) return;
+    muteNext(lesson.trainer);
+    void playSung(cueAudio, lesson.trainer);
+  }, [roundNo, cueAudio]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the lesson opens the panel when it starts (a round arrives while it is closed)
   useEffect(() => { if (active && !active.finished && !open) setOpen(true); }, [active?.song.id]); // eslint-disable-line react-hooks/exhaustive-deps

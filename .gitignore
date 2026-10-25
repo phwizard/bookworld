@@ -23,3 +23,7 @@ worlds/*/knowledge/
 worlds/*/draft.json
 worlds/*/world.invalid.json
 generator/.cache/
+
+# local voice renderer environment and its output
+voice/.venv/
+voice/out/

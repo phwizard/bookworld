@@ -18,6 +18,8 @@ import { cleanVisitor, record, readEvents } from './metrics.ts';
 import { buildReport } from './metrics-report.ts';
 import { budgetConfigFromEnv } from './budget.ts';
 import { debug, debugOn } from './debuglog.ts';
+import { backend as voiceBackend, readAudio, renderLine, renderSung, voicedCharacters, VoiceError, TEXT_MAX } from './voice.ts';
+import { songById } from './world/songs.ts';
 import { existsSync, readFileSync } from 'node:fs';
 
 const PORT = Number(process.env.PORT ?? 2567);
@@ -27,6 +29,11 @@ const ORIGIN = process.env.CORS_ORIGIN ?? '*';
 
 const worlds = loadWorlds();
 console.log(`[worlds] loaded: ${[...worlds.keys()].join(', ')}`);
+
+function voiceInfo(world: import('@bookworld/shared').World): EnterResponse['voice'] {
+  const characters = voicedCharacters(world);
+  return characters.length ? { backend: voiceBackend, characters } : undefined;
+}
 
 function ethoraInfo(slug: string, playerId: string | null): EthoraPublicInfo {
   const e = ethoraFor(slug);
@@ -145,6 +152,40 @@ const server = new Server({
       res.json(job);
     });
 
+    // A character's line as audio, rendered once by the voice backend and cached (docs/VOICES.md).
+    app.get('/api/worlds/:slug/voice/:character', async (req, res) => {
+      const text = typeof req.query.text === 'string' ? req.query.text.slice(0, TEXT_MAX) : '';
+      try {
+        const file = await renderLine(req.params.slug, req.params.character, text);
+        res.setHeader('content-type', 'audio/mpeg');
+        res.setHeader('cache-control', 'public, max-age=86400');
+        res.send(readAudio(file));
+      } catch (e) {
+        const err = e as Error;
+        const status = err instanceof VoiceError ? err.status : 500;
+        if (status === 500) console.error('[voice]', err.message);
+        res.status(status).json({ error: err.message });
+      }
+    });
+
+    // A line of a song sung in a character's voice (docs/VOICES.md, "Singing").
+    app.get('/api/worlds/:slug/sung/:character/:song/:line', async (req, res) => {
+      try {
+        const song = songById(req.params.slug, req.params.song);
+        if (!song) throw new VoiceError('unknown song', 404);
+        const file = await renderSung(req.params.slug, req.params.character, song, Number(req.params.line));
+        if (!file) throw new VoiceError('this line has no melody', 404);
+        res.setHeader('content-type', 'audio/mpeg');
+        res.setHeader('cache-control', 'public, max-age=86400');
+        res.send(readAudio(file));
+      } catch (e) {
+        const err = e as Error;
+        const status = err instanceof VoiceError ? err.status : 500;
+        if (status === 500) console.error('[voice]', err.message);
+        res.status(status).json({ error: err.message });
+      }
+    });
+
     app.get('/api/worlds/:slug', (req, res) => {
       const loaded = getWorld(req.params.slug);
       if (!loaded) return res.status(404).json({ error: 'unknown world' });
@@ -175,6 +216,8 @@ const server = new Server({
         token, playerId, name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, uid),
         ai: budgetFor(loaded.world.slug).snapshot(visitor), ...(debugOn ? { debug: true } : {}),
       };
+      const voice = voiceInfo(loaded.world);
+      if (voice) body.voice = voice;
       res.json(body);
     });
 
@@ -196,6 +239,8 @@ const server = new Server({
         token, playerId: session.pid, name: session.name, world: loaded.world, ethora: ethoraInfo(loaded.world.slug, session.uid),
         ai: budgetFor(loaded.world.slug).snapshot(session.visitor), ...(debugOn ? { debug: true } : {}),
       };
+      const voice = voiceInfo(loaded.world);
+      if (voice) body.voice = voice;
       res.json(body);
     });
   },

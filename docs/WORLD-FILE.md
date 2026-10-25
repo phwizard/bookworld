@@ -45,6 +45,7 @@
       "avatar": "assets/avatars/white-rabbit.vrm",
       "pos": [-3, 0, -4], "rotY": 3.14,                                             // optional standing spot in the home room (room-local metres)
       "wander": 1.2,                                                                // metres it strolls around that spot while idle (0 = stands still)
+      "voice": { "description": "...", "sample": "voices/rosie.wav", "lang": "en", "ids": { "say": "Moira", "openai": "sage" } }, // optional: the voice a server-side renderer uses (docs/VOICES.md)
       "schedule": [ { "at": "*/15 * * * *", "do": "move", "to": "hall-of-doors" },  // cron, executed by the world service: the character walks out ("has left (E)") and its agent follows
                     { "at": "7 * * * *", "do": "say", "text": "Tea!" } ]
     }

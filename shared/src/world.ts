@@ -116,6 +116,19 @@ export interface WorldCharacter {
   /** how far (metres) the character wanders from its spot while idle; 0 keeps it still */
   wander?: number;
   schedule?: ScheduleEntry[];
+  /** the character's voice, for a server-side renderer (docs/VOICES.md); clients fall back to the browser's voices */
+  voice?: WorldVoice;
+}
+
+export interface WorldVoice {
+  /** what the voice sounds like, in words (used by renderers that take instructions, and by people designing one) */
+  description?: string;
+  /** a wav or mp3 of 10 to 30 seconds in this voice, relative to the world folder; the reference for a cloning renderer */
+  sample?: string;
+  /** language of the lines for the renderer ("en", "uk"); default en */
+  lang?: string;
+  /** voice ids per backend: { "elevenlabs": "...", "openai": "sage", "say": "Moira" } */
+  ids?: Record<string, string>;
 }
 
 export interface ScriptLine {
@@ -236,6 +249,13 @@ export function validateWorld(input: unknown): string[] {
     if (!INSTRUMENTS.includes(it.instrument)) errors.push(`item ${it.id}: unknown instrument ${JSON.stringify(it.instrument)}`);
     if (!byId.has(it.room)) errors.push(`item ${it.id}: room ${it.room} is not a room id`);
     if (it.pos && (!Array.isArray(it.pos) || it.pos.length !== 3)) errors.push(`item ${it.id}: pos must be [x,y,z]`);
+  }
+  for (const c of w.characters ?? []) {
+    const v = c.voice;
+    if (!v) continue;
+    if (typeof v !== 'object') { errors.push(`character ${c.id}: voice must be an object`); continue; }
+    if (v.sample && (typeof v.sample !== 'string' || v.sample.includes('..') || v.sample.startsWith('/'))) errors.push(`character ${c.id}: voice.sample must be a path inside the world folder`);
+    if (v.ids && (typeof v.ids !== 'object' || Object.values(v.ids).some((x) => typeof x !== 'string'))) errors.push(`character ${c.id}: voice.ids must map backend names to strings`);
   }
   for (const l of w.lessons ?? []) {
     if (!byId.has(l.room)) errors.push(`lesson in ${l.room}: not a room id`);

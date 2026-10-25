@@ -80,6 +80,8 @@ export interface EnterResponse {
   ai: AiState;
   /** the operator's debug log is on: the client mirrors the room's chat and its own message text to the server (DEBUG_LOG) */
   debug?: boolean;
+  /** characters whose lines the server renders as audio (GET /api/worlds/:slug/voice/:character?text=), when a voice backend is on */
+  voice?: { backend: string; characters: string[] };
 }
 
 /** Colyseus join options */
