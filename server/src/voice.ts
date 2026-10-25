@@ -146,6 +146,33 @@ function hash(s: string): number {
 
 export function readAudio(file: string): Buffer { return readFileSync(file); }
 
+/**
+ * Renders the lines the world files already hold (the scenes of the plays, greetings that do not name the visitor)
+ * into the cache at startup, one after another at low priority, so a scene never waits for the renderer and a slow
+ * box (Kokoro on one core) only renders the agents' live replies. Free for the command backend, so on by default
+ * there; a paid backend renders in advance only with VOICE_WARM=on.
+ */
+export function warmVoices(worlds: World[]): void {
+  const on = (process.env.VOICE_WARM ?? (backend === 'command' ? 'on' : 'off')).trim().toLowerCase() === 'on';
+  if (backend === 'off' || !on) return;
+  const jobs: { slug: string; who: string; text: string }[] = [];
+  for (const w of worlds) {
+    const voiced = new Set(voicedCharacters(w));
+    for (const sc of w.scripts ?? []) for (const l of sc.lines) if (voiced.has(l.who) && !l.text.includes('{player}')) jobs.push({ slug: w.slug, who: l.who, text: l.text });
+  }
+  if (!jobs.length) return;
+  console.log(`[voice] warming the cache: ${jobs.length} scripted lines`);
+  const started = Date.now();
+  let rendered = 0;
+  void jobs.reduce((p, j) => p.then(async () => {
+    try {
+      const before = Date.now();
+      await renderLine(j.slug, j.who, j.text);
+      if (Date.now() - before > 50) { rendered++; await new Promise((r) => setTimeout(r, 500)); }
+    } catch (e) { console.warn(`[voice] warm ${j.slug}/${j.who}:`, (e as Error).message); }
+  }), Promise.resolve()).then(() => console.log(`[voice] cache warm: ${rendered} lines rendered, ${jobs.length - rendered} were there, ${Math.round((Date.now() - started) / 1000)} s`));
+}
+
 // ---- singing ----------------------------------------------------------------------------------------------------
 
 /** VOICE_SING: the singing renderer (voice/sing.py in its venv); it speaks each word through VOICE_COMMAND and forces the tune. */

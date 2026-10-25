@@ -1153,7 +1153,12 @@
           "do": "say",
           "text": "I want a clean cup. Let's all move one place on."
         }
-      ]
+      ],
+      "voice": {
+        "ids": {
+          "kokoro": "bm_fable"
+        }
+      }
     },
     {
       "id": "caterpillar",
@@ -1180,7 +1185,12 @@
           "do": "say",
           "text": "Who are you?"
         }
-      ]
+      ],
+      "voice": {
+        "ids": {
+          "kokoro": "bm_george"
+        }
+      }
     },
     {
       "id": "queen",
@@ -1219,7 +1229,12 @@
           "do": "say",
           "text": "Off with their heads!"
         }
-      ]
+      ],
+      "voice": {
+        "ids": {
+          "kokoro": "bf_emma"
+        }
+      }
     }
   ],
   "scripts": [

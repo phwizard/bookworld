@@ -842,7 +842,10 @@
       "rotY": 3.1416,
       "wander": 1,
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_fable"
+        }
       }
     }
   ],

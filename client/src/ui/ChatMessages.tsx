@@ -53,6 +53,7 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
         if (import.meta.env.DEV) console.log('[bubbles] line', { who: line.name, age: now - messageTime(m), date: m.date, ts: m.timestamp, tsMs: m.messageTimestampMs });
         if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) {
           useStore.getState().setBubble(line.name, line.text);
+          useStore.getState().setLastLine(line.name, isCharacter(line.name));
           if (isCharacter(line.name)) speak(line.name, line.text);
         }
         continue;
@@ -63,6 +64,7 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
       if (now - messageTime(m) > BUBBLE_MAX_AGE_MS) { if (import.meta.env.DEV) console.log('[bubbles] too old', now - messageTime(m), m.body.slice(0, 30)); continue; }
       const who = speakerName(m);
       if (import.meta.env.DEV) console.log('[bubbles] candidate', { who, me, age: now - messageTime(m), body: m.body.slice(0, 40) });
+      if (who) useStore.getState().setLastLine(who, isCharacter(who));
       if (!who || who === me) continue;
       const music = parseMusicLine(m.body);
       if (music) {

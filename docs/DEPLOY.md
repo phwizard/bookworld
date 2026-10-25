@@ -49,7 +49,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-  The real unit is `deploy/bookworld.service`. The server has no build output (its `build` script only typechecks; the workspace packages export TypeScript sources), so `ExecStart` is `/usr/local/bin/node --import tsx src/index.ts` with `tsx` as a runtime dependency. `MemoryMax` was 350M for the service alone and is 650M since 25 Oct 2026 (journal): the voice renders (Piper about 190 MB, the singing renderer about 100 MB) run as children of the service, one at a time, inside this cgroup. If Colyseus plus the generator need more, say so in the journal before raising it again.
+  The real unit is `deploy/bookworld.service`. The server has no build output (its `build` script only typechecks; the workspace packages export TypeScript sources), so `ExecStart` is `/usr/local/bin/node --import tsx src/index.ts` with `tsx` as a runtime dependency. `MemoryMax` was 350M for the service alone and is 650M since 25 Oct 2026 (journal): the voice renders (Piper about 190 MB, the singing renderer about 100 MB) run as children of the service, one at a time, inside this cgroup. If Colyseus plus the generator need more, say so in the journal before raising it again. With Kokoro as the voice the renders take about 750 MB each: `SERVICE_MEMORY_MAX=1500M` in `.env` (install.sh writes it into the unit) on a 4 GB droplet (`docs/VOICES.md`, "On the droplet").
 
 - Caddy block appended to `/etc/caddy/Caddyfile` (back the file up first: `cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak-$(date +%s)`, then `caddy validate --config /etc/caddy/Caddyfile` and `systemctl reload caddy`). Static client from disk, everything else (Colyseus matchmaking, the WebSocket upgrade, `/api/*`) to Node:
 

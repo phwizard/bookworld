@@ -45,6 +45,8 @@ export interface WorldCard {
   chat: boolean;
   /** the daily AI budget is spent; characters rest until the reset */
   resting: boolean;
+  /** the play: how many scenes it has, which is next (0-based), whether one is being performed now */
+  story: { scenes: number; next: number; running: boolean };
 }
 
 /** GET /api/stats: the numbers a home page shows. */

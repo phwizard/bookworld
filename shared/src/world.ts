@@ -151,8 +151,13 @@ export interface ScriptLine {
 export interface WorldScript {
   id: string;
   room: string;
-  trigger: { cron?: string; onEnter?: boolean };
-  /** seconds before the same script may run again (default 120) */
+  /**
+   * `play`: a scene of the play, performed by the world service in the file's order while visitors are near the
+   * characters (docs/WORLD-FILE.md). `cron`: the older spelling of the same (the minute is not used any more).
+   * `onEnter`: a greeting, run when a visitor walks into the room.
+   */
+  trigger: { play?: boolean; cron?: string; onEnter?: boolean };
+  /** seconds before the same script may run again (default 120); greetings only, the play has its own pace */
   cooldownSec?: number;
   lines: ScriptLine[];
   onInterrupt?: 'improvise-then-resume' | 'stop' | 'ignore';
@@ -250,6 +255,7 @@ export function validateWorld(input: unknown): string[] {
   for (const sc of w.scripts ?? []) {
     if (!byId.has(sc.room)) errors.push(`script ${sc.id}: room ${sc.room} is not a room id`);
     for (const l of sc.lines ?? []) if (!charIds.has(l.who)) errors.push(`script ${sc.id}: unknown character ${l.who}`);
+    if (!sc.trigger || typeof sc.trigger !== 'object' || !(sc.trigger.play || sc.trigger.cron || sc.trigger.onEnter)) errors.push(`script ${sc.id}: trigger must have play, cron or onEnter`);
   }
   const itemIds = new Set<string>();
   for (const it of w.items ?? []) {
@@ -284,6 +290,11 @@ export function validateWorld(input: unknown): string[] {
   }
   for (const r of w.rooms) if (!grid.has(r.id)) errors.push(`room ${r.id} is not reachable from ${w.start}`);
   return errors;
+}
+
+/** The scenes of the play, in the order they are performed (the file's order of the scripts with a play or cron trigger). */
+export function playScenes(world: World): WorldScript[] {
+  return (world.scripts ?? []).filter((sc) => sc.trigger.play || sc.trigger.cron);
 }
 
 export function roomById(world: World, id: string): WorldRoom | undefined {

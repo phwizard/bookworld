@@ -12,13 +12,13 @@ import { stats as presenceStats, visited } from './presence.ts';
 import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
 import { cleanName, ethoraUserId, newPlayerId, signSession, verifySession } from './auth.ts';
-import { budgetFor, ethoraFor } from './services.ts';
+import { budgetFor, ethoraFor, simFor } from './services.ts';
 import { tryEthora } from './ethora.ts';
 import { cleanVisitor, record, readEvents } from './metrics.ts';
 import { buildReport } from './metrics-report.ts';
 import { budgetConfigFromEnv } from './budget.ts';
 import { debug, debugOn } from './debuglog.ts';
-import { backend as voiceBackend, readAudio, renderLine, renderSung, voicedCharacters, VoiceError, TEXT_MAX } from './voice.ts';
+import { backend as voiceBackend, readAudio, renderLine, renderSung, voicedCharacters, warmVoices, VoiceError, TEXT_MAX } from './voice.ts';
 import { songById } from './world/songs.ts';
 import { existsSync, readFileSync } from 'node:fs';
 
@@ -96,6 +96,7 @@ const server = new Server({
           visits: p.visits,
           chat: ethoraFor(world.slug).enabled,
           resting: budgetFor(world.slug).snapshot().asleep,
+          story: simFor(world.slug).story(),
         };
       });
 
@@ -262,4 +263,5 @@ function badge(label: string, value: string, color: string): string {
 server.define(COLYSEUS_ROOM_NAME, LocationRoom).filterBy(['world', 'location']);
 
 await server.listen(PORT, HOST);
+warmVoices([...worlds.values()].map((l) => l.world));
 console.log(`[bookworld] world service on ${HOST ?? ''}:${PORT}`);

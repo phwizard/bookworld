@@ -1200,7 +1200,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_daniel"
+        }
       }
     },
     {
@@ -1242,7 +1245,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_george"
+        }
       }
     },
     {
@@ -1265,7 +1271,10 @@
       ],
       "rotY": 3.14,
       "voice": {
-        "gender": "f"
+        "gender": "f",
+        "ids": {
+          "kokoro": "bf_emma"
+        }
       }
     },
     {
@@ -1302,7 +1311,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
       }
     }
   ],
@@ -1391,7 +1403,7 @@
       "id": "round-table-talk",
       "room": "great-hall",
       "trigger": {
-        "cron": "20 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1426,7 +1438,7 @@
       "id": "gardener-boy-talk",
       "room": "cameliard-garden",
       "trigger": {
-        "cron": "50 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [

@@ -16,7 +16,8 @@ ExecStart=/usr/local/bin/node --import tsx src/index.ts
 Restart=always
 RestartSec=3
 # 350M for the service alone; the voice renders (Piper about 190 MB, the singing renderer about 100 MB) run inside this
-# cgroup one at a time, so the budget is 650M while voices are on (docs/DEPLOY.md, journal 25 Oct 2026)
+# cgroup one at a time, so the budget is 650M while voices are on (docs/DEPLOY.md, journal 25 Oct 2026). Kokoro needs
+# about 750 MB per render: set SERVICE_MEMORY_MAX=1500M in .env (install.sh writes it here) on a box with 4 GB.
 MemoryMax=650M
 NoNewPrivileges=true
 ProtectSystem=strict

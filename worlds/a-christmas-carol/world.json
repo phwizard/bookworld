@@ -1038,7 +1038,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_george"
+        }
       }
     },
     {
@@ -1077,7 +1080,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_fable"
+        }
       }
     },
     {
@@ -1116,7 +1122,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
       }
     }
   ],

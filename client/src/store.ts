@@ -43,6 +43,9 @@ interface State {
   pointerLocked: boolean;
   toast: string | null;
   bubbles: Record<string, { text: string; at: number }>;
+  /** the last chat line seen in this room: who sent it and whether that was a character (an unnamed reply goes to them) */
+  lastLine: { from: string; character: boolean; at: number } | null;
+  setLastLine(from: string, character: boolean): void;
   /** daily AI budget as last reported by the server */
   ai: AiState | null;
   setAi(ai: AiState): void;
@@ -106,6 +109,8 @@ export const useStore = create<State>((set) => ({
   pointerLocked: false,
   toast: null,
   bubbles: {},
+  lastLine: null,
+  setLastLine: (from, character) => set({ lastLine: { from, character, at: Date.now() } }),
   musicOn: (() => { try { return localStorage.getItem('bookworld.music') !== 'off'; } catch { return true; } })(),
   setMusicOn: (musicOn) => { try { localStorage.setItem('bookworld.music', musicOn ? 'on' : 'off'); } catch { /* ignore */ } set({ musicOn }); },
   sfxOn: (() => { try { return localStorage.getItem('bookworld.sfx') !== 'off'; } catch { return true; } })(),
@@ -121,7 +126,7 @@ export const useStore = create<State>((set) => ({
   chatTyping: false,
   setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, band: null, resume: enterFrom ? null : s.resume })),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, band: null, lastLine: null, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),

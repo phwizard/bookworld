@@ -51,8 +51,8 @@
     }
   ],
   "scripts": [                                                                      // optional: enacted plays / set pieces
-    { "id": "tea-party", "room": "tea-party", "trigger": { "cron": "0 20 * * *" },  // or { "onEnter": true } when a player walks in
-      "cooldownSec": 180,                                                           // minimum gap between runs
+    { "id": "tea-party", "room": "tea-party", "trigger": { "play": true },          // a scene of the play (performed in the file's order), or { "onEnter": true } when a player walks in
+      "cooldownSec": 180,                                                           // minimum gap between runs of a greeting
       "lines": [ { "who": "hatter", "text": "Why is a raven like a writing-desk, {player}?", "waitMs": 6000 } ], // {player} = the name of who walked in
       "onInterrupt": "improvise-then-resume" }
   ],
@@ -73,7 +73,7 @@ Instruments: a visitor who stands next to one presses E to pick it up (the world
 
 Lessons: a room named in `lessons` is a practice room. Its trainer drills the songs in `worlds/<slug>/songs/` (ChordPro files; `songs/private/` is gitignored for songs in copyright): the world service sings a line in the trainer's name, plays its chords, asks the visitor for the next line's chords (on the carried instrument) or words (typed in the panel), judges the answer itself, brings missed lines back, and keeps each visitor's progress in `DATA_DIR/progress`. The score goes into the chat as a `_Lesson: ..._` narration line and, at the end of a session, as a note for the trainer's Memory. See `docs/SONGBOOK.md`.
 
-A script with a cron trigger is a scene of the play. It runs at its minute when visitors are in its room, and it also comes to the audience: when visitors have been in a room for 45 seconds, the room's next scene whose cooldown has passed is performed for them, the characters it needs walking in first (with the usual "has arrived" narration); one scene at a time per world, and a room rests two and a half minutes between scenes. So a visitor who stays sees the room's scenes in the file's order, and a visitor who walks the world meets the scenes of the rooms they linger in, without knowing the timetable.
+The play. Scripts with `"trigger": { "play": true }` are the scenes of the world's story, in the file's order (an older `"cron"` trigger means the same; the minute is no longer used). The world service keeps a story clock per world: the next scene is performed in its own room, the characters it needs walking there first (with the usual "has left" and "has arrived" narration, and their agents following), so the play moves through the world the way the book does and visitors can follow the characters from room to room or come across a scene. The play is for the visitors: a scene starts only after someone has shared a room with a character for half a minute, scenes are two minutes apart, and lines are posted only in rooms where someone reads them, so an empty world is silent and a world whose visitors have left pauses until someone finds the characters again. After the last scene the cast walks home and the play rests ten minutes before it can begin again. The pace is deliberately unhurried: the play is a background for the people in the world, not a show to keep up with. `GET /api/worlds` reports each world's `story` (scenes, next, running).
 
 Character lines from scripts and schedules are posted by the world service as `**Name:** text`; clients show them as the character speaking (a bubble over the avatar). Narration ("X has joined (E)") is posted as `_italic_`. A player who names a character in chat makes it turn to face them for 30 s.
 

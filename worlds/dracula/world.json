@@ -1169,7 +1169,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_george"
+        }
       }
     },
     {
@@ -1206,7 +1209,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_daniel"
+        }
       }
     },
     {
@@ -1233,7 +1239,10 @@
       ],
       "rotY": 0,
       "voice": {
-        "gender": "f"
+        "gender": "f",
+        "ids": {
+          "kokoro": "bf_isabella"
+        }
       }
     },
     {
@@ -1274,7 +1283,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
       }
     }
   ],
@@ -1363,7 +1375,7 @@
       "id": "library-parting",
       "room": "castle-library",
       "trigger": {
-        "cron": "10 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1398,7 +1410,7 @@
       "id": "pass-meeting",
       "room": "borgo-pass",
       "trigger": {
-        "cron": "40 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [

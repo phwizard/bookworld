@@ -3,7 +3,7 @@
 // Location rooms subscribe to it and mirror the characters in their location into Colyseus state.
 import { Cron } from 'croner';
 import {
-  DIRECTIONS, DIRECTION_LABEL, OPPOSITE, characterLine, characterPose, itemPose, roomById, roomSize, clamp,
+  DIRECTIONS, DIRECTION_LABEL, OPPOSITE, characterLine, characterPose, itemPose, playScenes, roomById, roomSize, clamp,
   type Anim, type Instrument, type World, type WorldCharacter, type WorldRoom, type WorldScript,
 } from '@bookworld/shared';
 import type { LoadedWorld } from './load.ts';
@@ -49,10 +49,15 @@ const DEFAULT_ITEM_NAME: Record<Instrument, string> = { guitar: "a guitar", bass
 
 const TICK_MS = 100;
 const WALK_SPEED = 0.9;
-/** The play comes to the audience: after a visitor has been in a room this long, its next scene is performed there... */
-const SCENE_AFTER_MS = 45000;
-/** ...and the room rests this long between scenes */
-const SCENE_GAP_MS = 150000;
+// The story clock (docs/WORLD-FILE.md, "The play"). The play runs at a visitor's pace, not a timetable's:
+/** a visitor has shared a room with a character this long before the play starts or goes on */
+const PLAY_NEAR_MS = 30000;
+/** between two scenes */
+const SCENE_GAP_MS = 120000;
+/** after the cast has walked into the scene's room, before the first line */
+const CAST_SETTLE_MS = 6000;
+/** after the last scene, before the play may begin again */
+const PLAY_REST_MS = 10 * 60000;
 const STORY_CHECK_MS = 5000;
 
 export class WorldSim {
@@ -63,7 +68,9 @@ export class WorldSim {
   private lastScriptRun = new Map<string, number>();
   /** when the first player arrived in a location that has players now */
   private occupiedSince = new Map<string, number>();
-  private lastSceneEnd = new Map<string, number>();
+  /** index of the next scene of the play (0 = the play has not started, or is over and the cast is home) */
+  private nextScene = 0;
+  private lastSceneEnd = 0;
   private sceneRunning = false;
   private lastStoryCheck = 0;
   private crons: Cron[] = [];
@@ -166,10 +173,7 @@ export class WorldSim {
         }));
       }
     }
-    for (const sc of this.world.scripts ?? []) {
-      if (sc.trigger.cron) this.crons.push(new Cron(sc.trigger.cron, () => void this.runScript(sc)));
-    }
-    console.log(`[sim ${this.world.slug}] ${this.chars.size} characters, ${this.crons.length} schedules`);
+    console.log(`[sim ${this.world.slug}] ${this.chars.size} characters, ${this.crons.length} schedules, ${playScenes(this.world).length} scenes`);
   }
 
   stop() {
@@ -241,33 +245,49 @@ export class WorldSim {
   }
 
   /**
-   * The scenes of the play (scripts with a cron trigger) do not only run at their minute: when visitors have been in a
-   * room for a while, the room's next scene whose cooldown has passed is performed for them, the characters it needs
-   * walking in first. One scene at a time per world; a room rests between scenes. Visitors who stay in one room see
-   * its scenes in the file's order; visitors who walk the world meet the scenes of the rooms they linger in.
+   * The story clock. The scenes of the play (scripts with a play trigger) are performed in the file's order, each in
+   * its own room, the characters it needs walking there first, so the play moves through the world as the book does
+   * and visitors can follow it or come across it. It is for the visitors: a scene starts only when someone has
+   * shared a room with a character for a while, so an empty world is silent and a world whose visitors have left
+   * pauses until someone finds the characters again. Lines are posted only where someone reads them, but the scene
+   * takes its time either way. After the last scene the cast walks home and the play rests before it can begin again.
    */
   private async storyTick(now: number) {
     if (this.sceneRunning) return;
-    for (const [room, since] of this.occupiedSince) {
-      if (now - since < SCENE_AFTER_MS || now - (this.lastSceneEnd.get(room) ?? 0) < SCENE_GAP_MS) continue;
-      const scenes = (this.world.scripts ?? []).filter((sc) => sc.room === room && sc.trigger.cron);
-      const ready = scenes.filter((sc) => now - (this.lastScriptRun.get(sc.id) ?? 0) >= (sc.cooldownSec ?? 120) * 1000);
-      if (!ready.length) continue;
-      // the one that has waited longest, never-performed ones first in the file's order
-      const next = ready.sort((a, b) => (this.lastScriptRun.get(a.id) ?? 0) - (this.lastScriptRun.get(b.id) ?? 0))[0]!;
-      this.sceneRunning = true;
-      try {
-        const cast = [...new Set(next.lines.map((l) => l.who))];
-        const absent = cast.filter((id) => this.chars.get(id) && this.chars.get(id)!.location !== room);
-        console.log(`[sim ${this.world.slug}] scene ${next.id} comes to the audience in ${room}${absent.length ? ` (${absent.join(', ')} walk in)` : ''}`);
-        for (const id of absent) await this.moveCharacter(id, room);
-        if (absent.length) await sleep(3000);
-        await this.runScript(next);
-      } finally {
-        this.lastSceneEnd.set(room, Date.now());
-        this.sceneRunning = false;
+    const scenes = playScenes(this.world);
+    if (!scenes.length) return;
+    if (now - this.lastSceneEnd < (this.nextScene === 0 ? PLAY_REST_MS : SCENE_GAP_MS)) return;
+    const near = [...this.occupiedSince].some(([room, since]) => now - since >= PLAY_NEAR_MS && this.inLocation(room).length > 0);
+    if (!near) return;
+    const scene = scenes[this.nextScene]!;
+    this.sceneRunning = true;
+    try {
+      const cast = [...new Set(scene.lines.map((l) => l.who))];
+      const absent = cast.filter((id) => this.chars.get(id) && this.chars.get(id)!.location !== scene.room);
+      console.log(`[sim ${this.world.slug}] scene ${this.nextScene + 1} of ${scenes.length}, ${scene.id} in ${scene.room}${absent.length ? ` (${absent.join(', ')} walk in)` : ''}${this.occupied(scene.room) ? '' : ', nobody there'}`);
+      for (const id of absent) await this.moveCharacter(id, scene.room);
+      if (absent.length) await sleep(CAST_SETTLE_MS);
+      await this.performScene(scene);
+      this.nextScene = (this.nextScene + 1) % scenes.length;
+      if (this.nextScene === 0) {
+        console.log(`[sim ${this.world.slug}] the play is over; the cast goes home`);
+        await sleep(CAST_SETTLE_MS);
+        for (const c of this.world.characters) await this.moveCharacter(c.id, c.home);
       }
-      return;
+    } finally {
+      this.lastSceneEnd = Date.now();
+      this.sceneRunning = false;
+    }
+  }
+
+  /** Speaks the scene's lines in its room, at the file's pace; lines reach the chat only while someone is there. */
+  private async performScene(sc: WorldScript) {
+    this.lastScriptRun.set(sc.id, Date.now());
+    for (const line of sc.lines) {
+      const c = this.chars.get(line.who);
+      if (!c || c.location !== sc.room) continue;
+      await this.say(line.who, line.text.replaceAll('{player}', 'stranger'));
+      await sleep(line.waitMs ?? 4000);
     }
   }
 
@@ -281,6 +301,11 @@ export class WorldSim {
     c.holdUntil = Date.now() + 30000;
     console.log(`[sim ${this.world.slug}] ${c.name} turns to face a speaker in ${c.location}`);
     this.notify(c.location);
+  }
+
+  /** The play's position, for the home page and the log: which scene is next and whether one is on. */
+  story(): { scenes: number; next: number; running: boolean } {
+    return { scenes: playScenes(this.world).length, next: this.nextScene, running: this.sceneRunning };
   }
 
   /** Called when a player enters a room: runs that room's on-enter scripts if their cooldown has passed. */
@@ -298,7 +323,6 @@ export class WorldSim {
     // A scene with nobody in the room would only make the agents talk to each other (paid replies, no audience).
     if (!this.occupied(sc.room)) return;
     this.lastScriptRun.set(sc.id, now);
-    if (sc.trigger.cron) this.lastSceneEnd.set(sc.room, now);
     console.log(`[sim ${this.world.slug}] script ${sc.id} in ${sc.room}${playerName ? ' for ' + playerName : ''}`);
     for (const line of sc.lines) {
       const c = this.chars.get(line.who);

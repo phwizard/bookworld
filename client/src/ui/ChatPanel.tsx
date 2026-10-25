@@ -8,6 +8,8 @@ import { reportSaid } from '../net/colyseus.ts';
 import type { LessonStateMessage } from '@bookworld/shared';
 
 let panelEl: HTMLElement | null = null;
+/** an unnamed line this soon after a character's line is a reply to that character */
+const REPLY_WINDOW_MS = 90000;
 
 /** Puts the cursor in the message box (T). Retries briefly because the panel may still be mounting. */
 export function focusComposer(tries = 10) {
@@ -92,10 +94,18 @@ export function ChatPanel() {
         text = muteCharacterNames(text);
         if (text !== area.value) s.setToast(ai.asleep ? 'The characters are resting; only visitors will read this' : 'Your share of the characters is used up for today');
       }
-      // In a practice room a line that names nobody is for the trainer: its agent answers only when named.
+      // The agents answer only when named. A line that names nobody is taken as addressed to the character it is
+      // evidently for: the trainer in a practice room, the only character in the room, or the character who spoke
+      // last here a moment ago (a reply to them). Their name goes in front, so the agent hears it and all can see.
       const lesson = s.lesson;
-      if (lesson && !/^[♪_*(]/.test(text) && !Object.values(s.characters).some((c) => text.toLowerCase().includes(c.name.toLowerCase()))) {
-        text = `${lesson.trainer}, ${text}`;
+      const chars = Object.values(s.characters);
+      if (!/^[♪_*(]/.test(text) && !chars.some((c) => text.toLowerCase().includes(c.name.toLowerCase()))) {
+        const last = s.lastLine;
+        const addressee = lesson ? lesson.trainer
+          : chars.length === 1 ? chars[0]!.name
+          : last?.character && Date.now() - last.at < REPLY_WINDOW_MS && chars.some((c) => c.name === last.from) ? last.from
+          : null;
+        if (addressee) text = `${addressee}, ${text}`;
       }
       // A question to the trainer during a lesson carries the scoreboard with it: the agent does not see the room's
       // own lines (ETHORA-GAPS #22), so the score travels inside the visitor's message, in brackets for all to read.

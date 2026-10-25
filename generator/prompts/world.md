@@ -39,6 +39,8 @@ Coordinates are room-local metres. The room is centred on the origin, the floor 
 
 One `scripts` entry per character with `trigger: { "onEnter": true }` in its home room, `cooldownSec` 180, and 1 to 3 lines the character says when someone walks in; `{player}` is replaced with the visitor's name. Lines are short, in the book's voice, and may quote it.
 
+When the notes ask for the story or the play, add scenes: `scripts` entries with `trigger: { "play": true }`, in the book's order, each in the room where the book has it happen, with 4 to 6 lines between the characters present (mostly the book's own words, lightly cut, each line a sentence or two, `waitMs` 5000 to 8000). The world service performs the scenes in this order, walking the characters into each scene's room first, so a scene may use characters from any room; keep every scene's cast to the characters of this world. The scenes should let a visitor who follows the characters see the whole story.
+
 ## Style
 
 Plain hyphens only: never an em dash or an en dash anywhere in the output. British or American spelling as the book has it. No spoilers for the book's ending in room descriptions. Everything in English unless the book is not.

@@ -97,6 +97,8 @@ So: rhythm and bass accompaniment from the service, soon and deterministic; a mo
 
 ## Talking to the trainer, and jamming
 
+(The same rule now holds in every room: a line that names no character goes to the only character in the room, or to the character who spoke last within the past minute and a half, with its name put in front. The trainer rule below came first and still applies in a practice room.)
+
 The trainer's agent answers only when named (its `responseMode` is `mentioned`, a cost rule). In a practice room the client puts the trainer's name in front of any line that names no character, so "can you jam with me?" reaches Rosie as "Rosie, can you jam with me?". Lines that are music, narration or brackets are left alone.
 
 "jam with Rosie" on the chord bar (shown while no lesson round is under way) sends every phrase you play to the trainer in your name: "Rosie, I played: C G Am F. Jam with me: answer with one music line of your own, then it is my turn again." The agent's prompt already knows the notation, so it answers with a `♪ Rosie (guitar): ...` line, which every client in the room plays, and the band (B) keeps the clock under both of you. Each phrase is one paid reply, at most one every twenty seconds (the agent's cooldown); phrases inside the cooldown are heard by the room but not answered.

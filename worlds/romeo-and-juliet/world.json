@@ -1271,7 +1271,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
       }
     },
     {
@@ -1318,7 +1321,10 @@
         }
       ],
       "voice": {
-        "gender": "f"
+        "gender": "f",
+        "ids": {
+          "kokoro": "bf_emma"
+        }
       }
     },
     {
@@ -1369,7 +1375,10 @@
         }
       ],
       "voice": {
-        "gender": "m"
+        "gender": "m",
+        "ids": {
+          "kokoro": "bm_daniel"
+        }
       }
     },
     {
@@ -1416,7 +1425,10 @@
         }
       ],
       "voice": {
-        "gender": "f"
+        "gender": "f",
+        "ids": {
+          "kokoro": "bf_alice"
+        }
       }
     }
   ],
@@ -1505,7 +1517,7 @@
       "id": "scene-feast",
       "room": "capulet-hall",
       "trigger": {
-        "cron": "0 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1540,7 +1552,7 @@
       "id": "scene-balcony",
       "room": "capulet-orchard",
       "trigger": {
-        "cron": "8 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1575,7 +1587,7 @@
       "id": "scene-noon",
       "room": "verona-square",
       "trigger": {
-        "cron": "17 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1610,7 +1622,7 @@
       "id": "scene-news",
       "room": "juliet-chamber",
       "trigger": {
-        "cron": "25 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1645,7 +1657,7 @@
       "id": "scene-cell",
       "room": "friar-cell",
       "trigger": {
-        "cron": "34 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1680,7 +1692,7 @@
       "id": "scene-farewell",
       "room": "mantua",
       "trigger": {
-        "cron": "43 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [
@@ -1715,7 +1727,7 @@
       "id": "scene-tomb",
       "room": "capulet-tomb",
       "trigger": {
-        "cron": "51 * * * *"
+        "play": true
       },
       "cooldownSec": 600,
       "lines": [

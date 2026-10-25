@@ -145,7 +145,7 @@ export const DRAFT_SCHEMA = {
         properties: {
           id: { type: 'string' },
           room: { type: 'string' },
-          trigger: { type: 'object', additionalProperties: false, properties: { onEnter: { type: 'boolean' }, cron: { type: 'string' } } },
+          trigger: { type: 'object', additionalProperties: false, properties: { onEnter: { type: 'boolean' }, play: { type: 'boolean' }, cron: { type: 'string' } } },
           cooldownSec: { type: 'integer' },
           lines: {
             type: 'array', minItems: 1,
@@ -387,8 +387,9 @@ export function draftToWorld(draft: Draft, ctx: BuildContext): BuildResult {
     if (!lines.length) continue;
     const trigger: WorldScript['trigger'] = {};
     if (sc.trigger?.onEnter) trigger.onEnter = true;
-    if (sc.trigger?.cron && isCron(sc.trigger.cron)) trigger.cron = sc.trigger.cron;
-    if (!trigger.onEnter && !trigger.cron) trigger.onEnter = true;
+    // a scene of the play; a cron minute (the older spelling) means the same, the world service keeps the order, not the minute
+    if (sc.trigger?.play || sc.trigger?.cron) trigger.play = true;
+    if (!trigger.onEnter && !trigger.play) trigger.onEnter = true;
     scripts.push({ id: slugify(sc.id), room, trigger, cooldownSec: sc.cooldownSec ?? 180, lines });
   }
 
