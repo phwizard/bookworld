@@ -129,6 +129,17 @@ export interface WorldVoice {
   lang?: string;
   /** voice ids per backend: { "elevenlabs": "...", "openai": "sage", "say": "Moira" } */
   ids?: Record<string, string>;
+  /** "f" or "m": picks a browser voice and a default rendered voice of that gender; inferred from the persona's pronouns when absent */
+  gender?: 'f' | 'm';
+}
+
+/** The character's voice gender: `voice.gender`, else the pronouns of its persona and description, else null. */
+export function characterGender(c: Pick<WorldCharacter, 'voice' | 'persona' | 'name'>): 'f' | 'm' | null {
+  if (c.voice?.gender) return c.voice.gender;
+  const text = c.persona ?? '';
+  const she = (text.match(/\b(she|her|hers|herself|woman|girl|lady|queen|mother|daughter|sister|wife|nurse|witch)\b/gi) ?? []).length;
+  const he = (text.match(/\b(he|him|his|himself|man|boy|lord|king|father|son|brother|husband|count|sir)\b/gi) ?? []).length;
+  return she > he ? 'f' : he > she ? 'm' : null;
 }
 
 export interface ScriptLine {
@@ -256,6 +267,7 @@ export function validateWorld(input: unknown): string[] {
     if (typeof v !== 'object') { errors.push(`character ${c.id}: voice must be an object`); continue; }
     if (v.sample && (typeof v.sample !== 'string' || v.sample.includes('..') || v.sample.startsWith('/'))) errors.push(`character ${c.id}: voice.sample must be a path inside the world folder`);
     if (v.ids && (typeof v.ids !== 'object' || Object.values(v.ids).some((x) => typeof x !== 'string'))) errors.push(`character ${c.id}: voice.ids must map backend names to strings`);
+    if (v.gender !== undefined && v.gender !== 'f' && v.gender !== 'm') errors.push(`character ${c.id}: voice.gender must be "f" or "m"`);
   }
   for (const l of w.lessons ?? []) {
     if (!byId.has(l.room)) errors.push(`lesson in ${l.room}: not a room id`);

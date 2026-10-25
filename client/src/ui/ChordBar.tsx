@@ -8,9 +8,14 @@ import { playTokens, DRUM_LABEL } from '../audio/instruments.ts';
 import { dropItem, sendBand, sendPlayed } from '../net/colyseus.ts';
 import { BPM_MAX, BPM_MIN } from '@bookworld/shared';
 import { listening, startListening, stopListening } from '../audio/listen.ts';
+import { sayInChat } from './ChatPanel.tsx';
 
 /** chords pressed within this window go to the server as one message (fewer messages while strumming fast) */
 const BATCH_MS = 120;
+/** a phrase for the trainer is complete this long after its last chord */
+const JAM_SETTLE_MS = 2500;
+let jamPending: string[] = [];
+let jamTimer: ReturnType<typeof setTimeout> | null = null;
 const KEY_CODES = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0'];
 
 let pending: string[] = [];
@@ -33,6 +38,17 @@ export function strikeToken(token: string, opts: { silent?: boolean } = {}): boo
   pending.push(token);
   if (timer) clearTimeout(timer);
   timer = setTimeout(() => { sendPlayed(pending); pending = []; timer = null; }, BATCH_MS);
+  // jamming: once the phrase has settled, it goes to the trainer in the visitor's name, and the trainer's agent
+  // answers with a music line the room plays (one paid reply per phrase)
+  jamPending.push(token);
+  if (jamTimer) clearTimeout(jamTimer);
+  jamTimer = setTimeout(() => {
+    const s = useStore.getState();
+    if (s.jamOn && s.lesson && !(s.lesson.active && !s.lesson.active.finished)) {
+      sayInChat(`${s.lesson.trainer}, I played: ${jamPending.join(' ')}. Jam with me: answer with one music line of your own, then it is my turn again.`);
+    }
+    jamPending = []; jamTimer = null;
+  }, JAM_SETTLE_MS);
   useStore.getState().setBubble(useStore.getState().session?.name ?? '', `♪ ${token}`);
   return true;
 }
@@ -61,6 +77,9 @@ export function ChordBar() {
   const bandItems = useStore((s) => Object.values(s.items).some((it) => !it.heldBy && (it.instrument === 'bass' || it.instrument === 'drums')));
   const lessonChords = useStore((s) => (s.lesson?.active && !s.lesson.active.finished ? s.lesson.active.song.chords : null));
   const micOn = useStore((s) => s.micOn);
+  const jamOn = useStore((s) => s.jamOn);
+  const setJamOn = useStore((s) => s.setJamOn);
+  const trainer = useStore((s) => (s.lesson && !(s.lesson.active && !s.lesson.active.finished) ? s.lesson.trainer : null));
   const setMicOn = useStore((s) => s.setMicOn);
   const micLevel = useStore((s) => s.micLevel);
   const setToast = useStore((s) => s.setToast);
@@ -121,6 +140,14 @@ export function ChordBar() {
               {micOn ? 'listening' : 'listen (mic)'}
             </button>
             {micOn && <span className="level"><span style={{ width: `${Math.round(micLevel * 100)}%` }} /></span>}
+            {' · '}
+          </>
+        )}
+        {trainer && (
+          <>
+            <button className={jamOn ? 'link mic on' : 'link mic'} onClick={() => { setJamOn(!jamOn); if (!jamOn) setToast(`Each phrase you play goes to ${trainer}, who answers with one of hers or his`); }} title={`${trainer} answers every phrase you play with a music line (one paid reply per phrase, at most one every twenty seconds)`}>
+              {jamOn ? `jamming with ${trainer}` : `jam with ${trainer}`}
+            </button>
             {' · '}
           </>
         )}

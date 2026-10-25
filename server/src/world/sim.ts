@@ -49,6 +49,11 @@ const DEFAULT_ITEM_NAME: Record<Instrument, string> = { guitar: "a guitar", bass
 
 const TICK_MS = 100;
 const WALK_SPEED = 0.9;
+/** The play comes to the audience: after a visitor has been in a room this long, its next scene is performed there... */
+const SCENE_AFTER_MS = 45000;
+/** ...and the room rests this long between scenes */
+const SCENE_GAP_MS = 150000;
+const STORY_CHECK_MS = 5000;
 
 export class WorldSim {
   readonly chars = new Map<string, CharState>();
@@ -56,6 +61,11 @@ export class WorldSim {
   private listeners = new Map<string, Set<Listener>>();
   private itemListeners = new Map<string, Set<ItemListener>>();
   private lastScriptRun = new Map<string, number>();
+  /** when the first player arrived in a location that has players now */
+  private occupiedSince = new Map<string, number>();
+  private lastSceneEnd = new Map<string, number>();
+  private sceneRunning = false;
+  private lastStoryCheck = 0;
   private crons: Cron[] = [];
   private timer: NodeJS.Timeout | null = null;
   private world: World;
@@ -173,8 +183,9 @@ export class WorldSim {
     let set = this.listeners.get(location);
     if (!set) this.listeners.set(location, (set = new Set()));
     set.add(cb);
+    if (set.size === 1) this.occupiedSince.set(location, Date.now());
     cb(this.inLocation(location));
-    return () => { set!.delete(cb); };
+    return () => { set!.delete(cb); if (set!.size === 0) this.occupiedSince.delete(location); };
   }
 
   inLocation(location: string): CharState[] {
@@ -226,6 +237,38 @@ export class WorldSim {
       if (before !== after) touched.add(c.location);
     }
     for (const loc of touched) this.notify(loc);
+    if (now - this.lastStoryCheck >= STORY_CHECK_MS) { this.lastStoryCheck = now; void this.storyTick(now); }
+  }
+
+  /**
+   * The scenes of the play (scripts with a cron trigger) do not only run at their minute: when visitors have been in a
+   * room for a while, the room's next scene whose cooldown has passed is performed for them, the characters it needs
+   * walking in first. One scene at a time per world; a room rests between scenes. Visitors who stay in one room see
+   * its scenes in the file's order; visitors who walk the world meet the scenes of the rooms they linger in.
+   */
+  private async storyTick(now: number) {
+    if (this.sceneRunning) return;
+    for (const [room, since] of this.occupiedSince) {
+      if (now - since < SCENE_AFTER_MS || now - (this.lastSceneEnd.get(room) ?? 0) < SCENE_GAP_MS) continue;
+      const scenes = (this.world.scripts ?? []).filter((sc) => sc.room === room && sc.trigger.cron);
+      const ready = scenes.filter((sc) => now - (this.lastScriptRun.get(sc.id) ?? 0) >= (sc.cooldownSec ?? 120) * 1000);
+      if (!ready.length) continue;
+      // the one that has waited longest, never-performed ones first in the file's order
+      const next = ready.sort((a, b) => (this.lastScriptRun.get(a.id) ?? 0) - (this.lastScriptRun.get(b.id) ?? 0))[0]!;
+      this.sceneRunning = true;
+      try {
+        const cast = [...new Set(next.lines.map((l) => l.who))];
+        const absent = cast.filter((id) => this.chars.get(id) && this.chars.get(id)!.location !== room);
+        console.log(`[sim ${this.world.slug}] scene ${next.id} comes to the audience in ${room}${absent.length ? ` (${absent.join(', ')} walk in)` : ''}`);
+        for (const id of absent) await this.moveCharacter(id, room);
+        if (absent.length) await sleep(3000);
+        await this.runScript(next);
+      } finally {
+        this.lastSceneEnd.set(room, Date.now());
+        this.sceneRunning = false;
+      }
+      return;
+    }
   }
 
   /** A player spoke to the character: it turns to face them and stands still for a while. */
@@ -255,6 +298,7 @@ export class WorldSim {
     // A scene with nobody in the room would only make the agents talk to each other (paid replies, no audience).
     if (!this.occupied(sc.room)) return;
     this.lastScriptRun.set(sc.id, now);
+    if (sc.trigger.cron) this.lastSceneEnd.set(sc.room, now);
     console.log(`[sim ${this.world.slug}] script ${sc.id} in ${sc.room}${playerName ? ' for ' + playerName : ''}`);
     for (const line of sc.lines) {
       const c = this.chars.get(line.who);

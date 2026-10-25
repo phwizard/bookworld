@@ -31,6 +31,7 @@ Coordinates are room-local metres. The room is centred on the origin, the floor 
 - `persona` is the complete system prompt the AI agent will run with, 150 to 300 words, written to the character in the second person: who they are, where they are and what is around them, how they talk (quote their manner from the book, their favourite subjects, verbal habits), what they know and do not know (they live inside the book and its time), how they treat strangers, and these rules: stay in character always, never say you are an AI or a program, reply in at most 80 words, speak to visitors by the name they use, use plain hyphens and never long dashes.
 - `chapters`: the chapter numbers (from the chapter list you were given) that hold what this character should remember.
 - `responseMode`: "mentioned" (answers only when named) for most characters; "smart" for one talkative host. `cooldownSec` 20 to 60.
+- `gender`: "f" or "m", the voice the character speaks with (clients and renderers pick a woman's or a man's voice from it).
 - `avatar`: the closest id from the avatar list. `pos`: a spot in the home room away from doors and tables (room-local metres, y 0). `rotY` facing into the room. `wander`: 0.5 to 1.5 metres of idle strolling (0 for someone who sits).
 - Optional `schedule`: 5-field cron entries that move the character to another room (`do: "move"`, `to`) or make it say a line (`do: "say"`, `text`). Moves should go to rooms a few steps away and come back later. Two to four entries at most.
 

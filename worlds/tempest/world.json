@@ -1156,7 +1156,10 @@
           "do": "move",
           "to": "cell"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "ariel",
@@ -1201,7 +1204,10 @@
           "do": "move",
           "to": "sands"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "caliban",
@@ -1246,7 +1252,10 @@
           "do": "move",
           "to": "rock"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "miranda",
@@ -1290,7 +1299,10 @@
           "do": "move",
           "to": "green"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "f"
+      }
     }
   ],
   "scripts": [

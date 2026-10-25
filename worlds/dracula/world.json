@@ -1167,7 +1167,10 @@
           "do": "say",
           "text": "You may go anywhere you wish in the castle, except where the doors are locked, where of course you will not wish to go."
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "jonathan",
@@ -1201,7 +1204,10 @@
           "do": "move",
           "to": "harker-bedroom"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "mina",
@@ -1225,7 +1231,10 @@
         0,
         -4
       ],
-      "rotY": 0
+      "rotY": 0,
+      "voice": {
+        "gender": "f"
+      }
     },
     {
       "id": "van-helsing",
@@ -1263,7 +1272,10 @@
           "do": "move",
           "to": "ruined-chapel"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     }
   ],
   "scripts": [

@@ -152,6 +152,8 @@ def main() -> int:
     ap_.add_argument('--sample', default='')
     ap_.add_argument('--lang', default='en')
     ap_.add_argument('--description', default='')
+    ap_.add_argument('--gender', default='')
+    ap_.add_argument('--name', default='')
     ap_.add_argument('--vibrato-cents', type=float, default=20.0)
     ap_.add_argument('--vibrato-hz', type=float, default=5.5)
     a = ap_.parse_args()
@@ -159,7 +161,7 @@ def main() -> int:
     beat = 60.0 / a.tempo
     total = sum(b for w in words for _, b in w['notes'])
     out = np.zeros(int((total * beat + 1.0) * RATE))
-    values = {'voice': a.voice, 'sample': a.sample, 'lang': a.lang, 'description': a.description}
+    values = {'voice': a.voice, 'sample': a.sample, 'lang': a.lang, 'description': a.description, 'gender': a.gender, 'name': a.name}
     with tempfile.TemporaryDirectory() as tmp:
         onset = 0.0
         for i, w in enumerate(words):

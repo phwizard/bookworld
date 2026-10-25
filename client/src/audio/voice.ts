@@ -1,5 +1,6 @@
 // Characters read their lines aloud with the browser's own speech synthesis (free, local, off by default, V).
 // Each character gets a fixed voice, pitch and pace from its name so the Hatter never sounds like the Queen.
+import { characterGender } from '@bookworld/shared';
 import { poses, useStore } from '../store.ts';
 import { audioContext, audioReady, pannerAt } from './engine.ts';
 import { SERVER_URL } from '../api.ts';
@@ -27,15 +28,35 @@ function hash(s: string): number {
   return h;
 }
 
-export function voiceFor(name: string): { voice: SpeechSynthesisVoice | null; pitch: number; rate: number } {
+// The browser does not say which of its voices are women's or men's; these names are (Apple, Google, Microsoft voices).
+const FEMALE = /Samantha|Karen|Moira|Tessa|Fiona|Victoria|Kate|Allison|Ava|Susan|Zoe|Serena|Nicky|Flo|Sandy|Shelley|Anna|Amelie|Female|Zira|Hazel|Aria|Jenny|Sonia|Libby|Emma|Olivia|Natasha|Catherine|Hayley|Clara|Mia|Google US English$/i;
+const MALE = /Daniel|Rishi|Alex|Fred|Tom\b|Aaron|Arthur|Gordon|Jamie|Oliver|Reed|Rocko|Eddy|Grandpa|Lee\b|Male|David|Mark|George|Guy|Ryan|Thomas|James|William|Liam|Christopher|Brian|Eric|Oscar|Noah|Ravi|Prabhat/i;
+
+export function voiceFor(name: string, gender: 'f' | 'm' | null = null): { voice: SpeechSynthesisVoice | null; pitch: number; rate: number } {
   const h = hash(name);
   // prefer voices that sound like people rather than assistants when the browser offers several
   const preferred = voices.filter((v) => /Daniel|Samantha|Karen|Moira|Tessa|Rishi|Fiona|Google UK|Google US|Natural/i.test(v.name));
-  const pool = preferred.length ? preferred : voices;
+  let pool = preferred.length ? preferred : voices;
+  if (gender) {
+    const re = gender === 'f' ? FEMALE : MALE;
+    const other = gender === 'f' ? MALE : FEMALE;
+    const same = pool.filter((v) => re.test(v.name)) ;
+    const sameAll = same.length ? same : voices.filter((v) => re.test(v.name));
+    pool = sameAll.length ? sameAll : pool.filter((v) => !other.test(v.name));
+    if (!pool.length) pool = voices;
+  }
   const voice = pool.length ? pool[h % pool.length]! : null;
-  const pitch = 0.75 + ((h >> 8) % 7) * 0.1;   // 0.75 .. 1.35
+  // a woman's voice is not pitched down, a man's not up
+  const spread = ((h >> 8) % 7) * 0.1;          // 0 .. 0.6
+  const pitch = gender === 'f' ? 0.95 + spread * 0.5 : gender === 'm' ? 0.7 + spread * 0.5 : 0.75 + spread;
   const rate = 0.95 + ((h >> 16) % 4) * 0.06;  // 0.95 .. 1.13
   return { voice, pitch, rate };
+}
+
+/** The gender of the character with this display name, from the world file (explicit, or from its persona's pronouns). */
+function genderOf(name: string): 'f' | 'm' | null {
+  const c = useStore.getState().session?.world.characters.find((ch) => ch.name === name);
+  return c ? characterGender(c) : null;
 }
 
 /** The character's id when the server renders its voice (the enter response lists them). */
@@ -124,7 +145,7 @@ export function speak(name: string, text: string): void {
 function speakBrowser(name: string, clean: string): void {
   if (!('speechSynthesis' in window)) return;
   const u = new SpeechSynthesisUtterance(clean);
-  const { voice, pitch, rate } = voiceFor(name);
+  const { voice, pitch, rate } = voiceFor(name, genderOf(name));
   if (voice) u.voice = voice;
   u.pitch = pitch;
   u.rate = rate;

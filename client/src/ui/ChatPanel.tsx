@@ -92,9 +92,13 @@ export function ChatPanel() {
         text = muteCharacterNames(text);
         if (text !== area.value) s.setToast(ai.asleep ? 'The characters are resting; only visitors will read this' : 'Your share of the characters is used up for today');
       }
+      // In a practice room a line that names nobody is for the trainer: its agent answers only when named.
+      const lesson = s.lesson;
+      if (lesson && !/^[♪_*(]/.test(text) && !Object.values(s.characters).some((c) => text.toLowerCase().includes(c.name.toLowerCase()))) {
+        text = `${lesson.trainer}, ${text}`;
+      }
       // A question to the trainer during a lesson carries the scoreboard with it: the agent does not see the room's
       // own lines (ETHORA-GAPS #22), so the score travels inside the visitor's message, in brackets for all to read.
-      const lesson = s.lesson;
       if (lesson?.active && !lesson.active.finished && text.toLowerCase().includes(lesson.trainer.toLowerCase()) && !text.includes('(Lesson:')) {
         text += `\n(${scoreboard(lesson)})`;
       }

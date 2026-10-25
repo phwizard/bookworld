@@ -840,7 +840,10 @@
         -2.6
       ],
       "rotY": 3.1416,
-      "wander": 1
+      "wander": 1,
+      "voice": {
+        "gender": "m"
+      }
     }
   ],
   "scripts": [

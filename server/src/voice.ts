@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync, renameSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { parseMelody, songLines, BPM_DEFAULT, type Song, type World, type WorldCharacter } from '@bookworld/shared';
+import { parseMelody, songLines, BPM_DEFAULT, characterGender, type Song, type World, type WorldCharacter } from '@bookworld/shared';
 import { getWorld } from './world/load.ts';
 
 export type VoiceBackend = 'off' | 'command' | 'openai' | 'elevenlabs';
@@ -96,14 +96,14 @@ async function render(worldDir: string, c: WorldCharacter, text: string, file: s
 }
 
 /**
- * VOICE_COMMAND is a program and arguments with placeholders: {text} {out} {voice} {sample} {description} {lang}.
+ * VOICE_COMMAND is a program and arguments with placeholders: {text} {out} {voice} {sample} {description} {lang} {gender} {name}.
  * Each placeholder is one argument (no shell), so the text cannot escape. The program writes an mp3 to {out}.
  */
 function renderCommand(worldDir: string, c: WorldCharacter, text: string, out: string): Promise<void> {
   const template = (process.env.VOICE_COMMAND ?? '').trim();
   if (!template) throw new VoiceError('VOICE_COMMAND is not set', 404);
   const sample = c.voice?.sample ? resolve(worldDir, c.voice.sample) : '';
-  const values: Record<string, string> = { text, out, voice: voiceId(c), sample, description: c.voice?.description ?? '', lang: c.voice?.lang ?? 'en' };
+  const values: Record<string, string> = { text, out, voice: voiceId(c), sample, description: c.voice?.description ?? '', lang: c.voice?.lang ?? 'en', gender: characterGender(c) ?? '', name: c.name };
   const parts = template.split(/\s+/).map((a) => a.replace(/\{(\w+)\}/g, (_, k: string) => values[k] ?? ''));
   const [cmd, ...args] = parts;
   return new Promise((res, rej) => {
@@ -180,7 +180,7 @@ export async function renderSung(slug: string, characterId: string, song: Song, 
       const args = [
         ...singCommand.split(/\s+/).slice(1),
         '--out', tmp, '--tempo', String(tempo), '--words', `@${wordsFile}`, '--speak', process.env.VOICE_COMMAND!,
-        '--voice', voiceId(c), '--sample', sample, '--lang', c.voice?.lang ?? 'en', '--description', c.voice?.description ?? '',
+        '--voice', voiceId(c), '--sample', sample, '--lang', c.voice?.lang ?? 'en', '--description', c.voice?.description ?? '', '--gender', characterGender(c) ?? '', '--name', c.name,
       ];
       await new Promise<void>((res, rej) => {
         execFile(singCommand.split(/\s+/)[0]!, args, { timeout: 300000, maxBuffer: 1 << 20 }, (err, _o, stderr) => {

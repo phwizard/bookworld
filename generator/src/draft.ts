@@ -38,6 +38,7 @@ export interface DraftCharacter {
   pos?: [number, number, number];
   rotY?: number;
   wander?: number;
+  gender?: 'f' | 'm';
   schedule?: { at: string; do: 'move' | 'say'; to?: string; text?: string }[];
 }
 
@@ -121,6 +122,7 @@ export const DRAFT_SCHEMA = {
           pos: { type: 'array', items: { type: 'number' }, minItems: 3, maxItems: 3 },
           rotY: { type: 'number' },
           wander: { type: 'number' },
+          gender: { type: 'string', enum: ['f', 'm'], description: 'the voice: a woman\'s or a man\'s' },
           schedule: {
             type: 'array',
             items: {
@@ -365,6 +367,7 @@ export function draftToWorld(draft: Draft, ctx: BuildContext): BuildResult {
       knowledgeTags: chapters.map((n) => knowledgeTag(slug, n)),
       avatar,
       wander: round2(clampNum(c.wander ?? 1.0, 0, 3)),
+      voice: c.gender === 'f' || c.gender === 'm' ? { gender: c.gender } : undefined,
     };
     if (c.pos && c.pos.length === 3) ch.pos = [round2(clampNum(c.pos[0], -w / 2 + 1, w / 2 - 1)), 0, round2(clampNum(c.pos[2], -d / 2 + 1, d / 2 - 1))];
     if (typeof c.rotY === 'number') ch.rotY = round2(c.rotY);

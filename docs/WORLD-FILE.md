@@ -45,7 +45,7 @@
       "avatar": "assets/avatars/white-rabbit.vrm",
       "pos": [-3, 0, -4], "rotY": 3.14,                                             // optional standing spot in the home room (room-local metres)
       "wander": 1.2,                                                                // metres it strolls around that spot while idle (0 = stands still)
-      "voice": { "description": "...", "sample": "voices/rosie.wav", "lang": "en", "ids": { "say": "Moira", "openai": "sage" } }, // optional: the voice a server-side renderer uses (docs/VOICES.md)
+      "voice": { "gender": "f", "description": "...", "sample": "voices/rosie.wav", "lang": "en", "ids": { "piper": "en_GB-jenny_dioco-medium", "openai": "sage" } }, // optional: gender picks a woman's or a man's voice; the rest is for a server-side renderer (docs/VOICES.md)
       "schedule": [ { "at": "*/15 * * * *", "do": "move", "to": "hall-of-doors" },  // cron, executed by the world service: the character walks out ("has left (E)") and its agent follows
                     { "at": "7 * * * *", "do": "say", "text": "Tea!" } ]
     }
@@ -72,6 +72,8 @@
 Instruments: a visitor who stands next to one presses E to pick it up (the world service checks the reach and that nobody else holds it), carries it through doors, and puts it down with E; a dropped connection leaves it where they stood. Keys 1 to 8 play chords (C, Dm, Em, F, G, Am, E7, G7) or drum hits (kick, snare, hat, ohat, tom1, tom2, crash, ride), synthesised in the browser and heard by everyone in the room from where the player stands. The run of chords goes into the chat a few seconds after the last one as a narrator line, `♪ Name (guitar): C G Am F`. A character (or a visitor typing by hand) answers with a line in the same form and every client in the room plays it; the provisioner adds the notation to each character's prompt (`musicPrompt` in `shared/src/music.ts`).
 
 Lessons: a room named in `lessons` is a practice room. Its trainer drills the songs in `worlds/<slug>/songs/` (ChordPro files; `songs/private/` is gitignored for songs in copyright): the world service sings a line in the trainer's name, plays its chords, asks the visitor for the next line's chords (on the carried instrument) or words (typed in the panel), judges the answer itself, brings missed lines back, and keeps each visitor's progress in `DATA_DIR/progress`. The score goes into the chat as a `_Lesson: ..._` narration line and, at the end of a session, as a note for the trainer's Memory. See `docs/SONGBOOK.md`.
+
+A script with a cron trigger is a scene of the play. It runs at its minute when visitors are in its room, and it also comes to the audience: when visitors have been in a room for 45 seconds, the room's next scene whose cooldown has passed is performed for them, the characters it needs walking in first (with the usual "has arrived" narration); one scene at a time per world, and a room rests two and a half minutes between scenes. So a visitor who stays sees the room's scenes in the file's order, and a visitor who walks the world meets the scenes of the rooms they linger in, without knowing the timetable.
 
 Character lines from scripts and schedules are posted by the world service as `**Name:** text`; clients show them as the character speaking (a bubble over the avatar). Narration ("X has joined (E)") is posted as `_italic_`. A player who names a character in chat makes it turn to face them for 30 s.
 

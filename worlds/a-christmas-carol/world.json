@@ -1036,7 +1036,10 @@
           "do": "move",
           "to": "counting-house"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "marley",
@@ -1072,7 +1075,10 @@
           "do": "move",
           "to": "scrooge-chambers"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "present",
@@ -1108,7 +1114,10 @@
           "do": "move",
           "to": "cratchit-kitchen"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     }
   ],
   "scripts": [

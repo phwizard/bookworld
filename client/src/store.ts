@@ -27,6 +27,9 @@ interface State {
   setLessonOpen(open: boolean): void;
   /** a real instrument through the microphone feeds the chord bar */
   micOn: boolean;
+  /** every phrase played goes to the practice room's trainer, who answers with one of its own */
+  jamOn: boolean;
+  setJamOn: (on: boolean) => void;
   setMicOn(on: boolean): void;
   micLevel: number;
   setMicLevel(v: number): void;
@@ -91,6 +94,8 @@ export const useStore = create<State>((set) => ({
   setLessonOpen: (lessonOpen) => set({ lessonOpen }),
   micOn: false,
   setMicOn: (micOn) => set({ micOn }),
+  jamOn: false,
+  setJamOn: (jamOn) => set({ jamOn }),
   micLevel: 0,
   setMicLevel: (micLevel) => set((s) => (Math.abs(s.micLevel - micLevel) < 0.03 ? s : { micLevel })),
   singOn: false,
@@ -105,7 +110,7 @@ export const useStore = create<State>((set) => ({
   setMusicOn: (musicOn) => { try { localStorage.setItem('bookworld.music', musicOn ? 'on' : 'off'); } catch { /* ignore */ } set({ musicOn }); },
   sfxOn: (() => { try { return localStorage.getItem('bookworld.sfx') !== 'off'; } catch { return true; } })(),
   setSfxOn: (sfxOn) => { try { localStorage.setItem('bookworld.sfx', sfxOn ? 'on' : 'off'); } catch { /* ignore */ } set({ sfxOn }); },
-  voiceOn: (() => { try { return localStorage.getItem('bookworld.voice') === 'on'; } catch { return false; } })(),
+  voiceOn: (() => { try { return localStorage.getItem('bookworld.voice') !== 'off'; } catch { return true; } })(),
   setVoiceOn: (voiceOn) => { try { localStorage.setItem('bookworld.voice', voiceOn ? 'on' : 'off'); } catch { /* ignore */ } set({ voiceOn }); },
   ai: null,
   setAi: (ai) => set({ ai }),

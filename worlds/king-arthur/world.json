@@ -1198,7 +1198,10 @@
           "do": "move",
           "to": "churchyard"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "merlin",
@@ -1237,7 +1240,10 @@
           "do": "say",
           "text": "Hark! The looking-glass showeth me a stranger upon the road. Come up, come up, and ask old Merlin what thou wilt."
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     },
     {
       "id": "guinevere",
@@ -1257,7 +1263,10 @@
         0,
         -3
       ],
-      "rotY": 3.14
+      "rotY": 3.14,
+      "voice": {
+        "gender": "f"
+      }
     },
     {
       "id": "gawaine",
@@ -1291,7 +1300,10 @@
           "do": "move",
           "to": "tournament-field"
         }
-      ]
+      ],
+      "voice": {
+        "gender": "m"
+      }
     }
   ],
   "scripts": [

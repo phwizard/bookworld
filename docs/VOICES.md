@@ -1,6 +1,6 @@
 # Voices: characters that speak in their own voice, and sing
 
-By default a character's line is read aloud by the browser's own speech synthesis (V, off by default), with a fixed voice, pitch and pace per character so that the Hatter never sounds like the Queen. This document is about the next step: the world service renders a character's lines as audio in a voice chosen for it, caches the files, and the clients play them from where the character stands. The same machinery sings.
+By default a character's line is read aloud by the browser's own speech synthesis (on by default since 25 Oct 2026, V switches it off), with a voice of the character's gender (`voice.gender` in the world file, "f" or "m"; the generator writes it, and without it the persona's pronouns decide) and a fixed pitch and pace per character so that the Hatter never sounds like the Queen. The browser does not say which of its voices are men's and women's, so the client keeps a list of the common Apple, Google and Microsoft voice names. This document is about the next step: the world service renders a character's lines as audio in a voice chosen for it, caches the files, and the clients play them from where the character stands. The same machinery sings.
 
 ## How it works
 
@@ -8,8 +8,9 @@ By default a character's line is read aloud by the browser's own speech synthesi
 
 Backends:
 
-- `command`: `VOICE_COMMAND` is a program with placeholders, one argument each, no shell: `{text} {out} {voice} {sample} {description} {lang}`. It writes an mp3 to `{out}`. `VOICE_IDS` names the key under the character's `voice.ids` that `{voice}` is read from (`piper`, `say`; default `command`), so one world file carries an id per renderer. Three come with the repo:
+- `command`: `VOICE_COMMAND` is a program with placeholders, one argument each, no shell: `{text} {out} {voice} {sample} {description} {lang} {gender} {name}`. It writes an mp3 to `{out}`. `VOICE_IDS` names the key under the character's `voice.ids` that `{voice}` is read from (`piper`, `say`; default `command`), so one world file carries an id per renderer. Four come with the repo:
   - `voice/.venv-piper/bin/python voice/piper-say.py {voice} {out} {text} {lang}` with `VOICE_IDS=piper`: Piper, small neural voices that run on any CPU, offline, free (the voices are a 60 to 120 MB file each, downloaded on first use into `voice/models/` or `$PIPER_MODELS`; the list is at https://huggingface.co/rhasspy/piper-voices/blob/main/VOICES.md). English, Ukrainian, Russian and some forty other languages; the character's `voice.ids.piper` names the voice, an empty id takes the default for `voice.lang`. Rosie uses `en_GB-jenny_dioco-medium`, an Irish English voice. A line of four seconds renders in about a second on this Mac, with 190 MB of memory; expect two to three seconds on the droplet's single core. The voice is fixed per model, no cloning, no description; the sound is clear and a step below the paid services. This is the production default. Setup: `uv venv --python 3.12 voice/.venv-piper && uv pip install --python voice/.venv-piper/bin/python piper-tts imageio-ffmpeg` (Piper's onnxruntime has no wheel for Python 3.13 and newer yet).
+  - `voice/.venv-piper/bin/python voice/kokoro-say.py {voice} {out} {text} {lang} {gender} {name}` with `VOICE_IDS=kokoro`: Kokoro (Apache 2.0), one 82M model with some fifty voices, women's and men's, American and British English plus Japanese, Chinese, Spanish, French, Hindi, Italian and Portuguese; no Ukrainian or Russian. Noticeably more natural than Piper, still no cloning. `voice.ids.kokoro` names the voice (bf_emma, bm_george, af_heart, am_michael, ...); empty picks a British voice of the character's gender, varied by its name. Measured here: a four-second line in 2.4 s with 850 MB of memory, so it does not fit the droplet's budget (650M for the whole service); it suits a Mac, a bigger box or a GPU. Model files (340 MB) from the kokoro-onnx releases into `voice/models/kokoro/` or `$KOKORO_MODELS`; `uv pip install --python voice/.venv-piper/bin/python kokoro-onnx soundfile`.
   - `voice/say.sh {voice} {out} {text}` with `VOICE_IDS=say`: the Mac's own voices (`say -v '?'` lists them), for development. Rosie uses Moira (Irish English).
   - `voice/render.py --sample {sample} --out {out} --lang {lang} --text {text}`: a cloned voice from the character's sample with Chatterbox (MIT). Needs a Python 3.10 to 3.12 environment with `chatterbox-tts`, PyTorch and `soundfile`, and a GPU to be quick (a CPU takes seconds per line). English with the base model; the multilingual model covers Russian, German, French and more, not Ukrainian (October 2026). Not run here yet: this machine's Python is too new for PyTorch.
 - `openai`: `OPENAI_API_KEY`, model `VOICE_OPENAI_MODEL` (default gpt-4o-mini-tts), the character's `voice.ids.openai` or a voice picked from its name, and `voice.description` as the speaking instructions. Cheap (well under a cent per line).
@@ -19,6 +20,7 @@ The character's side in the world file:
 
 ```json
 "voice": {
+  "gender": "f",
   "description": "A woman in her forties with a soft Galway accent, warm and unhurried, a little husky from years of singing in the street.",
   "sample": "voices/rosie.wav",
   "lang": "en",
@@ -26,7 +28,9 @@ The character's side in the world file:
 }
 ```
 
-`sample` is 10 to 30 seconds of clean speech in the voice, next to world.json, the reference for a cloning renderer. A sample made with a paid service can serve as the reference for a self-hosted one, so the service is paid once per voice rather than per line; check the service's terms on that use before relying on it.
+`gender` picks a woman's or a man's voice wherever a renderer or the browser has both. `sample` is 10 to 30 seconds of clean speech in the voice, next to world.json, the reference for a cloning renderer. A sample made with a paid service can serve as the reference for a self-hosted one, so the service is paid once per voice rather than per line; check the service's terms on that use before relying on it.
+
+Which to choose: the browser's voices cost nothing and now have the right gender; Piper runs on the droplet and gives each character a fixed, clear voice; Kokoro sounds better and needs a bigger box; OpenAI's speech API follows the `description` (an accent, an age, a mood) for a fraction of a cent per line; ElevenLabs gives a voice designed or cloned for the character, reusable for every new line through its id, so lines rendered in advance and lines rendered live for an agent's replies are the same voice. The renderer and the cache are the same for all of them: what a character says in the chat arrives as audio from the server, the first time after the backend's delay, then at once.
 
 ## On the droplet
 

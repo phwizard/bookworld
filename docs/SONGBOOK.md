@@ -94,3 +94,9 @@ A character that improvises a melody or a harmony, or demonstrates an alternativ
 Voice. Singing synthesis in a browser is not available off the shelf; speech synthesis is (what V uses), and a cloud text-to-speech voice reading the lyrics in rhythm is the realistic "sings along" for the next year. Real-time voice chat between people in a room (WebRTC, proximity voice) is a separate feature on the plan and the natural carrier for a human jam; an agent joining it would need a streaming speech model on the service side (speech in, speech out, in the hundreds of milliseconds), which exists for conversation and not for singing.
 
 So: rhythm and bass accompaniment from the service, soon and deterministic; a model-planned phrase a section ahead, feasible; a character that listens and improvises in real time, or sings, is research rather than a feature, and the engine's notation (chords, later notes with durations) is the right interface to grow toward it.
+
+## Talking to the trainer, and jamming
+
+The trainer's agent answers only when named (its `responseMode` is `mentioned`, a cost rule). In a practice room the client puts the trainer's name in front of any line that names no character, so "can you jam with me?" reaches Rosie as "Rosie, can you jam with me?". Lines that are music, narration or brackets are left alone.
+
+"jam with Rosie" on the chord bar (shown while no lesson round is under way) sends every phrase you play to the trainer in your name: "Rosie, I played: C G Am F. Jam with me: answer with one music line of your own, then it is my turn again." The agent's prompt already knows the notation, so it answers with a `♪ Rosie (guitar): ...` line, which every client in the room plays, and the band (B) keeps the clock under both of you. Each phrase is one paid reply, at most one every twenty seconds (the agent's cooldown); phrases inside the cooldown are heard by the room but not answered.
