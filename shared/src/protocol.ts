@@ -53,8 +53,8 @@ export interface WorldCard {
 export interface WhereResponse {
   /** humans per room id, active only */
   humans: Record<string, number>;
-  /** every character and the room it is in now */
-  characters: { id: string; name: string; at: string }[];
+  /** every character, the room it is in now and where it stands there (room-local metres) */
+  characters: { id: string; name: string; at: string; x: number; z: number }[];
 }
 
 /** GET /api/stats: the numbers a home page shows. */

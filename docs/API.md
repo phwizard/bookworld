@@ -66,7 +66,7 @@ An image for any page, no JavaScript: `<img src="https://<world service>/api/bad
 
 - `GET /api/health`: `{ ok, worlds }`.
 - `GET /api/worlds/:slug`: the full world file plus the public Ethora info (app id, room JIDs).
-- `GET /api/worlds/:slug/where`: `{ humans: { roomId: count }, characters: [{ id, name, at }] }`, who is in which room right now (active humans from presence, each character's current room from the simulation). The client's mini-map polls it every four seconds; cacheable for two.
+- `GET /api/worlds/:slug/where`: `{ humans: { roomId: count }, characters: [{ id, name, at, x, z }] }`, who is in which room right now (active humans from presence, each character's current room from the simulation). The client's mini-map polls it every four seconds; cacheable for two.
 - `POST /api/worlds/:slug/enter` `{ name, visitor? }`, `POST /api/worlds/:slug/resume` `{ token }`: how the client gets in; see `shared/src/protocol.ts`.
 - `GET /api/ai-budget`: today's AI budget per world and the generator's ledger.
 - `GET /api/metrics` (needs `METRICS_TOKEN`): the usage report, see `docs/GENERATOR.md`.

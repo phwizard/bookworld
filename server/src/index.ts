@@ -195,7 +195,7 @@ const server = new Server({
       const sim = simFor(loaded.world.slug);
       const body: WhereResponse = {
         humans: presenceStats(loaded.world.slug).byRoom,
-        characters: [...sim.chars.values()].map((c) => ({ id: c.id, name: c.name, at: c.location })),
+        characters: [...sim.chars.values()].map((c) => ({ id: c.id, name: c.name, at: c.location, x: Math.round(c.x * 10) / 10, z: Math.round(c.z * 10) / 10 })),
       };
       res.json(body);
     });
