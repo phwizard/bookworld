@@ -36,7 +36,7 @@ Which to choose: the browser's voices cost nothing and now have the right gender
 
 The box has one core, 2 GB of memory and no working apt (`docs/DEPLOY.md`), and the service runs under systemd with a memory budget and a read-only filesystem outside its data and home directories. The voices fit that without a GPU:
 
-- `deploy/install.sh` runs `deploy/install-voice.sh` when `.env` has `VOICE_BACKEND=command` or `VOICE_SING`: it installs `uv` into the service user's home, makes a Python 3.12 venv there (`/var/www/bookworld-home/voice-venv`) with piper-tts, numpy, soundfile, pyworld and a bundled ffmpeg (`imageio-ffmpeg`, used when the box has none), and downloads every Piper voice named in a world file into `/var/www/bookworld-home/piper-models`. Idempotent; the first run takes a few minutes for the downloads.
+- `deploy/install.sh` runs `deploy/install-voice.sh` when `.env` has `VOICE_BACKEND=command` or `VOICE_SING`: it installs `uv` into the service user's home, makes a Python 3.12 venv there (`/var/www/bookworld-home/voice-venv`) with piper-tts, kokoro-onnx, numpy, soundfile and a bundled ffmpeg (`imageio-ffmpeg`, used when the box has none), and downloads every Piper voice named in a world file into `/var/www/bookworld-home/piper-models`. Idempotent; the first run takes a few minutes for the downloads. pyworld, which the singing renderer needs, has no prebuilt Linux wheel and compiles C++ at install: the installer adds it only when the box has a compiler, and the current droplet has none (apt is broken), so `VOICE_SING` stays unset there and the trainer's cues are spoken, not sung, until the next box. Found on the first deploy, 25 Oct 2026.
 - `.env.production` then has:
 
 ```

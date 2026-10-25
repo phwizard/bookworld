@@ -4,7 +4,7 @@
 # broken on the box): uv in the service user's home, a Python 3.12 venv there with piper-tts, kokoro-onnx, numpy,
 # soundfile, pyworld and a bundled ffmpeg, the Piper voices named in the world files, and the Kokoro model files when
 # .env has VOICE_IDS=kokoro (340 MB, once). Idempotent; a second run takes a second.
-# .env then points at the venv: see docs/VOICES.md, "On the droplet".
+# .env then points at the venv: see docs/VOICES.md, "On the droplet". Singing (pyworld) needs a C++ compiler at install.
 set -euo pipefail
 APP=/var/www/bookworld
 HOME_DIR=/var/www/bookworld-home
@@ -25,8 +25,15 @@ if ! run test -x "$VENV/bin/python"; then
   echo "voice: creating $VENV (Python 3.12, downloaded by uv)"
   run uv venv --quiet --python 3.12 "$VENV"
 fi
-# setuptools<81 keeps pkg_resources, which pyworld imports at load
-run uv pip install --quiet --python "$VENV/bin/python" piper-tts kokoro-onnx numpy soundfile pyworld imageio-ffmpeg "setuptools<81"
+run uv pip install --quiet --python "$VENV/bin/python" piper-tts kokoro-onnx numpy soundfile imageio-ffmpeg
+# The singing renderer needs pyworld, which has no prebuilt Linux wheel and compiles C++ at install: it only goes in
+# when the box has a compiler (this one has none and apt is broken), so speech works without singing.
+# setuptools<81 keeps pkg_resources, which pyworld imports at load.
+if command -v g++ >/dev/null 2>&1 || command -v x86_64-linux-gnu-g++ >/dev/null 2>&1; then
+  run uv pip install --quiet --python "$VENV/bin/python" pyworld "setuptools<81" && echo "voice: singing renderer (pyworld) installed"
+else
+  echo "voice: no C++ compiler on the box, pyworld skipped: speech works, singing (VOICE_SING) stays off"
+fi
 run mkdir -p "$MODELS"
 # every Piper voice named in a world file, plus the English default, so the first line does not wait for a download
 VOICES=$(cat "$APP"/worlds/*/world.json | grep -o '"piper": *"[^"]*"' | sed 's/.*: *"//; s/"//' | sort -u)
