@@ -48,6 +48,17 @@ export class VoiceError extends Error {
 
 const inflight = new Map<string, Promise<string>>();
 
+/**
+ * One renderer process at a time: a Kokoro render takes about 750 MB, so two at once would overrun the service's
+ * memory budget on the box. Requests queue; the same line asked twice is still deduped through `inflight`.
+ */
+let chain: Promise<unknown> = Promise.resolve();
+function oneAtATime<T>(fn: () => Promise<T>): Promise<T> {
+  const p = chain.then(fn, fn);
+  chain = p.catch(() => undefined);
+  return p;
+}
+
 /** Cleans a line for the voice: markdown marks off, music lines without the chord tokens, whitespace folded. */
 export function speakable(text: string): string {
   return text.replace(/\*\*|__|`/g, '').replace(/^_+|_+$/g, '').split(/\r?\n/).filter((l) => !l.includes('♪')).join(' ').replace(/\s+/g, ' ').trim().slice(0, TEXT_MAX);
@@ -86,7 +97,7 @@ async function render(worldDir: string, c: WorldCharacter, text: string, file: s
   mkdirSync(dirname(file), { recursive: true });
   // the half-written file keeps the extension so a renderer can tell the format from the name
   const tmp = file.replace(/\.mp3$/, '.part.mp3');
-  if (backend === 'command') await renderCommand(worldDir, c, text, tmp);
+  if (backend === 'command') await oneAtATime(() => renderCommand(worldDir, c, text, tmp));
   else if (backend === 'openai') writeFileSync(tmp, await renderOpenAI(c, text));
   else if (backend === 'elevenlabs') writeFileSync(tmp, await renderElevenLabs(c, text));
   else throw new VoiceError('voices are off', 404);
@@ -209,11 +220,11 @@ export async function renderSung(slug: string, characterId: string, song: Song, 
         '--out', tmp, '--tempo', String(tempo), '--words', `@${wordsFile}`, '--speak', process.env.VOICE_COMMAND!,
         '--voice', voiceId(c), '--sample', sample, '--lang', c.voice?.lang ?? 'en', '--description', c.voice?.description ?? '', '--gender', characterGender(c) ?? '', '--name', c.name,
       ];
-      await new Promise<void>((res, rej) => {
+      await oneAtATime(() => new Promise<void>((res, rej) => {
         execFile(singCommand.split(/\s+/)[0]!, args, { timeout: 300000, maxBuffer: 1 << 20 }, (err, _o, stderr) => {
           if (err) rej(new VoiceError(`singing failed: ${(stderr || err.message).toString().slice(-300)}`, 502)); else res();
         });
-      });
+      }));
       if (!existsSync(tmp) || statSync(tmp).size === 0) throw new VoiceError('the singer produced no audio', 502);
       renameSync(tmp, file);
       return file;
