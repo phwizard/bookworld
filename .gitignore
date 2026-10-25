@@ -29,3 +29,4 @@ voice/.venv/
 voice/.venv-*/
 voice/models/
 voice/out/
+__pycache__/
