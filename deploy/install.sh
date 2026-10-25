@@ -35,7 +35,7 @@ fi
 
 install -m 644 "$APP/deploy/bookworld.service" /etc/systemd/system/bookworld.service
 # the memory budget can be raised from .env (SERVICE_MEMORY_MAX=1500M with Kokoro on a 4 GB box; docs/VOICES.md)
-MEM=$(grep -E '^SERVICE_MEMORY_MAX=' "$APP/.env" | tail -1 | cut -d= -f2 | tr -d '[:space:]')
+MEM=$(grep -E '^SERVICE_MEMORY_MAX=' "$APP/.env" | tail -1 | cut -d= -f2 | tr -d '[:space:]' || true)
 if [ -n "$MEM" ]; then sed -i "s/^MemoryMax=.*/MemoryMax=$MEM/" /etc/systemd/system/bookworld.service; echo "MemoryMax=$MEM (from .env)"; fi
 systemctl daemon-reload
 systemctl enable --quiet bookworld
