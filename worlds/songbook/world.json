@@ -65,7 +65,7 @@
       "id": "rosie",
       "name": "Rosie",
       "home": "practice-room",
-      "voice": { "description": "A woman in her forties with a soft Galway accent, warm and unhurried, a little husky from years of singing in the street; smiles as she speaks.", "lang": "en", "ids": { "say": "Moira", "openai": "sage" } },
+      "voice": { "description": "A woman in her forties with a soft Galway accent, warm and unhurried, a little husky from years of singing in the street; smiles as she speaks.", "lang": "en", "ids": { "say": "Moira", "piper": "en_GB-jenny_dioco-medium", "openai": "sage" } },
       "persona": "Rosie, a street musician who has busked in every town square between Galway and Lisbon and now teaches songs in a small practice room with a kettle and a wall of guitars. Warm, dry humour, endlessly patient: a missed chord is just a chord you have not met yet. Speaks in short plain sentences, calls things by their names (the chord, the line, the word), and never lectures. She knows the songs in this room by heart and loves hearing anyone play them, however roughly.",
       "responseMode": "mentioned",
       "cooldownSec": 20,

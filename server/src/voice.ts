@@ -20,7 +20,7 @@ const cacheDir = join(dataDir, 'voice');
 const DAILY_CHARS = Number(process.env.VOICE_DAILY_CHARS ?? 200000);
 export const TEXT_MAX = 600;
 
-if (backend !== 'off') console.log(`[voice] backend ${backend}${backend === 'command' ? ` (${process.env.VOICE_COMMAND ?? 'VOICE_COMMAND not set!'})` : ''}, cache ${cacheDir}, cap ${DAILY_CHARS || 'none'} chars/world/day`);
+if (backend !== 'off') console.log(`[voice] backend ${backend}${backend === 'command' ? ` (${process.env.VOICE_COMMAND ?? 'VOICE_COMMAND not set!'}; ids.${(process.env.VOICE_IDS ?? 'command').trim() || 'command'})` : ''}, cache ${cacheDir}, cap ${DAILY_CHARS || 'none'} chars/world/day`);
 
 /** Characters of a world that the server can voice: every character when a backend is on (a missing sample or id falls back to a default voice). */
 export function voicedCharacters(world: World): string[] {
@@ -74,8 +74,10 @@ export async function renderLine(slug: string, characterId: string, rawText: str
   return p;
 }
 
+/** the key under the character's `voice.ids` for the command backend: VOICE_IDS (say, piper, ...), so one world file serves every renderer */
+const idsKey = backend === 'command' ? (process.env.VOICE_IDS ?? 'command').trim() || 'command' : backend;
 function voiceId(c: WorldCharacter): string {
-  return c.voice?.ids?.[backend] ?? '';
+  return c.voice?.ids?.[idsKey] ?? '';
 }
 
 function safe(s: string): string { return s.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 64); }

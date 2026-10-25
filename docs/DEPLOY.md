@@ -38,7 +38,7 @@ Environment=HOME=/var/www/bookworld-home
 ExecStart=/usr/local/bin/node dist/index.js
 Restart=always
 RestartSec=3
-MemoryMax=350M
+MemoryMax=650M
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
@@ -49,7 +49,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-  The real unit is `deploy/bookworld.service`. The server has no build output (its `build` script only typechecks; the workspace packages export TypeScript sources), so `ExecStart` is `/usr/local/bin/node --import tsx src/index.ts` with `tsx` as a runtime dependency. `MemoryMax=350M` is the budget; if Colyseus plus the generator need more, say so in the journal before raising it.
+  The real unit is `deploy/bookworld.service`. The server has no build output (its `build` script only typechecks; the workspace packages export TypeScript sources), so `ExecStart` is `/usr/local/bin/node --import tsx src/index.ts` with `tsx` as a runtime dependency. `MemoryMax` was 350M for the service alone and is 650M since 25 Oct 2026 (journal): the voice renders (Piper about 190 MB, the singing renderer about 100 MB) run as children of the service, one at a time, inside this cgroup. If Colyseus plus the generator need more, say so in the journal before raising it again.
 
 - Caddy block appended to `/etc/caddy/Caddyfile` (back the file up first: `cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak-$(date +%s)`, then `caddy validate --config /etc/caddy/Caddyfile` and `systemctl reload caddy`). Static client from disk, everything else (Colyseus matchmaking, the WebSocket upgrade, `/api/*`) to Node:
 
@@ -91,6 +91,10 @@ Until the GitHub repo exists, rsync from the Mac is the deploy: `./deploy/push.s
 - Scheduled character lines and cron scenes only post to a room while a player is in it (the world service skips them otherwise, 19 Oct). Before that, the Tempest's seven scenes an hour ran around the clock for an empty island, and any line that named another character could draw a paid agent reply with nobody reading it.
 - The AI budget caps stay on. The owner's test apps already produced multi-million token days on Ethora during local testing; a public URL multiplies that. Check `GET /api/ai-budget` after the first evening with the team.
 - Logs: `journalctl -u bookworld -f`. Caddy access logs are off by default on this box; turn them on per host only if needed.
+
+## Voices on the box
+
+`deploy/install.sh` calls `deploy/install-voice.sh` when `.env` has `VOICE_BACKEND=command` or `VOICE_SING`. That script installs nothing with apt: `uv` goes into the service user's home, a Python 3.12 venv with Piper, pyworld and a bundled ffmpeg next to it, and the Piper voices named in the world files are downloaded once. The `.env.production` lines and the memory arithmetic are in `docs/VOICES.md`, "On the droplet". Without those lines the service runs as before and the clients use the browser's voices.
 
 ## Cloudflare
 

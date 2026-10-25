@@ -15,7 +15,9 @@ Environment=HOME=/var/www/bookworld-home
 ExecStart=/usr/local/bin/node --import tsx src/index.ts
 Restart=always
 RestartSec=3
-MemoryMax=350M
+# 350M for the service alone; the voice renders (Piper about 190 MB, the singing renderer about 100 MB) run inside this
+# cgroup one at a time, so the budget is 650M while voices are on (docs/DEPLOY.md, journal 25 Oct 2026)
+MemoryMax=650M
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true

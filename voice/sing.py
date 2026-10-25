@@ -7,11 +7,12 @@ with a little portamento and vibrato, and placed on the beat. No model sings; th
             --speak 'voice/say.sh {voice} {out} {text}' --voice Moira [--sample x.wav --lang en --description '...']
 
 `words` is the JSON the world service builds from a song file's {melody:} line (shared/src/song.ts parseMelody):
-notes are [midi, beats]; midi -1 is a rest. Needs the venv: numpy, soundfile, pyworld; ffmpeg on the PATH.
+notes are [midi, beats]; midi -1 is a rest. Needs the venv: numpy, soundfile, pyworld; ffmpeg on the PATH or the imageio-ffmpeg package.
 """
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -22,6 +23,21 @@ import soundfile as sf
 
 FRAME_MS = 5.0
 RATE = 22050
+
+
+def ffmpeg_path() -> str:
+    """ffmpeg on the PATH, or the one in the imageio-ffmpeg package (a box where nothing can be installed with apt)."""
+    found = shutil.which('ffmpeg')
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg  # type: ignore
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return 'ffmpeg'
+
+
+FFMPEG = ffmpeg_path()
 
 
 def speak(template: str, text: str, out: str, values: dict) -> None:
@@ -37,7 +53,7 @@ def speak(template: str, text: str, out: str, values: dict) -> None:
 
 def load_mono(path: str) -> np.ndarray:
     wav = path + '.wav'
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', path, '-ac', '1', '-ar', str(RATE), wav], check=True)
+    subprocess.run([FFMPEG, '-loglevel', 'error', '-y', '-i', path, '-ac', '1', '-ar', str(RATE), wav], check=True)
     x, fs = sf.read(wav, dtype='float64')
     if x.ndim > 1:
         x = x.mean(axis=1)
@@ -121,6 +137,11 @@ def sing_word(x: np.ndarray, notes: list, tempo: float, vib_cents: float, vib_hz
 
 
 def main() -> int:
+    # a background job next to the world service: the service gets the CPU first
+    try:
+        os.nice(10)
+    except OSError:
+        pass
     ap_ = argparse.ArgumentParser()
     ap_.add_argument('--out', required=True)
     ap_.add_argument('--tempo', type=float, required=True)
@@ -159,7 +180,7 @@ def main() -> int:
     wav = a.out + '.wav'
     sf.write(wav, out, RATE)
     if a.out.endswith('.mp3'):
-        r = subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-codec:a', 'libmp3lame', '-q:a', '4', a.out])
+        r = subprocess.run([FFMPEG, '-loglevel', 'error', '-y', '-i', wav, '-codec:a', 'libmp3lame', '-q:a', '4', a.out])
         if r.returncode == 0:
             os.remove(wav)
         else:

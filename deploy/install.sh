@@ -28,6 +28,11 @@ fi
 # sudo resets PATH, so pnpm goes by full path; node is on the secure path as /usr/local/bin/node.
 sudo -u bookworld -H nice -n 19 "$PNPM_BIN" --dir "$APP" install --prod --frozen-lockfile --filter "@bookworld/server..." 2>&1 | tail -5
 
+# the voices (docs/VOICES.md): a Python venv with Piper and the singing renderer, only when .env asks for them
+if grep -qE '^(VOICE_BACKEND=command|VOICE_SING=.)' "$APP/.env"; then
+  bash "$APP/deploy/install-voice.sh"
+fi
+
 install -m 644 "$APP/deploy/bookworld.service" /etc/systemd/system/bookworld.service
 systemctl daemon-reload
 systemctl enable --quiet bookworld

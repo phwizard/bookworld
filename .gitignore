@@ -24,6 +24,8 @@ worlds/*/draft.json
 worlds/*/world.invalid.json
 generator/.cache/
 
-# local voice renderer environment and its output
+# local voice renderer environments, downloaded Piper voices, and renders
 voice/.venv/
+voice/.venv-*/
+voice/models/
 voice/out/
