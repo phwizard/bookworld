@@ -47,7 +47,7 @@ export function MiniMap() {
 
   // The heading comes from the render loop's pose (not React state); sampled a few times a second.
   useEffect(() => {
-    let last = NaN;
+    let last = 0; // the initial state; a NaN here once made the comparison below always false, and the map never turned
     const t = setInterval(() => {
       const d = (myPose.ry * 180) / Math.PI;
       if (Math.abs(d - last) >= 0.5) { last = d; setDeg(d); }

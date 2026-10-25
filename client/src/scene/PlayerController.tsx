@@ -20,6 +20,7 @@ const DOOR_MARGIN = 0.25;
 
 /** Where this player stands, updated every frame (read by the items for the pick-up prompt; never React state). */
 export const myPose = { x: 0, y: 0, z: 0, ry: 0 };
+if (import.meta.env.DEV) (window as unknown as { __pose: unknown }).__pose = myPose;
 
 export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; enterFrom: Direction | null; at?: { x: number; z: number; ry: number } | null }) {
   const ecctrl = useRef<EcctrlHandle>(null);
@@ -34,6 +35,7 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
   const surface = surfaceFor(room);
 
   useEffect(() => {
+    if (import.meta.env.DEV) (window as unknown as { __cam: unknown }).__cam = camera;
     camera.rotation.set(0, start.rotY, 0, 'YXZ');
     joinedAt.current = performance.now();
   }, [camera, start.rotY]);

@@ -6,10 +6,12 @@ import { audioContext, audioReady, pannerAt } from './engine.ts';
 import { SERVER_URL } from '../api.ts';
 
 const MAX_CHARS = 400;
-const MAX_QUEUE = 2;
+/** lines waiting their turn beyond the one playing; more than this and a new line is dropped (the chat has it) */
+const MAX_QUEUE = 3;
+/** a line that waited this long is not spoken: the scene has moved on */
+const STALE_MS = 30000;
 
 let voices: SpeechSynthesisVoice[] = [];
-let queued = 0;
 
 function refreshVoices() {
   if (!('speechSynthesis' in window)) return;
@@ -69,11 +71,11 @@ function serverVoiced(name: string): string | null {
 const audioCache = new Map<string, Promise<AudioBuffer>>();
 let voiceBus: GainNode | null = null;
 
-/** Plays the server-rendered line from where the character stands. Resolves false when it could not (the browser voice then speaks). */
-async function playServerVoice(characterId: string, name: string, clean: string): Promise<boolean> {
+/** Fetches and decodes the server's rendering of the line (cached); null when the server has none. Starts at enqueue time so the audio is ready when the line's turn comes. */
+function loadServerVoice(characterId: string, clean: string): Promise<AudioBuffer | null> {
   const s = useStore.getState();
   const slug = s.session?.world.slug;
-  if (!slug || !audioReady()) return false;
+  if (!slug || !audioReady()) return Promise.resolve(null);
   const url = `${SERVER_URL}/api/worlds/${slug}/voice/${characterId}?text=${encodeURIComponent(clean)}`;
   let p = audioCache.get(url);
   if (!p) {
@@ -82,21 +84,24 @@ async function playServerVoice(characterId: string, name: string, clean: string)
     p.catch(() => audioCache.delete(url));
     if (audioCache.size > 200) audioCache.delete(audioCache.keys().next().value!);
   }
-  let buffer: AudioBuffer;
-  try { buffer = await p; } catch { return false; }
-  if (!useStore.getState().voiceOn) return true;
+  return p.catch(() => null);
+}
+
+/** Plays a decoded line from where the character stands now; resolves when it has finished. */
+function playBuffer(buffer: AudioBuffer, characterId: string): Promise<void> {
   const c = audioContext();
   if (!voiceBus) { voiceBus = c.createGain(); voiceBus.gain.value = 1; voiceBus.connect(c.destination); }
   const src = c.createBufferSource();
   src.buffer = buffer;
   const pose = poses.get(`c:${characterId}`);
-  const out: AudioNode = pose ? pannerAt([pose.x, pose.y + 1.5, pose.z], voiceBus) : voiceBus;
-  src.connect(out);
-  queued++;
-  src.onended = () => { queued = Math.max(0, queued - 1); src.disconnect(); };
-  src.start();
-  if (import.meta.env.DEV) spoken.push(`${name} (server): ${clean.slice(0, 60)}`);
-  return true;
+  src.connect(pose ? pannerAt([pose.x, pose.y + 1.5, pose.z], voiceBus) : voiceBus);
+  current = src;
+  return new Promise((resolve) => {
+    const done = () => { if (current === src) current = null; src.disconnect(); resolve(); };
+    src.onended = done;
+    setTimeout(done, buffer.duration * 1000 + 500);
+    src.start();
+  });
 }
 
 const mutedUntil = new Map<string, number>();
@@ -129,33 +134,65 @@ export async function playSung(url: string, name: string): Promise<boolean> {
   return true;
 }
 
-/** Speaks a character line if voices are on: the server's rendering of the character's voice when there is one, else the browser's. Human messages are never spoken. */
+interface Line { name: string; clean: string; id: string | null; audio: Promise<AudioBuffer | null> | null; at: number }
+const queue: Line[] = [];
+let playing = false;
+let current: AudioBufferSourceNode | null = null;
+
+/**
+ * Speaks a character line if voices are on: the server's rendering of the character's voice when there is one, else
+ * the browser's. Lines play one after another, never over each other (a scene's lines arrive faster than a voice
+ * reads them; a character's answer used to start over the previous character's line). Human messages are never spoken.
+ */
 export function speak(name: string, text: string): void {
   if (!useStore.getState().voiceOn) return;
-  if (queued >= MAX_QUEUE) return;
   const clean = text.replace(/\*\*|__|`/g, '').replace(/^_+|_+$/g, '').trim().slice(0, MAX_CHARS);
   if (!clean) return;
   const until = mutedUntil.get(name);
   if (until) { mutedUntil.delete(name); if (until > Date.now()) return; }
+  if (queue.length >= MAX_QUEUE) return;
   const id = serverVoiced(name);
-  if (id) { void playServerVoice(id, name, clean).then((ok) => { if (!ok) speakBrowser(name, clean); }); return; }
-  speakBrowser(name, clean);
+  queue.push({ name, clean, id, audio: id ? loadServerVoice(id, clean) : null, at: Date.now() });
+  void pump();
 }
 
-function speakBrowser(name: string, clean: string): void {
-  if (!('speechSynthesis' in window)) return;
+async function pump(): Promise<void> {
+  if (playing) return;
+  playing = true;
+  try {
+    for (let line = queue.shift(); line; line = queue.shift()) {
+      if (Date.now() - line.at > STALE_MS || !useStore.getState().voiceOn) continue;
+      const buffer = line.audio ? await line.audio : null;
+      if (buffer && line.id) {
+        if (import.meta.env.DEV) spoken.push(`${line.name} (server): ${line.clean.slice(0, 60)}`);
+        await playBuffer(buffer, line.id);
+      } else {
+        await speakBrowser(line.name, line.clean);
+      }
+    }
+  } finally {
+    playing = false;
+  }
+}
+
+/** The browser's own voice for the line; resolves when it has been read (with a fallback timer, Chrome does not always fire onend). */
+function speakBrowser(name: string, clean: string): Promise<void> {
+  if (!('speechSynthesis' in window)) return Promise.resolve();
   const u = new SpeechSynthesisUtterance(clean);
   const { voice, pitch, rate } = voiceFor(name, genderOf(name));
   if (voice) u.voice = voice;
   u.pitch = pitch;
   u.rate = rate;
   u.volume = 0.9;
-  queued++;
   if (import.meta.env.DEV) spoken.push(`${name}: ${clean.slice(0, 60)}`);
-  const done = () => { queued = Math.max(0, queued - 1); };
-  u.onend = done;
-  u.onerror = done;
-  speechSynthesis.speak(u);
+  return new Promise((resolve) => {
+    let finished = false;
+    const done = () => { if (!finished) { finished = true; resolve(); } };
+    u.onend = done;
+    u.onerror = done;
+    setTimeout(done, 2000 + clean.length * 90);
+    speechSynthesis.speak(u);
+  });
 }
 
 const spoken: string[] = [];
@@ -163,5 +200,7 @@ if (import.meta.env.DEV) (window as unknown as { __voice: unknown }).__voice = {
 
 export function stopSpeaking(): void {
   if ('speechSynthesis' in window) speechSynthesis.cancel();
-  queued = 0;
+  queue.length = 0;
+  try { current?.stop(); } catch { /* already ended */ }
+  current = null;
 }
