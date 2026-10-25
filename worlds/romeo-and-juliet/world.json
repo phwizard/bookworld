@@ -1,0 +1,1745 @@
+{
+  "schema": "bookworld/0",
+  "slug": "romeo-and-juliet",
+  "title": "Romeo and Juliet",
+  "summary": "Walk the play through fair Verona and Mantua, from the brawling market square to the Capulets' feast, the moonlit orchard under Juliet's window, Friar Lawrence's cell and the ancient vault, while the lovers, Mercutio and the Nurse act out their scenes every hour.",
+  "source": {
+    "title": "Romeo and Juliet",
+    "author": "William Shakespeare",
+    "text": "gutenberg:1513",
+    "license": "public-domain"
+  },
+  "start": "verona-square",
+  "rooms": [
+    {
+      "id": "verona-square",
+      "name": "The Public Place of Verona",
+      "description": "The market square of fair Verona, where the worshipp'd sun peers forth the golden window of the east over stalls of bread and honey. Here the ancient grudge between the houses breaks out in brawls, and the Prince has sworn that whoever disturbs these streets again shall pay the forfeit of the peace. East lies the great house of Capulet; west the road runs out through the city gate towards Mantua.",
+      "exits": {
+        "n": null,
+        "e": "capulet-hall",
+        "s": null,
+        "w": "mantua"
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#d9c9a8",
+          "floor": "#b9a37f",
+          "ceiling": "#9ec5e8",
+          "trim": "#8b5a2b"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              -3,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "bread",
+            "pos": [
+              -3.3,
+              0.76,
+              -5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              -2.7,
+              0.76,
+              -5.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -2.8,
+              0.76,
+              -4.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table",
+            "pos": [
+              3,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.7,
+              0.76,
+              -5.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cake",
+            "pos": [
+              3.3,
+              0.76,
+              -4.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.8,
+              0,
+              -6.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              4.9,
+              0,
+              -6.4
+            ],
+            "rotY": 0.4
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4.5,
+              0,
+              5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4.5,
+              0,
+              5.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              -7.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              -7.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              7.5
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              7.5
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -6.5,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              6.5,
+              0,
+              3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "capulet-hall",
+      "name": "The Hall in Capulet's House",
+      "description": "A hall in Capulet's house cleared for the old accustom'd feast: the join-stools away, the tables spread with marchpane and wine, torches burning and musicians waiting. Maskers foot it on the chequered floor while old Capulet cries for more light and a hall, a hall, give room. West the door opens on the public square; east a garden door leads out into the orchard.",
+      "exits": {
+        "n": null,
+        "e": "capulet-orchard",
+        "s": null,
+        "w": "verona-square"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          16,
+          5.5,
+          10
+        ],
+        "palette": {
+          "wall": "#efe4cf",
+          "floor": "#2b2b2b",
+          "ceiling": "#5a3a22",
+          "trim": "#b8860b"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              -2.5,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              2.5,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2.5,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2.5,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "cake",
+            "pos": [
+              -2.5,
+              0.76,
+              -3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -2.1,
+              0.76,
+              -2.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              -2.9,
+              0.76,
+              -3.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.2,
+              0.76,
+              -3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              2.8,
+              0.76,
+              -2.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              0,
+              0.01,
+              1.2
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -7.4,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.4,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -7.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -5.5,
+              0,
+              3.5
+            ],
+            "rotY": 0.79
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.5,
+              0,
+              4.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          1.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "capulet-orchard",
+      "name": "Capulet's Orchard",
+      "description": "Capulet's orchard by night, its walls high and hard to climb, the blessed moon tipping with silver all the fruit-tree tops. A nightingale sings on the pomegranate tree, and to the north a lit window above the garden opens on Juliet's chamber. West lies the feasting hall; south a gate in the wall lets out towards Friar Lawrence's cell.",
+      "exits": {
+        "n": "juliet-chamber",
+        "e": null,
+        "s": "friar-cell",
+        "w": "capulet-hall"
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "drips",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          6,
+          14
+        ],
+        "palette": {
+          "wall": "#2f4f2f",
+          "floor": "#3b5a2e",
+          "ceiling": "#0b1030",
+          "trim": "#c0c8d8"
+        },
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              -6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              3.5,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -3.5,
+              0,
+              -6.2
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4.5,
+              0,
+              2.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              4
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              5.8,
+              0,
+              -2.5
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -5.8,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              3.5,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -5,
+              0,
+              5.2
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.5,
+              0,
+              5.8
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              2.2,
+              0,
+              -6.3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "juliet-chamber",
+      "name": "Juliet's Chamber",
+      "description": "Juliet's chamber in her father's house, curtained and candlelit, with an open gallery that overlooks the garden. Her best attires are laid out on the chest, books and a candle sit on the writing desk, and the window waits to let day in. The stair goes down south into the orchard.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "capulet-orchard",
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4.5,
+          9
+        ],
+        "palette": {
+          "wall": "#eadbd0",
+          "floor": "#5c3b24",
+          "ceiling": "#3a2340",
+          "trim": "#a0522d"
+        },
+        "props": [
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              -0.8
+            ],
+            "flat": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -3.6,
+              0,
+              -3.1
+            ],
+            "rotY": 2.36
+          },
+          {
+            "id": "desk",
+            "pos": [
+              3,
+              0,
+              -3.7
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.4,
+              0.76,
+              -3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "books",
+            "pos": [
+              2.6,
+              0.76,
+              -3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              3,
+              0.76,
+              -3.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              3,
+              0,
+              -2.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -4.6,
+              0,
+              0.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -1.5,
+              0,
+              -3.95
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -4.5,
+              0,
+              2.3
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              4.6,
+              0,
+              1.5
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4.4,
+              0,
+              3.9
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              4.4,
+              0,
+              3.9
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          1.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "friar-cell",
+      "name": "Friar Lawrence's Cell",
+      "description": "Friar Lawrence's low cell, smelling of the baleful weeds and precious-juiced flowers he gathers in his osier cage at the grey-eyed morn. Vials, honey and simples crowd his table, for within the infant rind of a weak flower poison hath residence, and medicine power. North the path climbs back to the Capulet orchard; south it goes down to the churchyard.",
+      "exits": {
+        "n": "capulet-orchard",
+        "e": null,
+        "s": "capulet-tomb",
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": null,
+      "music": null,
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        },
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          9,
+          4,
+          9
+        ],
+        "palette": {
+          "wall": "#6b4a2f",
+          "floor": "#7a6a55",
+          "ceiling": "#3e2c1c",
+          "trim": "#556b2f"
+        },
+        "props": [
+          {
+            "id": "table",
+            "pos": [
+              -2.4,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "honey",
+            "pos": [
+              -2.6,
+              0.76,
+              0.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -2.1,
+              0.76,
+              -0.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2.7,
+              0.76,
+              -0.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -2.1,
+              0.76,
+              0.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2.4,
+              0,
+              1.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              4.1,
+              0,
+              0
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -4.1,
+              0,
+              -2.6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.6,
+              0,
+              -3.6
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -3.6,
+              0,
+              -3.9
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              3.6,
+              0,
+              3.6
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -3.6,
+              0,
+              3.6
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              2.2,
+              0,
+              -3.8
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0.5,
+              0.01,
+              0.3
+            ],
+            "flat": true
+          }
+        ],
+        "spawn": [
+          0.5,
+          0,
+          1.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "capulet-tomb",
+      "name": "The Churchyard and the Capulets' Tomb",
+      "description": "A churchyard under yew trees and, within it, the ancient vault where all the kindred of the Capulets lie, a palace of dim night under dust and stones. The ground is loose with digging, water drips from the vaulting, and torchlight falls on the old biers. The only way out is north, back up to the Friar's cell.",
+      "exits": {
+        "n": "friar-cell",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "drips",
+          "volume": 0.5
+        },
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          10
+        ],
+        "palette": {
+          "wall": "#5e5a55",
+          "floor": "#3d3328",
+          "ceiling": "#2a2826",
+          "trim": "#8a8478"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              0,
+              0,
+              2.6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              0.5,
+              0.76,
+              2.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -0.4,
+              0.76,
+              2.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table",
+            "pos": [
+              -4,
+              0,
+              2
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.1,
+              0,
+              -0.5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -5.1,
+              0,
+              -0.5
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              1.2,
+              0,
+              3.9
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -1.2,
+              0,
+              3.9
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -5.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4,
+              0,
+              2.2
+            ],
+            "rotY": -1.57
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          -2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "mantua",
+      "name": "Mantua, the Apothecary's Shop",
+      "description": "A needy apothecary's shop in a back street of Mantua, where a stuffed alligator and a tortoise hang above a beggarly account of empty boxes. Green earthen pots, bladders, musty seeds and old cakes of roses are thinly scattered on the shelves to make up a show. East the road leads back across the plain to the gates of Verona.",
+      "exits": {
+        "n": null,
+        "e": "verona-square",
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": null,
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          9,
+          4,
+          8
+        ],
+        "palette": {
+          "wall": "#4a3524",
+          "floor": "#3a2a1c",
+          "ceiling": "#2b1f15",
+          "trim": "#6b8e23"
+        },
+        "props": [
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -1.5,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              1.6,
+              0,
+              -3.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "desk",
+            "pos": [
+              -2.4,
+              0,
+              0.6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -2.4,
+              0.76,
+              0.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -2.2,
+              0.76,
+              0.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -2.6,
+              0.76,
+              1.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3.5,
+              0,
+              0.6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.8,
+              0,
+              3.3
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -2.9,
+              0,
+              3.4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              3.8,
+              0,
+              -3.2
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              3.8,
+              0,
+              3.3
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -3.9,
+              0,
+              -2.6
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0.6,
+              0.01,
+              0.8
+            ],
+            "flat": true
+          }
+        ],
+        "spawn": [
+          1,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "mercutio",
+      "name": "Mercutio",
+      "home": "verona-square",
+      "persona": "You are Mercutio, kinsman to Prince Escalus of Verona and dearest friend to Romeo Montague. You stand in the public place of Verona among market stalls of bread and honey, benches and potted trees, where Capulet and Montague servants bite their thumbs at each other and the Prince has forbidden brawling on pain of death. You belong to neither house and you mock both. You talk faster than any man in Verona: puns, bawdy jests, wild flights of fancy. You conjured Queen Mab, the fairies' midwife, no bigger than an agate-stone, who gallops night by night through lovers' brains. You call Tybalt the Prince of Cats, a fashion-monger who fights by the book of arithmetic, and you tease Romeo for groaning after pale Rosaline. Favourite turns: 'Tut, dun's the mouse', 'Come, we burn daylight, ho', 'I will not budge for no man's pleasure, I', 'Signior, bonjour!' You love masks, dancing, swordplay and wordplay, and scorn lovesick sighing and affected new fashions. You know the feud, the brawls, the Capulets' feast and every rumour of the street; you know nothing of Romeo's secret love for Juliet, and nothing of what the coming hot days will bring. Treat a stranger as a fresh audience: greet them grandly, give them a nickname, bait them into a battle of wits, but be generous underneath. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 25,
+      "knowledgeTags": [
+        "romeo-and-juliet-ch3",
+        "romeo-and-juliet-ch4"
+      ],
+      "avatar": "kaykit:Knight",
+      "wander": 1.5,
+      "pos": [
+        2.5,
+        0,
+        2
+      ],
+      "rotY": -0.78,
+      "schedule": [
+        {
+          "at": "30 * * * *",
+          "do": "move",
+          "to": "capulet-hall"
+        },
+        {
+          "at": "40 * * * *",
+          "do": "move",
+          "to": "capulet-orchard"
+        },
+        {
+          "at": "45 * * * *",
+          "do": "say",
+          "text": "Romeo! Humours! Madman! Passion! Lover! Appear thou in the likeness of a sigh, speak but one rhyme, and I am satisfied."
+        },
+        {
+          "at": "52 * * * *",
+          "do": "move",
+          "to": "verona-square"
+        }
+      ],
+      "voice": {
+        "gender": "m"
+      }
+    },
+    {
+      "id": "nurse",
+      "name": "Nurse",
+      "home": "capulet-hall",
+      "persona": "You are the Nurse to Juliet Capulet, and your master calls you good Angelica. You bustle about the great hall of Capulet's house, among tables spread with cakes and wine, torches, and a chequered floor made ready for the feast. You nursed Juliet yourself after your own Susan went to God; you can tell her age unto an hour, fourteen come Lammas Eve at night, and you never tire of telling how your merry late husband said 'Wilt thou not, Jule?' and the pretty fool stinted and said 'Ay.' You ramble, repeat yourself, lose the thread and find it again; you complain of your aching bones and your head; you say 'by my troth', 'God's lady dear', 'Marry', 'Anon, anon!', and you call for Peter and your fan. You are warm, bawdy, fond of a coin, shrewd about men, and proud to be trusted. You carry Juliet's messages and keep her secrets close: you never tell a stranger she has a sweetheart, though you may wink and hint. You know the household, the feast, Lady Capulet, old Capulet's temper, the County Paris who is 'a man of wax', and young Romeo the Montague. You know nothing beyond your own days in Verona. Treat strangers as guests: fuss over them, offer them marchpane, gossip, and ask their business. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "romeo-and-juliet-ch3",
+        "romeo-and-juliet-ch4",
+        "romeo-and-juliet-ch5",
+        "romeo-and-juliet-ch6"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0.8,
+      "pos": [
+        4,
+        0,
+        2
+      ],
+      "rotY": -1.57,
+      "schedule": [
+        {
+          "at": "13 * * * *",
+          "do": "move",
+          "to": "verona-square"
+        },
+        {
+          "at": "21 * * * *",
+          "do": "move",
+          "to": "juliet-chamber"
+        },
+        {
+          "at": "30 * * * *",
+          "do": "move",
+          "to": "friar-cell"
+        },
+        {
+          "at": "40 * * * *",
+          "do": "move",
+          "to": "capulet-hall"
+        }
+      ],
+      "voice": {
+        "gender": "f"
+      }
+    },
+    {
+      "id": "romeo",
+      "name": "Romeo",
+      "home": "capulet-orchard",
+      "persona": "You are Romeo, only son of old Montague, young, ardent and a poet. You stand in Capulet's orchard at night beneath Juliet's lit window, having leapt the high wall with love's light wings; her kinsmen would murder you if they found you here, but you have night's cloak to hide you. Around you are fruit trees silvered by the moon, a nightingale in the pomegranate tree, benches under the hedges. Until lately you sighed for Rosaline; then at the Capulets' feast you saw Juliet, and she doth teach the torches to burn bright. You speak in rich images and paradoxes, 'O brawling love, O loving hate', you sigh, swear by the moon and slip into rhyme; with friends you can still trade puns as fast as Mercutio. You hate the feud and your own name, because it is an enemy to her. You trust Friar Lawrence, your ghostly father, and your friends Benvolio and Mercutio. You know the feud, the street brawls, the feast, your vows beneath the balcony and your hopes of a secret marriage. You do not know your future and never speak of it. Treat strangers warily at first, for they may be Capulets, then confide in them, since a lover longs to speak of his lady. Speak low, for the Nurse may call. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "romeo-and-juliet-ch3",
+        "romeo-and-juliet-ch4",
+        "romeo-and-juliet-ch5"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 1,
+      "pos": [
+        -2.5,
+        0,
+        -3.5
+      ],
+      "rotY": 0,
+      "schedule": [
+        {
+          "at": "56 * * * *",
+          "do": "move",
+          "to": "capulet-hall"
+        },
+        {
+          "at": "4 * * * *",
+          "do": "move",
+          "to": "capulet-orchard"
+        },
+        {
+          "at": "30 * * * *",
+          "do": "move",
+          "to": "friar-cell"
+        },
+        {
+          "at": "39 * * * *",
+          "do": "move",
+          "to": "mantua"
+        },
+        {
+          "at": "47 * * * *",
+          "do": "move",
+          "to": "capulet-tomb"
+        }
+      ],
+      "voice": {
+        "gender": "m"
+      }
+    },
+    {
+      "id": "juliet",
+      "name": "Juliet",
+      "home": "juliet-chamber",
+      "persona": "You are Juliet Capulet, not yet fourteen, the only daughter of old Capulet. You are in your chamber in your father's house: curtains, a writing desk with a candle and books, a cushioned chair, a chest of attires, and an open gallery looking down on the orchard where a nightingale sings on the pomegranate tree. At your father's feast you met Romeo, a Montague, the only son of your great enemy, and your only love sprang from your only hate. You are quick, frank, clever and braver than your years. You distrust easy oaths, 'O swear not by the moon, th'inconstant moon', you argue in neat wordplay, and you count every hour until the Nurse brings news. You think much on names: what's in a name? That which we call a rose by any other name would smell as sweet. Your love is as boundless as the sea. You honour your parents, but you will not be pushed into marrying the County Paris. You confide in the Nurse and Friar Lawrence and no one else; with strangers you are courteous but guarded, and you never reveal your secret to anyone who might be a kinsman's spy. You know the feud, the feast, your fiery cousin Tybalt and Paris's suit. You do not know what is to come. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; speak to visitors by the name they use; use plain hyphens and never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 40,
+      "knowledgeTags": [
+        "romeo-and-juliet-ch3",
+        "romeo-and-juliet-ch4",
+        "romeo-and-juliet-ch5",
+        "romeo-and-juliet-ch6"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 0.5,
+      "pos": [
+        -1.6,
+        0,
+        1
+      ],
+      "rotY": 1.57,
+      "schedule": [
+        {
+          "at": "5 * * * *",
+          "do": "move",
+          "to": "capulet-orchard"
+        },
+        {
+          "at": "21 * * * *",
+          "do": "move",
+          "to": "juliet-chamber"
+        },
+        {
+          "at": "39 * * * *",
+          "do": "move",
+          "to": "mantua"
+        },
+        {
+          "at": "47 * * * *",
+          "do": "move",
+          "to": "capulet-tomb"
+        }
+      ],
+      "voice": {
+        "gender": "f"
+      }
+    }
+  ],
+  "scripts": [
+    {
+      "id": "greet-mercutio",
+      "room": "verona-square",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "mercutio",
+          "text": "Signior {player}, bonjour! Come, we burn daylight, ho.",
+          "waitMs": 4000
+        },
+        {
+          "who": "mercutio",
+          "text": "Men's eyes were made to look, and let them gaze. I will not budge for no man's pleasure, I.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "greet-nurse",
+      "room": "capulet-hall",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "nurse",
+          "text": "God ye good morrow, {player}! Anon, anon!",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "Faith, I can tell her age unto an hour. Come Lammas Eve at night shall she be fourteen.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "greet-romeo",
+      "room": "capulet-orchard",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "romeo",
+          "text": "He jests at scars that never felt a wound.",
+          "waitMs": 4000
+        },
+        {
+          "who": "romeo",
+          "text": "Soft, {player}, speak low. The orchard walls are high and hard to climb, and the place death if any of her kinsmen find us here.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "greet-juliet",
+      "room": "juliet-chamber",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "juliet",
+          "text": "How now, who calls? Is it {player}?",
+          "waitMs": 4000
+        },
+        {
+          "who": "juliet",
+          "text": "What's in a name? That which we call a rose by any other name would smell as sweet.",
+          "waitMs": 3500
+        }
+      ]
+    },
+    {
+      "id": "scene-feast",
+      "room": "capulet-hall",
+      "trigger": {
+        "cron": "0 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "romeo",
+          "text": "O, she doth teach the torches to burn bright! It seems she hangs upon the cheek of night as a rich jewel in an Ethiop's ear.",
+          "waitMs": 4000
+        },
+        {
+          "who": "romeo",
+          "text": "What is her mother?",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "Marry, bachelor, her mother is the lady of the house, and a good lady, and a wise and virtuous.",
+          "waitMs": 3500
+        },
+        {
+          "who": "nurse",
+          "text": "I nurs'd her daughter that you talk'd withal. I tell you, he that can lay hold of her shall have the chinks.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "Is she a Capulet? O dear account! My life is my foe's debt.",
+          "waitMs": 4500
+        }
+      ]
+    },
+    {
+      "id": "scene-balcony",
+      "room": "capulet-orchard",
+      "trigger": {
+        "cron": "8 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "romeo",
+          "text": "But soft, what light through yonder window breaks? It is the east, and Juliet is the sun!",
+          "waitMs": 4000
+        },
+        {
+          "who": "juliet",
+          "text": "O Romeo, Romeo, wherefore art thou Romeo? Deny thy father and refuse thy name.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "I take thee at thy word. Call me but love, and I'll be new baptis'd.",
+          "waitMs": 4500
+        },
+        {
+          "who": "juliet",
+          "text": "Good night, good night. Parting is such sweet sorrow that I shall say good night till it be morrow.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "Sleep dwell upon thine eyes, peace in thy breast.",
+          "waitMs": 4500
+        }
+      ]
+    },
+    {
+      "id": "scene-noon",
+      "room": "verona-square",
+      "trigger": {
+        "cron": "17 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "nurse",
+          "text": "God ye good morrow, gentlemen.",
+          "waitMs": 4000
+        },
+        {
+          "who": "mercutio",
+          "text": "God ye good-den, fair gentlewoman.",
+          "waitMs": 3000
+        },
+        {
+          "who": "nurse",
+          "text": "Is it good-den?",
+          "waitMs": 3000
+        },
+        {
+          "who": "mercutio",
+          "text": "'Tis no less, I tell ye; for the bawdy hand of the dial is now upon the prick of noon.",
+          "waitMs": 3500
+        },
+        {
+          "who": "nurse",
+          "text": "Out upon you! What a man are you?",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "scene-news",
+      "room": "juliet-chamber",
+      "trigger": {
+        "cron": "25 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "juliet",
+          "text": "Ay me, what news? Why dost thou wring thy hands?",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "Tybalt is gone, and Romeo banished. Romeo that kill'd him, he is banished.",
+          "waitMs": 4000
+        },
+        {
+          "who": "juliet",
+          "text": "O God! Did Romeo's hand shed Tybalt's blood?",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "Will you speak well of him that kill'd your cousin?",
+          "waitMs": 4000
+        },
+        {
+          "who": "juliet",
+          "text": "Shall I speak ill of him that is my husband?",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "scene-cell",
+      "room": "friar-cell",
+      "trigger": {
+        "cron": "34 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "nurse",
+          "text": "Stand up, stand up; stand, and you be a man. For Juliet's sake, for her sake, rise and stand.",
+          "waitMs": 4000
+        },
+        {
+          "who": "romeo",
+          "text": "Spakest thou of Juliet? How is it with her?",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "O, she says nothing, sir, but weeps and weeps; and Tybalt calls, and then on Romeo cries.",
+          "waitMs": 4000
+        },
+        {
+          "who": "nurse",
+          "text": "Here sir, a ring she bid me give you, sir. Hie you, make haste, for it grows very late.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "How well my comfort is reviv'd by this.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "scene-farewell",
+      "room": "mantua",
+      "trigger": {
+        "cron": "43 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "juliet",
+          "text": "O thinkest thou we shall ever meet again?",
+          "waitMs": 4000
+        },
+        {
+          "who": "romeo",
+          "text": "I doubt it not, and all these woes shall serve for sweet discourses in our time to come.",
+          "waitMs": 4000
+        },
+        {
+          "who": "juliet",
+          "text": "O God! I have an ill-divining soul! Methinks I see thee, now thou art so low, as one dead in the bottom of a tomb.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "Dry sorrow drinks our blood. Adieu, adieu.",
+          "waitMs": 4500
+        },
+        {
+          "who": "romeo",
+          "text": "If I may trust the flattering eye of sleep, my dreams presage some joyful news at hand.",
+          "waitMs": 5000
+        }
+      ]
+    },
+    {
+      "id": "scene-tomb",
+      "room": "capulet-tomb",
+      "trigger": {
+        "cron": "51 * * * *"
+      },
+      "cooldownSec": 600,
+      "lines": [
+        {
+          "who": "romeo",
+          "text": "Here lies Juliet, and her beauty makes this vault a feasting presence full of light.",
+          "waitMs": 4000
+        },
+        {
+          "who": "romeo",
+          "text": "Eyes, look your last. Arms, take your last embrace! Here's to my love! Thus with a kiss I die.",
+          "waitMs": 4500
+        },
+        {
+          "who": "juliet",
+          "text": "O comfortable Friar, where is my lord? I do remember well where I should be, and there I am. Where is my Romeo?",
+          "waitMs": 5000
+        },
+        {
+          "who": "juliet",
+          "text": "What's here? A cup clos'd in my true love's hand? Thy lips are warm!",
+          "waitMs": 4500
+        }
+      ]
+    }
+  ]
+}

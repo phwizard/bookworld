@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-10-25T12:48:13.191Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 7,
+    "characters": 4,
+    "notes": "This is a play, set in Verona and Mantua. Rooms: the street and market square of Verona, the Capulets' hall where the feast and masque are held, the Capulets' orchard under Juliet's balcony (a night garden), Juliet's chamber, Friar Laurence's cell with its herbs, the churchyard and the Capulets' tomb, and one more of your choice (Mantua, or the Montagues' house). Characters: Romeo, Juliet, Mercutio and the Nurse (display name Nurse); single-word names. Make it an enacted play: besides the on-enter greetings, give each room one script with a cron trigger spread over the hour in which two characters present in that room exchange 3 to 5 short lines taken from the text, in the order of the play (the street brawl and Mercutio's wit, the feast, the balcony, the cell, the chamber, the tomb); use schedule moves so the pairs are in the same room when the scene runs. Mercutio wanders a lot, Juliet little. Sound: night birds and a fountain in the orchard, a crowd murmur in the square, drips and wind in the tomb."
+  },
+  "source": {
+    "title": "Romeo and Juliet",
+    "author": "William Shakespeare",
+    "text": "gutenberg:1513",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "ACT V Scene I. Mantua. A Street.",
+      "chars": 1838
+    },
+    {
+      "index": 2,
+      "title": "ACT I SCENE I. A public place.",
+      "chars": 2617
+    },
+    {
+      "index": 3,
+      "title": "Part, fools! put up your swords, you know not what you do. [_Beats down their swords._]",
+      "chars": 30218
+    },
+    {
+      "index": 4,
+      "title": "ACT II Enter Chorus.",
+      "chars": 30716
+    },
+    {
+      "index": 5,
+      "title": "ACT III SCENE I. A public Place.",
+      "chars": 36904
+    },
+    {
+      "index": 6,
+      "title": "ACT IV SCENE I. Friar Lawrence’s Cell.",
+      "chars": 19037
+    },
+    {
+      "index": 7,
+      "title": "ACT V SCENE I. Mantua. A Street.",
+      "chars": 20274
+    }
+  ],
+  "warnings": []
+}
