@@ -53,6 +53,8 @@ export class ChessGame {
   private lastMove: { from: string; to: string } | undefined;
   private result: { result: string; reason: string } | null = null;
   private drawOffer: ChessColor | undefined;
+  /** a scene is showing a game on this board */
+  show = false;
 
   get over() { return this.result !== null; }
   get moves(): string[] { return this.chess.history(); }
@@ -64,6 +66,7 @@ export class ChessGame {
 
   /** Takes a chair; a player already in the other chair moves over before the first move, never after. */
   sit(color: ChessColor, who: Seat): string | null {
+    if (this.show) return 'a game is being shown on this board; watch';
     const chair = color === 'w' ? this.white : this.black;
     if (chair && chair.seat !== who.seat) return `${COLOR_NAME[color]} is taken by ${chair.name}`;
     const mine = this.seatOf(who.seat);
@@ -133,12 +136,43 @@ export class ChessGame {
 
   /** Clears the board (chairs stay). Allowed once the game is over, or before it began. */
   reset(): boolean {
-    if (!this.over && this.moves.length) return false;
+    if (this.show || (!this.over && this.moves.length)) return false;
     this.chess = new Chess();
     this.lastMove = undefined;
     this.result = null;
     this.drawOffer = undefined;
     return true;
+  }
+
+  /** A scene takes the board: cleared, the two characters in the chairs, nobody else may sit or move. */
+  takeover(white: Seat, black: Seat) {
+    this.chess = new Chess();
+    this.lastMove = undefined;
+    this.result = null;
+    this.drawOffer = undefined;
+    this.white = white;
+    this.black = black;
+    this.show = true;
+  }
+
+  /** A scripted move in SAN; the SAN as chess.js writes it, or null when it is not legal here. */
+  play(san: string): string | null {
+    if (!this.show || this.over) return null;
+    try {
+      const made = this.chess.move(san);
+      this.lastMove = { from: made.from, to: made.to };
+      this.settle();
+      return made.san;
+    } catch {
+      return null;
+    }
+  }
+
+  /** The scene is over: the chairs are free, the position stays for whoever sits next (or presses New game). */
+  release() {
+    this.show = false;
+    this.white = null;
+    this.black = null;
   }
 
   view(): ChessGameView {
@@ -147,7 +181,7 @@ export class ChessGame {
       white: this.white ? { name: this.white.name, seat: this.white.seat } : null,
       black: this.black ? { name: this.black.name, seat: this.black.seat } : null,
       status: this.result ? 'over' : this.white && this.black ? 'playing' : 'waiting',
-      check: this.chess.inCheck(),
+      check: this.chess.inCheck(), show: this.show,
     };
     if (this.result) { v.result = this.result.result; v.reason = this.result.reason; }
     if (this.lastMove) v.lastMove = this.lastMove;
@@ -362,4 +396,18 @@ export function puzzleMemoryNote(player: string, p: ChessProgress, session: { so
   const day = new Date().toISOString().slice(0, 10);
   const missed = session.missed.slice(0, 3);
   return `- ${day}: ${player} did puzzles: ${session.solved} solved, ${session.failed} failed this visit; puzzle rating ${p.rating} (${p.solved} solved, ${p.failed} failed in all)${missed.length ? `. Missed ${missed.join(', ')}` : ''}.`;
+}
+
+/** Plays a scene's moves through from the start; the first move that is not legal, or null when all are. */
+export function checkScriptedGame(moves: string[]): string | null {
+  const c = new Chess();
+  for (const m of moves) {
+    try {
+      // exact SAN as chess.js writes it, so a wrong check or mate mark ("Rd7#" for a plain Rd7) is caught too
+      if (c.move(m).san !== m) return m;
+    } catch {
+      return m;
+    }
+  }
+  return null;
 }

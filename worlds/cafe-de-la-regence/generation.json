@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-11-05T22:53:58.047Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 6,
+    "characters": 5,
+    "notes": "This world is Paris in the autumn of 1858, when Paul Morphy of New Orleans came to the Cafe de la Regence, as Edge's book tells it. Chess players will visit this world: every room should feel like a place where chess is played or talked about, and the characters should speak of real games, openings and players of 1858 (Harrwitz, Anderssen, Saint-Amant, Lowenthal, Staunton, the Duke of Brunswick, Count Isouard, the blindfold exhibition of eight games). Lay the rooms out exactly on these cells and only these links: the front room of the Cafe de la Regence at [1,1] (the start: marble tables, the regulars, the professional's table, the waiter with the coffee, the hum of a hundred games; use the planks or stone floor and a warm wallpaper); the back room of the Regence at [2,1] (east of the front room: the room where Morphy played eight games blindfold at once on 27 September 1858, sitting in an armchair with his back to the boards, and where the match with Harrwitz was played); the Rue Saint-Honore outside the cafe at [1,0] (north of the front room: the street, the Palais-Royal across the way, carriages, an outdoor panorama); the foyer of the Theatre-Italien (Salle Ventadour) at [2,0] (east of the street: an evening of Norma, gilt and velvet); the Duke of Brunswick's box at the opera at [3,0] (east of the foyer: the box where Morphy played the Duke and Count Isouard, who consulted together, with his back to the stage, during Norma; this is the room of the famous Opera Game, keep it elegant); and Morphy's rooms at the Hotel Breteuil at [1,2] (south of the front room: where he received callers, read letters from home and lay ill with the fever and the leeches, an indoor room with a carpet). Six rooms. Characters: Paul Morphy (display name \"Morphy\", home: the back room; quiet, courteous, modest to a fault, twenty-one, from New Orleans, a gentleman who plays for honour and never for money, who answers questions about positions precisely and briefly and dislikes praise; he remembers every game he has played), Daniel Harrwitz (display name \"Harrwitz\", home: the front room; the Regence's resident professional, Prussian, quick, proud and prickly, who won the first two games of the match against Morphy and then lost five, and withdrew pleading ill health; he does not like to be reminded of it), Pierre de Saint-Amant (display name \"Saint-Amant\", home: the front room; the old French champion who lost to Staunton in 1843, now a courteous elder statesman of the cafe and a wine merchant, who makes the introductions and tells the cafe's history, Philidor and Deschapelles and Labourdonnais), Frederick Edge (display name \"Edge\", home: Morphy's hotel rooms; Morphy's English secretary and companion, the author of this book, an excitable storyteller who saw everything and writes it all down, proud of his friend and a little indiscreet), and the Duke of Brunswick (display name \"Duke\", home: the opera box; Karl II, the deposed Duke, an exile living in Paris, rich, eccentric, passionate about chess and about Norma, who plays in consultation with Count Isouard and loses with good humour; he keeps a chess board in his box and talks about the Opera Game as his finest defeat). Make it the play, in this order: the front room (Saint-Amant and Harrwitz on the American's arrival and the match, Harrwitz's two wins and then the losses and the withdrawal); the back room (the blindfold exhibition: Morphy and Edge, eight boards, ten hours, the crowd, the shout at the end); the hotel (Edge and Morphy with the letters from New Orleans and the illness, the leeches, Anderssen expected from Breslau); the opera box (the Duke before the game: Norma on the stage, the board set up with Morphy's back to the singers, the Count beside him; keep this scene short, two or three lines, because the game itself is performed separately); then the front room again (Saint-Amant and Harrwitz on Anderssen's coming at Christmas and what Morphy's play has changed). Greetings for the front room, the back room, the hotel and the opera box. Morphy wanders a little, Harrwitz paces, the Duke stays in his box. Sound: the hum of a crowd is not available, so use the clock in the cafe rooms and the hotel, wind and birds in the street, nothing in the opera. Music where it fits. No long dashes anywhere, plain hyphens only."
+  },
+  "source": {
+    "title": "The Exploits and Triumphs, in Europe, of Paul Morphy, the Chess Champion",
+    "author": "Frederick Milnes Edge",
+    "text": "gutenberg:34180",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "CHAPTER I. MORPHY'S FIRST GAMES.",
+      "chars": 2459
+    },
+    {
+      "index": 2,
+      "title": "CHAPTER II. THE FIRST AMERICAN CHESS CONGRESS.",
+      "chars": 11160
+    },
+    {
+      "index": 3,
+      "title": "CHAPTER III. MORPHY PREPARES TO START FOR EUROPE.",
+      "chars": 15308
+    },
+    {
+      "index": 4,
+      "title": "CHAPTER IV. CHESS IN ENGLAND.",
+      "chars": 49328
+    },
+    {
+      "index": 5,
+      "title": "CHAPTER V. MORPHY IN ENGLAND.",
+      "chars": 42888
+    },
+    {
+      "index": 6,
+      "title": "CHAPTER VI. THE STAUNTON AFFAIR.",
+      "chars": 39574
+    },
+    {
+      "index": 7,
+      "title": "LETTER FROM A FRIEND OF PAUL MORPHY. _To the Editor of Bell's Life in London_:",
+      "chars": 9989
+    },
+    {
+      "index": 8,
+      "title": "LETTER FROM A COADJUTOR OF MR. STAUNTON. _To the Editor of Bell's Life_:--",
+      "chars": 55368
+    },
+    {
+      "index": 9,
+      "title": "CHAPTER VII. MORPHY IN FRANCE.",
+      "chars": 4927
+    },
+    {
+      "index": 10,
+      "title": "CHAPTER VIII. THE CAFE DE LA REGENCE.",
+      "chars": 7813
+    },
+    {
+      "index": 11,
+      "title": "CHAPTER IX. THE MATCH BETWEEN MORPHY AND HARRWITZ.",
+      "chars": 13063
+    },
+    {
+      "index": 12,
+      "title": "CHAPTER X. MORPHY'S GREATEST BLINDFOLD FEAT.",
+      "chars": 9698
+    },
+    {
+      "index": 13,
+      "title": "CHAPTER XI. CONTINUATION OF THE MATCH WITH HARRWITZ.",
+      "chars": 4937
+    },
+    {
+      "index": 14,
+      "title": "CHAPTER XII. MORPHY IN SOCIETY.",
+      "chars": 7098
+    },
+    {
+      "index": 15,
+      "title": "CHAPTER XIII. MORPHY AND THE FRENCH AMATEURS.",
+      "chars": 9044
+    },
+    {
+      "index": 16,
+      "title": "CHAPTER XIV. MORPHY GETS BEATEN.",
+      "chars": 4052
+    },
+    {
+      "index": 17,
+      "title": "CHAPTER XV. MORPHY AND ANDERSSEN.",
+      "chars": 14958
+    },
+    {
+      "index": 18,
+      "title": "CHAPTER XVI. MORPHY AND MONGREDIEU.",
+      "chars": 4048
+    },
+    {
+      "index": 19,
+      "title": "CHAPTER XVII. TROPHIES.",
+      "chars": 16806
+    }
+  ],
+  "warnings": []
+}

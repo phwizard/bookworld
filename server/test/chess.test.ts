@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PUZZLE_START_RATING, movesText, themeWords, type ChessProgress, type PuzzleView } from '@bookworld/shared';
-import { ChessGame, PuzzleRun, loadPuzzles, pickPuzzle, puzzleMemoryNote, type Puzzle, type PuzzleIO } from '../src/world/chess.ts';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { PUZZLE_START_RATING, movesText, recordLine, themeWords, type ChessProgress, type PuzzleView } from '@bookworld/shared';
+import { ChessGame, PuzzleRun, checkScriptedGame, loadPuzzles, pickPuzzle, puzzleMemoryNote, type Puzzle, type PuzzleIO } from '../src/world/chess.ts';
 
 const taras = { name: 'Taras', seat: 's1', uid: 'u1' };
 const anna = { name: 'Anna', seat: 's2', uid: 'u2' };
@@ -171,4 +172,46 @@ test('the puzzle file reads and every puzzle plays through', () => {
 test('the note for the memory', () => {
   const note = puzzleMemoryNote('Taras', { rating: 1340, solved: 12, failed: 5, seen: [] }, { solved: 3, failed: 1, missed: ['a fork (1450)'] });
   assert.match(note, /^- \d{4}-\d{2}-\d{2}: Taras did puzzles: 3 solved, 1 failed this visit; puzzle rating 1340 \(12 solved, 5 failed in all\). Missed a fork \(1450\).$/);
+});
+
+test('a scene takes the board, plays a game and leaves the position', () => {
+  const g = new ChessGame();
+  g.sit('w', taras);
+  g.takeover({ name: 'Morphy', uid: 'c:morphy', seat: 'c:morphy' }, { name: 'Duke', uid: 'c:duke', seat: 'c:duke' });
+  assert.equal(g.view().show, true);
+  assert.equal(g.view().white?.name, 'Morphy');
+  assert.match(g.sit('w', anna)!, /being shown/);
+  assert.equal(g.reset(), false);
+  assert.equal(g.play('e4'), 'e4');
+  assert.equal(g.play('e4'), null, 'not legal here');
+  assert.equal(g.play('e5'), 'e5');
+  assert.equal(recordLine(g.view()), 'Chess: 1. e4 e5');
+  g.play('Qh5'); g.play('Nc6'); g.play('Bc4'); g.play('Nf6');
+  assert.equal(g.play('Qxf7#'), 'Qxf7#');
+  assert.equal(g.over, true);
+  assert.match(recordLine(g.view())!, /^Chess: Morphy wins by checkmate, 1-0: 1\. e4 e5/);
+  g.release();
+  const v = g.view();
+  assert.equal(v.show, false);
+  assert.equal(v.white, null);
+  assert.equal(v.status, 'over');
+  assert.equal(v.moves.length, 7, 'the position stays');
+  assert.equal(g.sit('w', taras), null);
+  assert.equal(g.reset(), true);
+});
+
+test('every scripted game in the worlds plays through', () => {
+  const dir = new URL('../../worlds/', import.meta.url);
+  let scenes = 0;
+  for (const slug of readdirSync(dir)) {
+    const file = new URL(`${slug}/world.json`, dir);
+    if (!existsSync(file)) continue;
+    const world = JSON.parse(readFileSync(file, 'utf8')) as { scripts?: { id: string; board?: unknown; lines: { move?: string }[] }[] };
+    for (const sc of world.scripts ?? []) {
+      if (!sc.board) continue;
+      scenes++;
+      assert.equal(checkScriptedGame(sc.lines.map((l) => l.move).filter((m): m is string => Boolean(m))), null, `${slug}/${sc.id}`);
+    }
+  }
+  assert.ok(scenes >= 0);
 });

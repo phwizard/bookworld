@@ -54,7 +54,10 @@
     { "id": "tea-party", "room": "tea-party", "trigger": { "play": true },          // a scene of the play (performed in the file's order), or { "onEnter": true } when a player walks in
       "cooldownSec": 180,                                                           // minimum gap between runs of a greeting
       "lines": [ { "who": "hatter", "text": "Why is a raven like a writing-desk, {player}?", "waitMs": 6000 } ], // {player} = the name of who walked in
-      "onInterrupt": "improvise-then-resume" }
+      "onInterrupt": "improvise-then-resume" },
+    { "id": "play-opera-game", "room": "opera-box", "trigger": { "play": true },        // a scene that plays a game on the room's board (docs/CHESS.md)
+      "board": { "white": "morphy", "black": "duke" },                                  // the two characters take the chairs; the room must be listed under chess
+      "lines": [ { "who": "morphy", "text": "The king's pawn.", "move": "e4" } ] }      // move: SAN on that board, made as the line is spoken
   ],
   "items": [                                                                        // optional: things visitors can pick up and carry
     { "id": "sands-guitar", "kind": "instrument", "instrument": "guitar",           // instrument: guitar | bass | drums | piano

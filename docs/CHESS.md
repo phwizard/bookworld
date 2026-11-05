@@ -27,10 +27,27 @@ On the Puzzles tab the master sets a puzzle at your level, easier or harder. The
 
 Your puzzle rating starts at 1200 and moves like Elo against the puzzle's rating: a solve at the first try gains, a hinted solve gains half, a miss or giving up loses, and only the first verdict counts. The rating and the puzzles you have seen are kept per visitor across worlds in `DATA_DIR/chess/<visitor>.json` (no name in it). After each puzzle the record goes into the chat (`Puzzle: Taras solved a 1450 puzzle at the first try (a fork); puzzle rating 1216, 3 solved, 1 failed.`) and the master says a line. The motif is told only once the puzzle is over. When you stop or leave, a one-line note goes to the master's Memory through the hosted MCP (`- 2026-11-05: Taras did puzzles: 3 solved, 1 failed this visit; puzzle rating 1216 ... Missed a fork (1450)`), the same path as the Songbook's trainer; it needs `ETHORA_API_KEY` and is only logged without it.
 
+## A game shown by the characters
+
+A scene of the play can play a famous game on the room's board. The script names the two characters who take the chairs, and its lines carry the moves:
+
+```jsonc
+{ "id": "play-opera-game", "room": "opera-box", "trigger": { "play": true },
+  "board": { "white": "morphy", "black": "duke" },
+  "lines": [
+    { "who": "duke", "text": "You have White, Mr Morphy; the Count and I shall consult." },
+    { "who": "morphy", "text": "The king's pawn.", "move": "e4", "waitMs": 3000 },
+    { "who": "duke", "text": "We answer in kind.", "move": "e5" }
+  ] }
+```
+
+When the scene begins the board is cleared and the two characters sit down (a visitors' game on that board is set aside; the chat says so). Each line is spoken and its move made, the record going into the chat a full move at a time as for a visitors' game, and the panel shows the position live to everyone in the room. A line may have an empty `text` when it only moves. A move that is not legal where it comes ends the game part of the scene and is reported in the log; `pnpm test` plays every scripted game in `worlds/` through. When the scene ends the chairs are free and the final position stays, so a visitor can sit down and play on from it, or press New game. The first one is the Opera Game, Morphy against the Duke of Brunswick and Count Isouard, Paris 1858, in the Cafe de la Regence world.
+
 ## Where it lives
 
-- `shared/src/chess.ts`: the world-file entry, the views the panel renders, the commands, the record text helpers, the master's prompt paragraph.
+- `shared/src/chess.ts`: the world-file entry, the views the panel renders, the commands, the record line, the master's prompt paragraph. `ScriptLine.move` and `WorldScript.board` are in `shared/src/world.ts`.
 - `server/src/world/chess.ts`: `ChessGame` (chairs, moves, result), `PuzzleRun` (one puzzle with one player), the puzzle file, the rating, the progress file. Tests in `server/test/chess.test.ts`, which also plays every puzzle in the file through.
+- `server/src/world/sim.ts`: the boards, one per room listed under `chess`, which outlive an empty room, and the scenes that play a game on them.
 - `server/src/rooms/LocationRoom.ts`: the `chess` message, the chat lines, the chairs on join and leave, the Memory note.
 - `client/src/ui/ChessPanel.tsx`: the panel and the board, loaded only in rooms with a board. Pieces are the Unicode chess glyphs coloured by CSS.
 

@@ -92,7 +92,8 @@ export function ChessPanel() {
     return <button className={`chesstab${lesson ? ' shifted' : ''}`} onClick={() => setOpen(true)}>{label}</button>;
   }
 
-  const status = g.status === 'over'
+  const status = g.show && g.status !== 'over' ? `${g.white?.name} and ${g.black?.name} are playing: ${COLOR_NAME[g.turn]} to move${g.check ? ', check' : ''}`
+    : g.status === 'over'
     ? `${g.result}: ${g.result === '1/2-1/2' ? 'a draw' : `${(g.result === '1-0' ? g.white?.name : g.black?.name) ?? COLOR_NAME[g.result === '1-0' ? 'w' : 'b']} wins`}, ${g.reason}`
     : g.status === 'waiting' ? `Waiting for ${!g.white ? 'White' : 'Black'}${g.moves.length ? ' to sit down' : ''}`
     : `${COLOR_NAME[g.turn]} to move${g.check ? ', check' : ''}${mine === g.turn ? ' (you)' : ''}`;
@@ -124,14 +125,14 @@ export function ChessPanel() {
                   <span className={`dot ${c}`} /> {COLOR_NAME[c]}:{' '}
                   {chair ? <b>{chair.name}</b> : <span className="muted">empty</span>}{' '}
                   {chair?.seat === me ? <button className="link" onClick={() => sendChess({ do: 'stand' })}>stand up</button>
-                    : !chair && (!mine || !g.moves.length || g.status === 'over') ? <button className="link" onClick={() => sendChess({ do: 'sit', color: c })}>sit here</button> : null}
+                    : !chair && !g.show && (!mine || !g.moves.length || g.status === 'over') ? <button className="link" onClick={() => sendChess({ do: 'sit', color: c })}>sit here</button> : null}
                 </div>
               );
             })}
           </div>
           <Board fen={g.fen} orientation={mine ?? 'w'} canMove={g.status === 'playing' ? mine : null} lastMove={g.lastMove} onMove={(from, to, promotion) => sendChess({ do: 'move', from, to, promotion })} />
           <div className="status">{status}{g.drawOffer && g.status === 'playing' ? ` · ${COLOR_NAME[g.drawOffer]} offers a draw` : ''}</div>
-          <div className="moves">{movesText(g.moves) || (g.status === 'playing' ? `White begins${mine === 'w' ? ': click a piece, then a square' : ''}.` : mine ? 'Your opponent needs the other chair. Then White begins.' : 'Take a chair to play; anyone in the room can watch.')}</div>
+          <div className="moves">{movesText(g.moves) || (g.show ? 'A game is about to be shown.' : g.status === 'playing' ? `White begins${mine === 'w' ? ': click a piece, then a square' : ''}.` : mine ? 'Your opponent needs the other chair. Then White begins.' : 'Take a chair to play; anyone in the room can watch.')}</div>
           <div className="actions">
             {mine && g.status === 'playing' && g.moves.length > 0 && <button onClick={() => sendChess({ do: 'resign' })}>Resign</button>}
             {mine && g.status === 'playing' && g.moves.length > 0 && <button onClick={() => sendChess({ do: 'draw' })}>{g.drawOffer && g.drawOffer !== mine ? 'Accept the draw' : g.drawOffer === mine ? 'Draw offered' : 'Offer a draw'}</button>}

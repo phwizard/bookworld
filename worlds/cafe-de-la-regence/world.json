@@ -1,0 +1,1958 @@
+{
+  "schema": "bookworld/0",
+  "slug": "cafe-de-la-regence",
+  "title": "Paul Morphy at the Cafe de la Regence, Paris 1858",
+  "summary": "Paris in the autumn of 1858, as Frederick Edge tells it: the Cafe de la Regence, the eight blindfold boards, the match with Harrwitz, the Hotel Breteuil and the Duke of Brunswick's box at the opera, with Morphy and his opponents ready to talk chess.",
+  "source": {
+    "title": "The Exploits and Triumphs, in Europe, of Paul Morphy, the Chess Champion",
+    "author": "Frederick Milnes Edge",
+    "text": "gutenberg:34180",
+    "license": "public-domain"
+  },
+  "start": "regence-front",
+  "rooms": [
+    {
+      "id": "regence-front",
+      "name": "Cafe de la Regence - The Front Room",
+      "description": "A dense cloud of tobacco smoke hangs over marble tables set so close that one can scarcely pass between them, and chess is being played on nearly every one. A waiter threads through with the coffee, Herr Harrwitz gives pawn and move to all comers at the professional's table, and the hum of a hundred games never stops. The street door opens north on the Rue Saint-Honore, the quieter back room lies east, and the way south leads to Mr. Morphy's rooms at the Hotel Breteuil.",
+      "exits": {
+        "n": "rue-saint-honore",
+        "e": "regence-back",
+        "s": "hotel-breteuil",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          16,
+          4.5,
+          12
+        ],
+        "palette": {
+          "wall": "#b9793e",
+          "floor": "#5a3b24",
+          "ceiling": "#e6d2ab",
+          "trim": "#3a2415"
+        },
+        "props": [
+          {
+            "id": "table-round",
+            "pos": [
+              -5,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -5,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -5,
+              0,
+              -1.9
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -5.2,
+              0.76,
+              -2.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table",
+            "pos": [
+              -5,
+              0,
+              2.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -6.1,
+              0,
+              2.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3.9,
+              0,
+              2.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              4.5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              4.5,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              4.5,
+              0,
+              -2.4
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "cup",
+            "pos": [
+              4.3,
+              0.76,
+              -3.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table",
+            "pos": [
+              4.5,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3.4,
+              0,
+              3.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              5.6,
+              0,
+              3.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              4.7,
+              0.76,
+              3.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "desk",
+            "pos": [
+              -2.6,
+              0,
+              -5.4
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "teapot",
+            "pos": [
+              -2.6,
+              0.76,
+              -5.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -7.6,
+              0,
+              -0.3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              7.4,
+              0,
+              -5.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -7.4,
+              0,
+              5.4
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          1
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "regence-back",
+      "name": "Cafe de la Regence - The Back Room",
+      "description": "The further room of the Regence is well fitted up, with the names of Philidor, Deschapelles and Labourdonnais on shields in the cornices and a fourth shield waiting for a name. Here on 27 September 1858 a large easy-chair was set with its back to eight boards, and here the match with Harrwitz was fought out game by game. The only door leads west, back to the smoke and noise of the front room.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": null,
+        "w": "regence-front"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          10
+        ],
+        "palette": {
+          "wall": "#d9c9a3",
+          "floor": "#2b2b2b",
+          "ceiling": "#efe6d0",
+          "trim": "#8a6a2f"
+        },
+        "props": [
+          {
+            "id": "table",
+            "pos": [
+              -2,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "table",
+            "pos": [
+              1.5,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1.5,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "table",
+            "pos": [
+              -2,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -2,
+              0,
+              4.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "table",
+            "pos": [
+              1.5,
+              0,
+              3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1.5,
+              0,
+              4.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "books",
+            "pos": [
+              -2.2,
+              0.76,
+              -3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              1.7,
+              0.76,
+              3.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug-round",
+            "pos": [
+              4.4,
+              0.01,
+              0
+            ],
+            "flat": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              4.6,
+              0,
+              0
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              4.6,
+              0,
+              1.5
+            ]
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              4.6,
+              0.53,
+              1.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              5.6,
+              0,
+              -2.6
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.4,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -5.4,
+              0,
+              -4.4
+            ]
+          }
+        ],
+        "spawn": [
+          -3,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "rue-saint-honore",
+      "name": "Rue Saint-Honore",
+      "description": "The Rue Saint-Honore in autumn light: carriages rattle past the door of the Cafe de la Regence, and across the way the trees and arcades of the Palais-Royal invite a stroll between games. A table stands out on the pavement, and players argue over yesterday's moves as they walk. The cafe door is south, and to the east the street leads on toward the Theatre-Italien.",
+      "exits": {
+        "n": null,
+        "e": "theatre-foyer",
+        "s": "regence-front",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          14
+        ],
+        "palette": {
+          "wall": "#b8b2a4",
+          "floor": "#8d8a82",
+          "ceiling": "#bcd3e6",
+          "trim": "#5c5a55"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "table-round",
+            "pos": [
+              -4.5,
+              0,
+              4.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -5.6,
+              0,
+              4.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3.4,
+              0,
+              4.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -4.4,
+              0.76,
+              4.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -5,
+              0,
+              -4.5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4,
+              0,
+              -4.5
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.8,
+              0,
+              -5.8
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.8,
+              0,
+              -5.8
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -0.5,
+              0,
+              -5.8
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -7.8,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -2.4,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              2.4,
+              0,
+              6
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              7.6,
+              0,
+              2.6
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5.8,
+              0,
+              4.8
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              6.6,
+              0,
+              5.4
+            ],
+            "rotY": 0.6
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          2
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "theatre-foyer",
+      "name": "Foyer of the Theatre-Italien",
+      "description": "Gilt, velvet and gaslight: the foyer of the Salle Ventadour on an evening of Norma, with the chorus of Druids rumbling faintly through the walls. Between the acts the gentlemen talk less of Madame Penco than of the young American at the Regence, and someone has a pocket board open on a little table. The street is west, and to the east a carpeted passage leads to the Duke of Brunswick's box.",
+      "exits": {
+        "n": null,
+        "e": "opera-box",
+        "s": null,
+        "w": "rue-saint-honore"
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": null,
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "scene": {
+        "template": "box",
+        "size": [
+          14,
+          5.5,
+          10
+        ],
+        "palette": {
+          "wall": "#e8d9a8",
+          "floor": "#7a1528",
+          "ceiling": "#f4ecd2",
+          "trim": "#c9a227"
+        },
+        "props": [
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "flat": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -3.2,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              -2,
+              0,
+              -4.1
+            ]
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -2,
+              0.53,
+              -4.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -0.8,
+              0,
+              -4.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              1,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              2.8,
+              0,
+              -3.9
+            ]
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              2.6,
+              0.76,
+              -3.9
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              3.1,
+              0.76,
+              -3.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              5.3,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.4,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6.4,
+              0,
+              -4.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              6.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -6.4,
+              0,
+              4.4
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -4,
+              0,
+              4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4,
+              0,
+              4.3
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              0,
+              0,
+              3.6
+            ]
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              -1.1,
+              0,
+              3.6
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              1.1,
+              0,
+              3.6
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "books",
+            "pos": [
+              0.1,
+              0.76,
+              3.6
+            ],
+            "onTop": true
+          }
+        ],
+        "spawn": [
+          -3.5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "opera-box",
+      "name": "The Duke of Brunswick's Box",
+      "description": "The Duke's box is right on the stage, so close that one might touch the prima donna, yet nobody in it is listening to Norma. A chess-board stands ready on a small table, with one chair set so that the player's back is to the singers and two facing it for the Duke and Count Isouard, who dispute their next move aloud. The only way out is west, to the foyer.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": null,
+        "w": "theatre-foyer"
+      },
+      "wallpaper": null,
+      "floor": null,
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "scene": {
+        "template": "box",
+        "size": [
+          8,
+          3.5,
+          8
+        ],
+        "palette": {
+          "wall": "#7a1528",
+          "floor": "#5c0f1e",
+          "ceiling": "#2a0d12",
+          "trim": "#c9a227"
+        },
+        "props": [
+          {
+            "id": "rug",
+            "pos": [
+              0.6,
+              0.01,
+              0.6
+            ],
+            "flat": true
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              1.5,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              1.5,
+              0,
+              2.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              2.1,
+              0,
+              -0.05
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              0.9,
+              0,
+              -0.05
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              2,
+              0.76,
+              1.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              1,
+              0.76,
+              0.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "books",
+            "pos": [
+              1.1,
+              0.76,
+              1.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -1.3,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              3.4,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.4,
+              0.53,
+              -2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              3.5,
+              0,
+              -3.5
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -3.4,
+              0,
+              -3.4
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3.5,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -3.5,
+              0,
+              3.5
+            ]
+          }
+        ],
+        "spawn": [
+          -1.5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "hotel-breteuil",
+      "name": "Morphy's Rooms at the Hotel Breteuil",
+      "description": "Apartments at the corner of the Rue de Rivoli, with a view over the palace and gardens of the Tuileries, a carpet underfoot and a fauteuil deep enough to be buried in. Letters from New Orleans lie open on the table, Mr. Edge's notes of every game cover the writing desk, and through the bedroom door stand the physic bottles of a first northern winter. The door north leads back to the Cafe de la Regence, a stone's throw away.",
+      "exits": {
+        "n": "regence-front",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": null,
+      "music": null,
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          4,
+          9
+        ],
+        "palette": {
+          "wall": "#c7b08a",
+          "floor": "#7b3a35",
+          "ceiling": "#efe7d6",
+          "trim": "#5b4030"
+        },
+        "props": [
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              0.6
+            ],
+            "flat": true
+          },
+          {
+            "id": "desk",
+            "pos": [
+              -4.3,
+              0,
+              -1.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -3.2,
+              0,
+              -1.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "books",
+            "pos": [
+              -4.3,
+              0.76,
+              -1.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -4.4,
+              0.76,
+              -2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "door-open",
+            "pos": [
+              4.6,
+              0,
+              -1.6
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "table",
+            "pos": [
+              2.4,
+              0,
+              1.5
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2.4,
+              0,
+              0.4
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2.4,
+              0,
+              2.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "teapot",
+            "pos": [
+              2.7,
+              0.76,
+              1.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              2.5,
+              0.76,
+              1.2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              2.1,
+              0.76,
+              1.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -3,
+              0,
+              3.1
+            ],
+            "rotY": 0.79
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              -1.6,
+              0,
+              3.7
+            ]
+          },
+          {
+            "id": "books",
+            "pos": [
+              -1.6,
+              0.53,
+              3.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              0.8,
+              0,
+              4.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.4,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4.5,
+              0,
+              4.1
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              4.4,
+              0,
+              -4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.3,
+              0,
+              0.8
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          -1.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "morphy",
+      "name": "Morphy",
+      "home": "regence-back",
+      "persona": "You are Paul Morphy of New Orleans, twenty-one years old, slight, five feet four, a Creole gentleman bred to the law, and since this autumn of 1858 the talk of the Cafe de la Regence in Paris. You stand in the back room of the cafe, where on 27 September you played eight games at once without sight of the boards, sitting ten hours in an easy-chair - against Baucher, Bierwirth, Bornemann, Guibert, Lequesne, Potier, Preti and Seguin, winning six and drawing with Guibert and Lequesne - and where your match with Herr Harrwitz ended five to two with one drawn, after he took the first two games. You are quiet, courteous and modest to a fault. You play for honour only, never for money, and you dislike praise: of blindfold play you say 'It proves nothing', and of a lost game 'he played the best moves'. You remember every game you have played, move for move, and you answer questions about positions and openings precisely and briefly: the Evans Gambit, the Ruy Lopez, Philidor's Defence, Harrwitz's pawn to queen's fourth. You speak with respect of Loewenthal, whom you beat nine to three in London, of Anderssen, expected from Breslau at Christmas, and without bitterness of Mr. Staunton, who would not fix a day. You are fond of music, speak French as readily as English, and miss home. You know nothing later than December 1858 and do not know how the match with Anderssen will end. Greet strangers politely and call each visitor by the name they give. Stay in character always; never say you are an AI or a program. Reply in at most 80 words. Use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "cafe-de-la-regence-ch1",
+        "cafe-de-la-regence-ch2",
+        "cafe-de-la-regence-ch5",
+        "cafe-de-la-regence-ch9",
+        "cafe-de-la-regence-ch11",
+        "cafe-de-la-regence-ch12",
+        "cafe-de-la-regence-ch13",
+        "cafe-de-la-regence-ch14",
+        "cafe-de-la-regence-ch15",
+        "cafe-de-la-regence-ch17",
+        "cafe-de-la-regence-ch19"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 0.8,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "am_michael"
+        }
+      },
+      "pos": [
+        3.1,
+        0,
+        -0.6
+      ],
+      "rotY": -1.57,
+      "schedule": [
+        {
+          "at": "15 */3 * * *",
+          "do": "move",
+          "to": "regence-front"
+        },
+        {
+          "at": "45 */3 * * *",
+          "do": "move",
+          "to": "regence-back"
+        }
+      ]
+    },
+    {
+      "id": "harrwitz",
+      "name": "Harrwitz",
+      "home": "regence-front",
+      "persona": "You are Daniel Harrwitz, a Prussian of Breslau, about forty, a little man with large piercing black eyes, and the resident professional of the Cafe de la Regence in Paris in the autumn of 1858. You arrive at noon, take your table in the smoky front room and play until past midnight, giving pawn and move to visitors for a small stake. You live for chess. You are quick, witty, cool, proud and prickly; you once rang for a waiter to 'look about for a move' that Mr. Staunton said he had lost. In matches you always open pawn to queen's fourth and defend with Philidor's Defence. You beat Loewenthal in a match, you edit the chess column of the Monde Illustre, and you play blindfold yourself. When Mr. Morphy came you beat him in an off-hand Allgaier Gambit and won the first two games of the match, feeling his pulse across the board; then you lost the third, fourth, fifth and sixth, drew the seventh, lost the eighth, and withdrew on account of ill health. You hate to be reminded of it. Pressed, you say the match was annulled, that you are no match player and are stronger off-hand, that he did not beat you by combination but sat you out. You were at school with Anderssen, who comes at Christmas, and you claim to beat him too. You know nothing later than December 1858. To strangers you are sharp but always ready for a game or an argument about openings and players. Call each visitor by the name they give. Stay in character always; never say you are an AI or a program. Reply in at most 80 words. Use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "cafe-de-la-regence-ch4",
+        "cafe-de-la-regence-ch10",
+        "cafe-de-la-regence-ch11",
+        "cafe-de-la-regence-ch12",
+        "cafe-de-la-regence-ch13",
+        "cafe-de-la-regence-ch15",
+        "cafe-de-la-regence-ch16",
+        "cafe-de-la-regence-ch18"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 1.4,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "am_fenrir"
+        }
+      },
+      "pos": [
+        2.4,
+        0,
+        -3.2
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "30 */2 * * *",
+          "do": "say",
+          "text": "Waiter! Look about for a move - somebody here has lost one."
+        }
+      ]
+    },
+    {
+      "id": "saint-amant",
+      "name": "Saint-Amant",
+      "home": "regence-front",
+      "persona": "You are Pierre Charles Fournier de Saint-Amant, in your late fifties, once the champion of France and now the courteous elder statesman of the Cafe de la Regence in Paris, autumn 1858. You are a wine merchant and a man of the world; chess was always your pastime, never your trade. You beat Mr. Staunton in a short match at the St. George's Club in London and lost the great return match to him in Paris in 1843; you speak of it with good grace and without excuses. You stand in the front room among the marble tables and the tobacco smoke and act as host: you make the introductions, point out Herr Harrwitz at the professional's table, Pere Morel with his immense pipe, De Riviere, Journoud, the sculptor Lequesne, and send visitors east to the back room to meet Mr. Morphy. You love the cafe's history: Philidor, Deschapelles, Labourdonnais and his battles with McDonnell, Voltaire, Rousseau, Franklin, Robespierre and Napoleon at these tables. You saw Morphy play eight blindfold games at Birmingham and wrote of it in Le Sport; you call him the chivalrous Bayard of chess and say 'Voici notre maitre a nous tous'. Watching a game you mutter 'Il va croquer ca'. You speak a graceful, slightly flowery English with a French phrase now and then. You know nothing later than December 1858; Anderssen is expected at Christmas. Welcome every stranger warmly and call each visitor by the name they give. Stay in character always; never say you are an AI or a program. Reply in at most 80 words. Use plain hyphens, never long dashes.",
+      "responseMode": "smart",
+      "cooldownSec": 25,
+      "knowledgeTags": [
+        "cafe-de-la-regence-ch4",
+        "cafe-de-la-regence-ch5",
+        "cafe-de-la-regence-ch10",
+        "cafe-de-la-regence-ch11",
+        "cafe-de-la-regence-ch13",
+        "cafe-de-la-regence-ch14",
+        "cafe-de-la-regence-ch15",
+        "cafe-de-la-regence-ch19"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0.8,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_george"
+        }
+      },
+      "pos": [
+        -2.4,
+        0,
+        0.4
+      ],
+      "rotY": 1.57,
+      "schedule": [
+        {
+          "at": "10 */2 * * *",
+          "do": "say",
+          "text": "Il va croquer ca! Look to your pawn, monsieur."
+        }
+      ]
+    },
+    {
+      "id": "edge",
+      "name": "Edge",
+      "home": "hotel-breteuil",
+      "persona": "You are Frederick Milnes Edge, an Englishman and a newspaper man, lately of the New York Herald, one of the secretaries of the American Chess Congress of 1857, and now the secretary, companion and self-appointed guardian of Paul Morphy in Europe. It is late 1858 and you are in the rooms you share at the Hotel Breteuil, corner of the Rue de Rivoli, overlooking the Tuileries, a stone's throw from the Cafe de la Regence. Your desk is covered with game scores he dictates and letters to every chess club in Europe. You are only a weak player, but you saw everything and write it all down: the match with Loewenthal, Mr. Staunton's evasions (your favourite grievance), Harrwitz feeling Morphy's pulse and then losing five, the eight blindfold games of ten hours and the crowd that chased you to the Palais-Royal, the evening in the Duke of Brunswick's box during Norma. You are excitable, talkative, humorous, fiercely proud of your friend and a little indiscreet: you tell how he sat up till four before his first match games, how he was leeched and joked 'then there's only a quart left', how you plotted with a doctor's certificate to keep him in Paris until Anderssen comes from Breslau at Christmas. You scold him about bed-times. You know nothing later than December 1858 and do not know how the Anderssen match will end. Welcome strangers eagerly and call each visitor by the name they give. Stay in character always; never say you are an AI or a program. Reply in at most 80 words. Use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "cafe-de-la-regence-ch2",
+        "cafe-de-la-regence-ch3",
+        "cafe-de-la-regence-ch5",
+        "cafe-de-la-regence-ch6",
+        "cafe-de-la-regence-ch7",
+        "cafe-de-la-regence-ch9",
+        "cafe-de-la-regence-ch10",
+        "cafe-de-la-regence-ch11",
+        "cafe-de-la-regence-ch12",
+        "cafe-de-la-regence-ch13",
+        "cafe-de-la-regence-ch14",
+        "cafe-de-la-regence-ch15",
+        "cafe-de-la-regence-ch16",
+        "cafe-de-la-regence-ch17"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 1,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
+      },
+      "pos": [
+        -1.4,
+        0,
+        0.6
+      ],
+      "rotY": 0,
+      "schedule": [
+        {
+          "at": "0 */4 * * *",
+          "do": "move",
+          "to": "regence-front"
+        },
+        {
+          "at": "30 */4 * * *",
+          "do": "move",
+          "to": "hotel-breteuil"
+        }
+      ]
+    },
+    {
+      "id": "duke",
+      "name": "Duke",
+      "home": "opera-box",
+      "persona": "You are Karl II, Duke of Brunswick, deposed from your duchy in 1830 and living ever since in exile, now in Paris, rich, eccentric, and a thorough devotee of Caissa. It is the autumn of 1858 and you are in your box at the Theatre-Italien, the Salle Ventadour, right upon the stage, where Madame Penco sings Norma. You keep a chess-board even here and play through the performance; you have heard Norma so often you could sing it without prompting. You never leave your box. Your ally in consultation is Count Isouard, and you two dispute every move aloud. Your pride is the game you lost here to young Mr. Morphy, who sat with his back to the stage, longing to hear the music: you defended with Philidor's Defence, pinned his knight with the bishop, and were mated in seventeen moves after he gave up a knight, then a rook for a knight, then his queen at knight's eighth, the rook mating at queen's eighth. You call it your finest defeat and laugh at it; you have lost every consultation game to him, here and at Count Casabianca's Friday evenings. You talk gladly of Morphy, Harrwitz, Anderssen, Saint-Amant and Staunton, of the Regence, and of Casta Diva. Your manner is grand, genial and whimsical, with a German prince's French courtesy. You know nothing later than December 1858. Receive strangers graciously and call each visitor by the name they give. Stay in character always; never say you are an AI or a program. Reply in at most 80 words. Use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "cafe-de-la-regence-ch12",
+        "cafe-de-la-regence-ch14",
+        "cafe-de-la-regence-ch19"
+      ],
+      "avatar": "kaykit:Knight",
+      "wander": 0.5,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_daniel"
+        }
+      },
+      "pos": [
+        0.3,
+        0,
+        -2
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "50 */3 * * *",
+          "do": "say",
+          "text": "Caissa is the only Casta Diva we care about in this box!"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "greet-regence-front",
+      "room": "regence-front",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "saint-amant",
+          "text": "Welcome to the Cafe de la Regence, {player}. Philidor, Deschapelles and Labourdonnais played under this roof. Take a table, and ask me who is who.",
+          "waitMs": 6000
+        },
+        {
+          "who": "harrwitz",
+          "text": "If you want a game, {player}, I give pawn and move. I open pawn to queen's fourth, and I do not discuss the American.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "greet-regence-back",
+      "room": "regence-back",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "morphy",
+          "text": "Good day, {player}. This is the room of the eight boards. If there is a position you wish to ask about, I shall answer as exactly as I can.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "greet-hotel-breteuil",
+      "room": "hotel-breteuil",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "edge",
+          "text": "Come in, come in, {player}! The Hotel Breteuil, corner of the Rue de Rivoli - Morphy's rooms, and my notes of every game. Ask me anything; I saw it all.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "greet-opera-box",
+      "room": "opera-box",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "duke",
+          "text": "Ah, {player}! Come into my box - softly, Madame Penco is singing. You see I keep a chess-board even here.",
+          "waitMs": 6000
+        },
+        {
+          "who": "duke",
+          "text": "Shall I tell you how Mr. Morphy mated the Count and me in seventeen moves? It is my finest defeat.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "play-1-the-match",
+      "room": "regence-front",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "saint-amant",
+          "text": "Messieurs, the American is come. He walked in from the Palais-Royal with Mr. Edge, and Lecrivain, De Riviere and Journoud have each tried him. Everybody looks to Herr Harrwitz.",
+          "waitMs": 7500
+        },
+        {
+          "who": "harrwitz",
+          "text": "On the Saturday I gave him an Allgaier Gambit and won it. Then the match: pawn to queen's fourth, and the first game was mine. I felt his pulse - it beat no faster than if he had won.",
+          "waitMs": 8000
+        },
+        {
+          "who": "saint-amant",
+          "text": "You won the second also, and the whole cafe looked chopfallen. But he said, laughing, 'How astonished all these men will be if Harrwitz does not get another game.'",
+          "waitMs": 7500
+        },
+        {
+          "who": "harrwitz",
+          "text": "The third, the fourth, the fifth, the sixth went to him. He is very much stronger than any I had ever met. And my health was bad.",
+          "waitMs": 7000
+        },
+        {
+          "who": "saint-amant",
+          "text": "The seventh was drawn by perpetual check, the eighth he won at the fifty-ninth move. Five to two and one drawn - and then a verbal message that Mr. Harrwitz resigns the match.",
+          "waitMs": 7500
+        },
+        {
+          "who": "harrwitz",
+          "text": "On account of ill health. I say the match was annulled. I am not a match player; I play much stronger off-hand.",
+          "waitMs": 6500
+        }
+      ]
+    },
+    {
+      "id": "play-2-eight-boards",
+      "room": "regence-back",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "edge",
+          "text": "Noon at the Regence, an easy-chair roped off with its back to the boards, and eight antagonists: Baucher, Bierwirth, Bornemann, Guibert, Lequesne, Potier, Preti, Seguin. Many asked whether he knew whom he was going to play against.",
+          "waitMs": 8000
+        },
+        {
+          "who": "morphy",
+          "text": "Pawn to King's Fourth on all the boards.",
+          "waitMs": 5000
+        },
+        {
+          "who": "edge",
+          "text": "Ten hours he sat almost immovable, without a morsel, not even water. Monsieur Baucher was the first to give in; Bornemann and Preti followed, then Potier and Bierwirth. Lequesne and Guibert drew.",
+          "waitMs": 8000
+        },
+        {
+          "who": "morphy",
+          "text": "Monsieur Seguin was the last, and the strongest of the eight. It came to the pawns at the end. Six won and two drawn.",
+          "waitMs": 6500
+        },
+        {
+          "who": "edge",
+          "text": "And then such a shout! Anglo-Saxon cheers, the French joining in, the waiters trying to carry him on their shoulders, and Pere Morel fighting a passage to the street by main strength.",
+          "waitMs": 7500
+        },
+        {
+          "who": "morphy",
+          "text": "It is a mere tour de force, Mr. Edge. It proves nothing.",
+          "waitMs": 5500
+        }
+      ]
+    },
+    {
+      "id": "play-3-letters-and-leeches",
+      "room": "hotel-breteuil",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "edge",
+          "text": "Letters from New Orleans again, Morphy. They want you home before Christmas - and here is Herr Anderssen writing that he cannot think you will leave Europe without playing him.",
+          "waitMs": 7500
+        },
+        {
+          "who": "morphy",
+          "text": "I must be at home in December. I have promised to be there.",
+          "waitMs": 5500
+        },
+        {
+          "who": "edge",
+          "text": "The doctor says a winter voyage across the Atlantic is not to be thought of in your state. You have been leeched, and lost three or four pints of blood.",
+          "waitMs": 7000
+        },
+        {
+          "who": "morphy",
+          "text": "Then there's only a quart left.",
+          "waitMs": 5000
+        },
+        {
+          "who": "edge",
+          "text": "Herr Mayet writes that Anderssen has left Breslau. His vacation is but two weeks, and you are too weak to stand upon your legs.",
+          "waitMs": 7000
+        },
+        {
+          "who": "morphy",
+          "text": "I have a positive chess fever coming over me. Give me the board and pieces, and I'll show you some of Anderssen's games.",
+          "waitMs": 6500
+        }
+      ]
+    },
+    {
+      "id": "play-4-before-the-game",
+      "room": "opera-box",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "duke",
+          "text": "Sit there, Mr. Morphy, with your back to the stage. Madame Penco sings Norma tonight, and Count Isouard and I have heard it so often we could sing it through without prompting.",
+          "waitMs": 7500
+        },
+        {
+          "who": "morphy",
+          "text": "I am at Your Highness's service - though I confess I am passionately fond of the music.",
+          "waitMs": 6000
+        },
+        {
+          "who": "duke",
+          "text": "The Count sits beside me and we consult. You have the first move, sir. Caissa is the only Casta Diva we care about in this box!",
+          "waitMs": 7000
+        }
+      ]
+    },
+    {
+      "id": "play-5-the-opera-game",
+      "room": "opera-box",
+      "trigger": {
+        "play": true
+      },
+      "board": {
+        "white": "morphy",
+        "black": "duke"
+      },
+      "lines": [
+        {
+          "who": "duke",
+          "text": "Norma is on, Count, but the board is set. You have White, Mr Morphy; the Count and I shall consult. Play, and do not mind the singing.",
+          "waitMs": 6000
+        },
+        {
+          "who": "morphy",
+          "text": "The king's pawn.",
+          "move": "e4",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "We answer in kind.",
+          "move": "e5",
+          "waitMs": 3000
+        },
+        {
+          "who": "morphy",
+          "text": "The knight.",
+          "move": "Nf3",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "Philidor's defence, Count. Solid as a wall.",
+          "move": "d6",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "I open the centre.",
+          "move": "d4",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "The bishop pins your knight. Now listen to that, the aria is coming.",
+          "move": "Bg4",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "I take the pawn.",
+          "move": "dxe5",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "Then we take the knight, since you ask for it.",
+          "move": "Bxf3",
+          "waitMs": 3000
+        },
+        {
+          "who": "morphy",
+          "text": "The queen takes back. Your bishop is gone, and every move of mine brings out a piece.",
+          "move": "Qxf3",
+          "waitMs": 4000
+        },
+        {
+          "who": "duke",
+          "text": "We regain the pawn. Even, Count, quite even.",
+          "move": "dxe5",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "The bishop looks at f7.",
+          "move": "Bc4",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "The knight guards it. Casta diva, what a voice she has.",
+          "move": "Nf6",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "Two threats at once: f7, and your pawn on b7.",
+          "move": "Qb3",
+          "waitMs": 3500
+        },
+        {
+          "who": "duke",
+          "text": "Our queen holds both. We are not children, Mr Morphy.",
+          "move": "Qe7",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "I could take on b7 and win a pawn. I bring out a piece instead.",
+          "move": "Nc3",
+          "waitMs": 4000
+        },
+        {
+          "who": "duke",
+          "text": "A pawn to shut your knight out of d5.",
+          "move": "c6",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "And the other bishop. Every piece of mine is in play now. Count your own.",
+          "move": "Bg5",
+          "waitMs": 4000
+        },
+        {
+          "who": "duke",
+          "text": "The Count says we must drive that bishop off. b5, then.",
+          "move": "b5",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "The knight takes it.",
+          "move": "Nxb5",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "A whole knight for a pawn! We accept, naturally.",
+          "move": "cxb5",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "Check.",
+          "move": "Bxb5+",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "The knight blocks. Our king is covered, Count, do keep your seat.",
+          "move": "Nbd7",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "I castle on the queen's side; the rook comes to the d-file at once.",
+          "move": "O-O-O",
+          "waitMs": 4000
+        },
+        {
+          "who": "duke",
+          "text": "Our rook faces yours.",
+          "move": "Rd8",
+          "waitMs": 3000
+        },
+        {
+          "who": "morphy",
+          "text": "The rook takes the knight.",
+          "move": "Rxd7",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "We take it back. He is throwing pieces at us, Count.",
+          "move": "Rxd7",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "And the other rook takes its place on the file.",
+          "move": "Rd1",
+          "waitMs": 3500
+        },
+        {
+          "who": "duke",
+          "text": "The queen comes back to defend. What is happening on the stage?",
+          "move": "Qe6",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "Check.",
+          "move": "Bxd7+",
+          "waitMs": 3000
+        },
+        {
+          "who": "duke",
+          "text": "The knight takes the bishop. We are a rook and a piece ahead, Count.",
+          "move": "Nxd7",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "The queen gives herself up. Check.",
+          "move": "Qb8+",
+          "waitMs": 3500
+        },
+        {
+          "who": "duke",
+          "text": "The knight must take her. Count, is this ...",
+          "move": "Nxb8",
+          "waitMs": 3500
+        },
+        {
+          "who": "morphy",
+          "text": "Mate.",
+          "move": "Rd8#",
+          "waitMs": 5000
+        },
+        {
+          "who": "duke",
+          "text": "Mate! Seventeen moves, and I never once looked at the stage. Count, we have lost the finest game I shall ever play. Bravo, Mr Morphy, bravo.",
+          "waitMs": 6000
+        },
+        {
+          "who": "morphy",
+          "text": "You are very kind, your Highness. Shall we watch the last act?",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "play-6-anderssen-is-coming",
+      "room": "regence-front",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "saint-amant",
+          "text": "It is settled. Herr Anderssen cannot leave his mathematics at Breslau before the Christmas vacation, but then he comes to Paris - and the stakes of your match, Herr Harrwitz, go to pay his journey.",
+          "waitMs": 8000
+        },
+        {
+          "who": "harrwitz",
+          "text": "Two hundred and ninety francs. Anderssen and I were at the same school in Breslau. I shall play him myself when he comes, and you will see who is the stronger.",
+          "waitMs": 7500
+        },
+        {
+          "who": "saint-amant",
+          "text": "The victor of the Tournament of 1851 against a young man of twenty-one who plays for no stake but honour. I have sat in this cafe since Labourdonnais, and I never thought to see it.",
+          "waitMs": 7500
+        },
+        {
+          "who": "harrwitz",
+          "text": "So Morphy passes the winter here after all? Then Mr. Morphy is not a man of his word.",
+          "waitMs": 6000
+        },
+        {
+          "who": "saint-amant",
+          "text": "He has waked every slumbering ember of French chess. Laroche is come back, Budzinsky is come back, and nobody will play him even any longer - he must give pawn and move.",
+          "waitMs": 7500
+        },
+        {
+          "who": "saint-amant",
+          "text": "The fourth shield in the cornice shall bear his name beside Philidor, Deschapelles and Labourdonnais. Voici notre maitre a nous tous.",
+          "waitMs": 7000
+        }
+      ]
+    }
+  ],
+  "chess": [
+    {
+      "room": "regence-front",
+      "master": "harrwitz"
+    },
+    {
+      "room": "regence-back",
+      "master": "morphy"
+    },
+    {
+      "room": "opera-box",
+      "master": "duke"
+    }
+  ]
+}

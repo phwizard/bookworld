@@ -7,7 +7,7 @@ import {
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
   type ChatSeenMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
-  type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, PUZZLE_LEVELS, movesText,
+  type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, PUZZLE_LEVELS, movesText, recordLine,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -22,7 +22,7 @@ import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
 import { Band } from '../world/band.ts';
 import { canSing, prerenderSung, sungUrl, voicedCharacters } from '../voice.ts';
 import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
-import { ChessGame, PuzzleRun, loadChessProgress, loadPuzzles, pickPuzzle, puzzleMemoryNote, saveChessProgress } from '../world/chess.ts';
+import { type ChessGame, PuzzleRun, loadChessProgress, loadPuzzles, pickPuzzle, puzzleMemoryNote, saveChessProgress } from '../world/chess.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -119,6 +119,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private unsubscribe: (() => void) | null = null;
   private unsubscribeItems: (() => void) | null = null;
   private unsubscribeBudget: (() => void) | null = null;
+  private unsubscribeBoard: (() => void) | null = null;
 
   onCreate(options: CreateOptions) {
     const loaded = getWorld(options.world);
@@ -146,7 +147,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
     this.lessonDef = loaded.world.lessons?.find((l) => l.room === room.id) ?? null;
     this.chessDef = loaded.world.chess?.find((c) => c.room === room.id) ?? null;
-    if (this.chessDef) this.game = new ChessGame();
+    this.game = this.sim.board(room.id);
+    if (this.game) this.unsubscribeBoard = this.sim.subscribeBoard(room.id, () => this.sendChessAll());
     this.budget = budgetFor(options.world);
     this.unsubscribeBudget = this.budget.subscribe(() => {
       for (const c of this.clients) c.send(MSG.ai, this.budget.snapshot((c.userData as UserData | undefined)?.session.visitor) satisfies AiMessage);
@@ -285,12 +287,12 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           void tryEthora('chess sit', () => this.ethora.narrate(this.room.id, v.status === 'playing' && !v.moves.length
             ? `Chess: ${v.white!.name} (White) and ${v.black!.name} (Black) sit down at the board`
             : `Chess: ${name} takes the ${COLOR_NAME[msg.color as 'w' | 'b'].toLowerCase()} chair${v.moves.length ? ` (${game.summary()})` : ''}`));
-          this.sendChessAll();
+          this.sim.notifyBoard(this.room.id);
           break;
         }
         case 'stand': {
           const color = game.stand(client.sessionId);
-          if (color) { void tryEthora('chess stand', () => this.ethora.narrate(this.room.id, `Chess: ${name} leaves the ${COLOR_NAME[color].toLowerCase()} chair`)); this.sendChessAll(); }
+          if (color) { void tryEthora('chess stand', () => this.ethora.narrate(this.room.id, `Chess: ${name} leaves the ${COLOR_NAME[color].toLowerCase()} chair`)); this.sim.notifyBoard(this.room.id); }
           break;
         }
         case 'move': {
@@ -300,16 +302,11 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           if ('error' in r) return client.send(MSG.denied, { reason: r.error });
           presence.message(this.world.slug);
           const v = game.view();
-          const n = v.moves.length;
           // the record goes into the chat a full move at a time, and the whole game when it ends
-          if (v.status === 'over') {
-            const winner = v.result === '1-0' ? v.white!.name : v.result === '0-1' ? v.black!.name : null;
-            void tryEthora('chess end', () => this.ethora.narrate(this.room.id, `Chess: ${winner ? `${winner} wins by ${v.reason}` : `drawn, ${v.reason}`}, ${v.result}: ${movesText(v.moves)}`));
-            record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: v.result, moves: n });
-          } else if (n % 2 === 0) {
-            void tryEthora('chess move', () => this.ethora.narrate(this.room.id, `Chess: ${movesText(v.moves.slice(n - 2))}${v.check ? ', check' : ''}`));
-          }
-          this.sendChessAll();
+          const rec = recordLine(v);
+          if (rec) void tryEthora('chess record', () => this.ethora.narrate(this.room.id, rec));
+          if (v.status === 'over') record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: v.result, moves: v.moves.length });
+          this.sim.notifyBoard(this.room.id);
           break;
         }
         case 'resign': {
@@ -318,7 +315,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           const v = game.view();
           void tryEthora('chess resign', () => this.ethora.narrate(this.room.id, `Chess: ${name} resigns, ${result}: ${movesText(v.moves)}`));
           record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result, moves: v.moves.length });
-          this.sendChessAll();
+          this.sim.notifyBoard(this.room.id);
           break;
         }
         case 'draw': {
@@ -327,14 +324,14 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           const v = game.view();
           void tryEthora('chess draw', () => this.ethora.narrate(this.room.id, what === 'agreed' ? `Chess: a draw is agreed, 1/2-1/2: ${movesText(v.moves)}` : `Chess: ${name} offers a draw`));
           if (what === 'agreed') record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: '1/2-1/2', moves: v.moves.length });
-          this.sendChessAll();
+          this.sim.notifyBoard(this.room.id);
           break;
         }
         case 'new': {
           if (!game.seatOf(client.sessionId)) return client.send(MSG.denied, { reason: 'take a chair first' });
-          if (!game.reset()) return client.send(MSG.denied, { reason: 'the game is still on; resign or agree a draw first' });
+          if (!game.reset()) return client.send(MSG.denied, { reason: game.show ? 'a game is being shown; wait for the end' : 'the game is still on; resign or agree a draw first' });
           void tryEthora('chess new', () => this.ethora.narrate(this.room.id, `Chess: ${name} sets the pieces up again`));
-          this.sendChessAll();
+          this.sim.notifyBoard(this.room.id);
           break;
         }
         case 'puzzle': {
@@ -584,7 +581,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
     client.send(MSG.bandState, this.band.state());
     if (this.lessonDef) this.sendLesson(client, client.userData as UserData, null);
-    if (this.game) { this.game.reseat(session.uid, client.sessionId, session.name); this.sendChessAll(); }
+    if (this.game) { this.game.reseat(session.uid, client.sessionId, session.name); this.sim.notifyBoard(this.room.id); }
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     // a returning player hears the trainer pick up their plan instead of the room's greeting (not after a reload)
@@ -640,7 +637,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       if (dropped) void tryEthora('narrate drop', () => this.ethora.narrate(this.room.id, `${data.session.name} left ${dropped.name} behind`));
       // the chair is free again; the position stays on the board for whoever sits next
       const chair = this.game?.stand(client.sessionId);
-      if (chair) { void tryEthora('chess leave', () => this.ethora.narrate(this.room.id, `Chess: the ${COLOR_NAME[chair].toLowerCase()} chair is free`)); this.sendChessAll(); }
+      if (chair) { void tryEthora('chess leave', () => this.ethora.narrate(this.room.id, `Chess: the ${COLOR_NAME[chair].toLowerCase()} chair is free`)); this.sim.notifyBoard(this.room.id); }
     } else {
       // the seat is gone but the player is not: the item sync must stop pointing at this session
       this.syncItems(this.sim.itemsIn(this.room.id));
@@ -653,6 +650,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.unsubscribe?.();
     this.unsubscribeItems?.();
     this.unsubscribeBudget?.();
+    this.unsubscribeBoard?.();
   }
 
   /** Mirrors the sim's items of this location; carried ones are tagged with the carrier's seat in this room. */

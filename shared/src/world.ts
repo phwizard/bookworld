@@ -145,8 +145,11 @@ export function characterGender(c: Pick<WorldCharacter, 'voice' | 'persona' | 'n
 
 export interface ScriptLine {
   who: string;
+  /** what the character says; may be empty when the line only moves a piece */
   text: string;
   waitMs?: number;
+  /** a move in SAN on the room's board, in a scene that has `board` (docs/CHESS.md) */
+  move?: string;
 }
 
 export interface WorldScript {
@@ -162,6 +165,12 @@ export interface WorldScript {
   cooldownSec?: number;
   lines: ScriptLine[];
   onInterrupt?: 'improvise-then-resume' | 'stop' | 'ignore';
+  /**
+   * A game shown on the room's board (the room must be listed under `chess`): when the scene begins the board is
+   * cleared and these two characters take the chairs; lines with `move` play it out; when the scene ends the chairs
+   * are free and the final position stays.
+   */
+  board?: { white: string; black: string };
 }
 
 /** A practice room: a character teaches the songs in the world's songs folder (docs/SONGBOOK.md). */
@@ -255,10 +264,15 @@ export function validateWorld(input: unknown): string[] {
       if (e.do === 'say' && !e.text) errors.push(`character ${c.id}: schedule say without text`);
     }
   }
+  const chessRoomIds = new Set((w.chess ?? []).map((c) => c.room));
   for (const sc of w.scripts ?? []) {
     if (!byId.has(sc.room)) errors.push(`script ${sc.id}: room ${sc.room} is not a room id`);
     for (const l of sc.lines ?? []) if (!charIds.has(l.who)) errors.push(`script ${sc.id}: unknown character ${l.who}`);
     if (!sc.trigger || typeof sc.trigger !== 'object' || !(sc.trigger.play || sc.trigger.cron || sc.trigger.onEnter)) errors.push(`script ${sc.id}: trigger must have play, cron or onEnter`);
+    if (sc.board) {
+      if (!chessRoomIds.has(sc.room)) errors.push(`script ${sc.id}: board scenes need the room ${sc.room} listed under chess`);
+      for (const side of ['white', 'black'] as const) if (!charIds.has(sc.board[side])) errors.push(`script ${sc.id}: board.${side} ${sc.board[side]} is not a character`);
+    } else if ((sc.lines ?? []).some((l) => l.move)) errors.push(`script ${sc.id}: lines with a move need the scene's board`);
   }
   const itemIds = new Set<string>();
   for (const it of w.items ?? []) {

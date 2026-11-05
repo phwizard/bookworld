@@ -6,8 +6,10 @@ import {
   DIRECTIONS, DIRECTION_LABEL, OPPOSITE, characterLine, characterPose, itemPose, playScenes, roomById, roomSize, clamp,
   type Anim, type Instrument, type World, type WorldCharacter, type WorldRoom, type WorldScript,
 } from '@bookworld/shared';
+import { recordLine } from '@bookworld/shared';
 import type { LoadedWorld } from './load.ts';
 import { tryEthora, type EthoraWorldService } from '../ethora.ts';
+import { ChessGame, checkScriptedGame } from './chess.ts';
 
 export interface CharState {
   id: string;
@@ -76,6 +78,9 @@ export class WorldSim {
   private crons: Cron[] = [];
   private timer: NodeJS.Timeout | null = null;
   private world: World;
+  /** the board of each room listed under `chess`; it outlives the location room, so a game survives an empty room */
+  private boards = new Map<string, ChessGame>();
+  private boardListeners = new Map<string, Set<() => void>>();
 
   constructor(private loaded: LoadedWorld, private ethora: EthoraWorldService) {
     this.world = loaded.world;
@@ -99,6 +104,33 @@ export class WorldSim {
       const pose = itemPose(room, it, i);
       this.items.set(it.id, { id: it.id, instrument: it.instrument, name: it.name ?? DEFAULT_ITEM_NAME[it.instrument], location: it.room, x: pose.x, y: pose.y, z: pose.z, heldBy: null });
     }
+    for (const sc of this.world.scripts ?? []) {
+      if (!sc.board) continue;
+      const bad = checkScriptedGame(sc.lines.map((l) => l.move).filter((m): m is string => Boolean(m)));
+      if (bad) console.warn(`[sim ${this.world.slug}] scene ${sc.id}: the move ${bad} is not legal where it comes; the scene stops there`);
+    }
+  }
+
+  // ---- boards ------------------------------------------------------------------------------------------------
+
+  /** The board of a room listed under `chess`, made on first use; null for other rooms. */
+  board(location: string): ChessGame | null {
+    if (!this.world.chess?.some((c) => c.room === location)) return null;
+    let g = this.boards.get(location);
+    if (!g) this.boards.set(location, (g = new ChessGame()));
+    return g;
+  }
+
+  subscribeBoard(location: string, cb: () => void): () => void {
+    let set = this.boardListeners.get(location);
+    if (!set) this.boardListeners.set(location, (set = new Set()));
+    set.add(cb);
+    return () => { set!.delete(cb); };
+  }
+
+  /** The board changed (a move, a chair): the location room sends everyone the new view. */
+  notifyBoard(location: string) {
+    for (const cb of this.boardListeners.get(location) ?? []) cb();
   }
 
   // ---- items -------------------------------------------------------------------------------------------------
@@ -283,12 +315,52 @@ export class WorldSim {
   /** Speaks the scene's lines in its room, at the file's pace; lines reach the chat only while someone is there. */
   private async performScene(sc: WorldScript) {
     this.lastScriptRun.set(sc.id, Date.now());
+    await this.speakLines(sc, 'stranger');
+  }
+
+  /**
+   * The lines of a script in order: what each character says, and, in a scene with a board, the moves it makes on
+   * the room's board (the record goes into the chat as for a visitors' game). A move that is not legal where it comes
+   * ends the game part of the scene; the words go on.
+   */
+  private async speakLines(sc: WorldScript, playerName: string) {
+    const game = sc.board ? this.board(sc.room) : null;
+    if (game && sc.board) {
+      const white = this.chars.get(sc.board.white); const black = this.chars.get(sc.board.black);
+      if (white && black) {
+        game.takeover({ name: white.name, uid: `c:${white.id}`, seat: `c:${white.id}` }, { name: black.name, uid: `c:${black.id}`, seat: `c:${black.id}` });
+        this.notifyBoard(sc.room);
+        await this.narrate(sc.room, `Chess: ${white.name} (White) and ${black.name} (Black) sit down at the board`);
+      }
+    }
+    let gameOn = Boolean(game?.show);
     for (const line of sc.lines) {
       const c = this.chars.get(line.who);
       if (!c || c.location !== sc.room) continue;
-      await this.say(line.who, line.text.replaceAll('{player}', 'stranger'));
+      if (line.text) await this.say(line.who, line.text.replaceAll('{player}', playerName));
+      if (line.move && game && gameOn) {
+        const san = game.play(line.move);
+        if (!san) { console.warn(`[sim ${this.world.slug}] scene ${sc.id}: ${line.move} is not legal here`); gameOn = false; }
+        else {
+          this.notifyBoard(sc.room);
+          const rec = recordLine(game.view());
+          if (rec) await this.narrate(sc.room, rec);
+          if (game.over) gameOn = false;
+        }
+      }
       await sleep(line.waitMs ?? 4000);
     }
+    if (game?.show) {
+      game.release();
+      this.notifyBoard(sc.room);
+      await this.narrate(sc.room, 'Chess: the game stays on the board; take a chair to play on, or set the pieces up again');
+    }
+  }
+
+  /** A record line into the room's chat, only while someone is there to read it. */
+  private async narrate(location: string, text: string) {
+    if (!this.occupied(location)) return;
+    await tryEthora(`narrate ${location}`, () => this.ethora.narrate(location, text));
   }
 
   /** A player spoke to the character: it turns to face them and stands still for a while. */
@@ -324,12 +396,7 @@ export class WorldSim {
     if (!this.occupied(sc.room)) return;
     this.lastScriptRun.set(sc.id, now);
     console.log(`[sim ${this.world.slug}] script ${sc.id} in ${sc.room}${playerName ? ' for ' + playerName : ''}`);
-    for (const line of sc.lines) {
-      const c = this.chars.get(line.who);
-      if (!c || c.location !== sc.room) continue;
-      await this.say(line.who, line.text.replaceAll('{player}', playerName ?? 'stranger'));
-      await sleep(line.waitMs ?? 4000);
-    }
+    await this.speakLines(sc, playerName ?? 'stranger');
   }
 
   async say(characterId: string, text: string) {

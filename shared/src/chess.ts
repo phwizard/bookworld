@@ -36,6 +36,19 @@ export interface ChessGameView {
   check: boolean;
   /** the colour that has offered a draw, waiting for the other */
   drawOffer?: ChessColor;
+  /** a scene is showing a game: the chairs are the characters', nobody else may sit or move */
+  show: boolean;
+}
+
+/** The record line for the chat after a move: a full move at a time, and the whole game when it ends; null otherwise. */
+export function recordLine(v: ChessGameView): string | null {
+  const n = v.moves.length;
+  if (v.status === 'over' && v.result) {
+    const winner = v.result === '1-0' ? v.white?.name ?? 'White' : v.result === '0-1' ? v.black?.name ?? 'Black' : null;
+    return `Chess: ${winner ? `${winner} wins by ${v.reason}` : `drawn, ${v.reason}`}, ${v.result}: ${movesText(v.moves)}`;
+  }
+  if (n && n % 2 === 0) return `Chess: ${movesText(v.moves.slice(n - 2))}${v.check ? ', check' : ''}`;
+  return null;
 }
 
 export type PuzzleLevel = 'easy' | 'level' | 'hard';
