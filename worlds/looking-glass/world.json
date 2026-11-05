@@ -1,0 +1,2277 @@
+{
+  "schema": "bookworld/0",
+  "slug": "looking-glass",
+  "title": "Through the Looking-Glass",
+  "summary": "Step through the mirror and play Lewis Carroll's chess game as a White Pawn, walking the Queen's file square by square from the Looking-glass House to Queen Alice's hall.",
+  "source": {
+    "title": "Through the Looking-Glass",
+    "author": "Lewis Carroll",
+    "text": "gutenberg:12",
+    "license": "public-domain"
+  },
+  "start": "looking-glass-house",
+  "rooms": [
+    {
+      "id": "looking-glass-house",
+      "name": "Looking-Glass House",
+      "description": "The Looking-glass drawing room, just the same as the old one, only the things go the other way. A real fire blazes in the hearth, the clock on the chimney-piece has the face of a little old man and grins, and the chessmen walk about two and two among the cinders. This is the first square of the Queen's file, d1, the back rank behind the pawns, and the glass over the fire is the way you came in. The Second Square lies north through the garden door: there is no brook to jump yet, only a doorstep.",
+      "exits": {
+        "n": "garden-of-live-flowers",
+        "e": null,
+        "s": null,
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Wallpaper.m4a",
+        "title": "Wallpaper",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "ambience": [
+        {
+          "preset": "clock",
+          "volume": 0.3
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          10
+        ],
+        "palette": {
+          "wall": "#d9cdb8",
+          "floor": "#2b2b2b",
+          "ceiling": "#efe8da",
+          "trim": "#7a2e2e"
+        },
+        "props": [
+          {
+            "id": "door",
+            "pos": [
+              0,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              2.6
+            ],
+            "flat": true
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -2.2,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -1.2,
+              0,
+              3.9
+            ]
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              3,
+              0,
+              1.5
+            ]
+          },
+          {
+            "id": "books",
+            "pos": [
+              2.8,
+              0.76,
+              1.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              3.3,
+              0.76,
+              1.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              3.1,
+              0.76,
+              1.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              2.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              4.1,
+              0,
+              1.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -5.6,
+              0,
+              -1.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              5.6,
+              0,
+              -2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -5.3,
+              0,
+              4.3
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              5.3,
+              0,
+              4.3
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.3,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5.3,
+              0,
+              -4.3
+            ]
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              2.4,
+              0,
+              -4.6
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "garden-of-live-flowers",
+      "name": "The Garden of Live Flowers",
+      "description": "The Second Square, d2, where a White Pawn begins the game. A large flower-bed with a border of daisies and a willow-tree in the middle: the Tiger-lily and the Rose can talk when there's anybody worth talking to, and the ground is kept hard so that they never fall asleep. From the top of the little hill the whole country is seen marked out like a large chessboard, with tiny brooks running straight across it and little green hedges from brook to brook. The house is back south; the Third Square lies north across the first little brook.",
+      "exits": {
+        "n": "railway-and-nameless-wood",
+        "e": null,
+        "s": "looking-glass-house",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Fairytale_Waltz.m4a",
+        "title": "Fairytale Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          18
+        ],
+        "palette": {
+          "wall": "#9cc4e4",
+          "floor": "#5f9b45",
+          "trim": "#c0392b"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -4,
+              0,
+              1
+            ],
+            "scale": 2.5
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -5.3,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -2.7,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -4,
+              0,
+              2.3
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              -4,
+              0,
+              -0.3
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -5,
+              0,
+              2
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -3,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              5.5,
+              0,
+              3
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2,
+              0,
+              5.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -6,
+              0,
+              -4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              -7
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              -7
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              7
+            ],
+            "scale": 1.8
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              7
+            ],
+            "scale": 1.8
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              6,
+              0,
+              -3
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          6
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "railway-and-nameless-wood",
+      "name": "The Railway Carriage and the Wood with No Names",
+      "description": "The Third Square, d3, which a pawn goes through very quickly on its first move - by railway. Here are the seats of the carriage where the Guard cries 'Tickets, please!' and the passengers think in chorus that language is worth a thousand pounds a word; beyond them the cool shady wood where things have no names, where a Gnat the size of a chicken sighs on a twig and a Fawn walks beside you without fear. The garden is south; the Fourth Square lies north across the brook that the train jumps.",
+      "exits": {
+        "n": "tweedle-wood",
+        "e": null,
+        "s": "garden-of-live-flowers",
+        "w": null
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": null,
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          14
+        ],
+        "palette": {
+          "wall": "#2f5a2c",
+          "floor": "#5a4631",
+          "ceiling": "#22381f",
+          "trim": "#8a6b3d"
+        },
+        "props": [
+          {
+            "id": "bench",
+            "pos": [
+              -4.5,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -2.2,
+              0,
+              3
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              2.2,
+              0,
+              3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4.5,
+              0,
+              3
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.35,
+              0,
+              4.9
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              3.35,
+              0,
+              4.9
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -4.5,
+              0,
+              -3
+            ],
+            "scale": 2.2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              4.5,
+              0,
+              -2.5
+            ],
+            "scale": 2.4
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5,
+              0,
+              -6
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              -6
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -3.2,
+              0,
+              -0.5
+            ],
+            "scale": 1.8
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              3,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -5.2,
+              0,
+              0.8
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.6,
+              0,
+              0
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          4.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "tweedle-wood",
+      "name": "Tweedledum and Tweedledee's Wood",
+      "description": "The Fourth Square, d4, which belongs to Tweedledum and Tweedledee. Wherever the road divides two finger-posts point the same way, one marked TO TWEEDLEDUM'S HOUSE and the other TO THE HOUSE OF TWEEDLEDEE; under the tree lie bolsters, hearth-rugs and coal-scuttles ready for a battle, and something close at hand snores like the puffing of a large steam-engine. The Third Square is south; the Fifth Square lies north across the little brook.",
+      "exits": {
+        "n": "sheep-shop",
+        "e": null,
+        "s": "railway-and-nameless-wood",
+        "w": null
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/leafy_grass.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          4.5,
+          12
+        ],
+        "palette": {
+          "wall": "#3b6b33",
+          "floor": "#5d8a3f",
+          "ceiling": "#2a4a27",
+          "trim": "#d9c26a"
+        },
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -4.2,
+              0,
+              -1.8
+            ],
+            "scale": 2.5
+          },
+          {
+            "id": "coat-rack",
+            "pos": [
+              -2.4,
+              0,
+              -2.8
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              3.5,
+              0,
+              2
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              4.3,
+              0,
+              2.8
+            ]
+          },
+          {
+            "id": "rug",
+            "pos": [
+              3.4,
+              0.01,
+              0.3
+            ],
+            "flat": true
+          },
+          {
+            "id": "bench",
+            "pos": [
+              4.9,
+              0,
+              -1.2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              -5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5,
+              0,
+              -5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5,
+              0,
+              5
+            ],
+            "scale": 1.8
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5,
+              0,
+              5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2,
+              0,
+              3.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              1.8,
+              0,
+              -4.2
+            ]
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              2.5,
+              0,
+              4.6
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              -4.8,
+              0,
+              1.6
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          4
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "sheep-shop",
+      "name": "The Sheep's Shop",
+      "description": "The Fifth Square, d5, which is mostly water. A little dark shop where an old Sheep sits knitting in an arm-chair behind the counter, and whichever shelf you look hard at is always quite empty, though the others round it are crowded as full as they can hold. Things flow about so here: the needles turn to oars, the counter to a little boat gliding among scented rushes, and back again to the shop. The wood is south; the Sixth Square lies north across the brook, past the egg on the furthest shelf.",
+      "exits": {
+        "n": "humpty-wall",
+        "e": null,
+        "s": "tweedle-wood",
+        "w": null
+      },
+      "wallpaper": "assets/textures/brown_planks_07.jpg",
+      "floor": "assets/textures/brown_planks_07.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "wood",
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          3.8,
+          10
+        ],
+        "palette": {
+          "wall": "#4a3526",
+          "floor": "#3d2c1f",
+          "ceiling": "#2e2118",
+          "trim": "#c9b98a"
+        },
+        "props": [
+          {
+            "id": "table",
+            "pos": [
+              -2.8,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "armchair",
+            "pos": [
+              -4.2,
+              0,
+              0
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "mug",
+            "pos": [
+              -2.8,
+              0.76,
+              0.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "honey",
+            "pos": [
+              -2.6,
+              0.76,
+              -0.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "lamp-table",
+            "pos": [
+              -3.1,
+              0.76,
+              0
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              4.6,
+              0,
+              -2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              4.6,
+              0,
+              2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              -4.6,
+              0,
+              -2.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              3,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase",
+            "pos": [
+              -3,
+              0,
+              -4.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bookcase-wide",
+            "pos": [
+              3,
+              0,
+              4.6
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.2,
+              0,
+              3.8
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.4,
+              0,
+              4.3
+            ]
+          },
+          {
+            "id": "table-round",
+            "pos": [
+              2.6,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              2.6,
+              0,
+              0.1
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "plant",
+            "pos": [
+              1.8,
+              0,
+              -3.7
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -4.4,
+              0,
+              -4.4
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          3
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "humpty-wall",
+      "name": "Humpty Dumpty's Wall",
+      "description": "The Sixth Square, d6, which belongs to Humpty Dumpty. He sits with his legs crossed, like a Turk, on the top of a high wall - such a narrow one that you quite wonder how he can keep his balance - with his eyes steadily fixed in the opposite direction. The shop is south, the road to the town runs east along the same rank, and the Seventh Square lies north across the brook.",
+      "exits": {
+        "n": "knights-forest",
+        "e": "lion-and-unicorn-town",
+        "s": "sheep-shop",
+        "w": null
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": null,
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          16,
+          6,
+          16
+        ],
+        "palette": {
+          "wall": "#a9c9e2",
+          "floor": "#63a04a",
+          "trim": "#e8e0c8"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "box",
+            "pos": [
+              -4.6,
+              0,
+              -1.8
+            ],
+            "scale": 1.5
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.6,
+              0,
+              -0.9
+            ],
+            "scale": 1.5
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.6,
+              0,
+              0
+            ],
+            "scale": 1.5
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.6,
+              0,
+              0.9
+            ],
+            "scale": 1.5
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4.6,
+              0,
+              1.8
+            ],
+            "scale": 1.5
+          },
+          {
+            "id": "bench",
+            "pos": [
+              1.5,
+              0,
+              2.8
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              -5
+            ],
+            "scale": 2.2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.5,
+              0,
+              -5.5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -6,
+              0,
+              5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              5.5,
+              0,
+              5.5
+            ],
+            "scale": 2.2
+          },
+          {
+            "id": "plant-small",
+            "pos": [
+              3,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -2,
+              0,
+              -4.5
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.5,
+              0,
+              -3.5
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "lion-and-unicorn-town",
+      "name": "The Town of the Lion and the Unicorn",
+      "description": "The Sixth Square still, one file east on e6, the King's file. In an open place by the town a great crowd stands in a cloud of dust round the Lion and the Unicorn, who are at it again, fighting for the crown, while the King's Anglo-Saxon Messengers, Haigha and Hatta, carry trays of white bread and brown and a plum-cake waits in the bag. The only way out is west, back to Humpty Dumpty's wall, from where the Seventh Square lies north across the brook.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": null,
+        "w": "humpty-wall"
+      },
+      "wallpaper": null,
+      "floor": "assets/textures/grass_ground.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "panorama",
+        "size": [
+          18,
+          6,
+          16
+        ],
+        "palette": {
+          "wall": "#b5cfe0",
+          "floor": "#6aa24c",
+          "trim": "#d4a017"
+        },
+        "panorama": "assets/panoramas/borghese_gardens_2k.hdr",
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              3,
+              0,
+              -2
+            ]
+          },
+          {
+            "id": "cake",
+            "pos": [
+              3,
+              0.76,
+              -2
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              2.5,
+              0.76,
+              -1.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bread",
+            "pos": [
+              3.5,
+              0.76,
+              -2.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teapot",
+            "pos": [
+              3.4,
+              0.76,
+              -1.6
+            ],
+            "onTop": true
+          },
+          {
+            "id": "teacup",
+            "pos": [
+              2.6,
+              0.76,
+              -2.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              -0.9
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "chair",
+            "pos": [
+              3,
+              0,
+              -3.1
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "bench",
+            "pos": [
+              -2,
+              0,
+              5.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              2.5,
+              0,
+              5.5
+            ],
+            "rotY": 0
+          },
+          {
+            "id": "bench",
+            "pos": [
+              6.8,
+              0,
+              2.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              -5
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -3.1,
+              0,
+              -5.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              -6.5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              -6.5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              7.5,
+              0,
+              6.5
+            ],
+            "scale": 2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -7.5,
+              0,
+              6.5
+            ],
+            "scale": 1.8
+          }
+        ],
+        "spawn": [
+          -5.5,
+          0,
+          0
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "knights-forest",
+      "name": "The Forest of the Knights",
+      "description": "The Seventh Square, d7, which is all forest, and one square from queening. 'Ahoy! Ahoy! Check!' rings among the trees where the Red Knight and the White Knight bang away at each other with a noise like a whole set of fire-irons falling into the fender; a little deal box hangs on a tree in hopes that bees may nest in it, and the setting sun gleams through the black shadows of the forest. Humpty Dumpty's wall is south; the Eighth Square lies north, down the hill and across the last little brook.",
+      "exits": {
+        "n": "queen-alice-hall",
+        "e": null,
+        "s": "humpty-wall",
+        "w": null
+      },
+      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "music": {
+        "file": "assets/music/Frost_Waltz.m4a",
+        "title": "Frost Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "grass",
+      "ambience": [
+        {
+          "preset": "wind",
+          "volume": 0.5
+        },
+        {
+          "preset": "birds",
+          "volume": 0.5
+        }
+      ],
+      "scene": {
+        "template": "box",
+        "size": [
+          12,
+          5,
+          14
+        ],
+        "palette": {
+          "wall": "#2c4f2a",
+          "floor": "#55422e",
+          "ceiling": "#1f331d",
+          "trim": "#d98f3a"
+        },
+        "props": [
+          {
+            "id": "plant",
+            "pos": [
+              -4.8,
+              0,
+              -5.5
+            ],
+            "scale": 2.3
+          },
+          {
+            "id": "plant",
+            "pos": [
+              4.8,
+              0,
+              -5.5
+            ],
+            "scale": 2.2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -4.8,
+              0,
+              5.5
+            ],
+            "scale": 2.2
+          },
+          {
+            "id": "plant",
+            "pos": [
+              4.8,
+              0,
+              5.5
+            ],
+            "scale": 2.4
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -5,
+              0,
+              0.5
+            ],
+            "scale": 2.4
+          },
+          {
+            "id": "box",
+            "pos": [
+              4.2,
+              0,
+              -2.4
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              5,
+              0,
+              -3.1
+            ]
+          },
+          {
+            "id": "box",
+            "pos": [
+              -4,
+              0,
+              2.6
+            ]
+          },
+          {
+            "id": "bench",
+            "pos": [
+              3.8,
+              0,
+              2.2
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "table-glass",
+            "pos": [
+              4.6,
+              0,
+              -0.4
+            ]
+          },
+          {
+            "id": "honey",
+            "pos": [
+              4.6,
+              0.53,
+              -0.4
+            ],
+            "onTop": true
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              -2.5,
+              0,
+              4
+            ]
+          },
+          {
+            "id": "mushroom",
+            "pos": [
+              2.2,
+              0,
+              -4.6
+            ]
+          },
+          {
+            "id": "plant-small-2",
+            "pos": [
+              -3.5,
+              0,
+              -3.2
+            ]
+          },
+          {
+            "id": "plant-small-3",
+            "pos": [
+              3,
+              0,
+              4.8
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          4.5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    },
+    {
+      "id": "queen-alice-hall",
+      "name": "Queen Alice's Hall",
+      "description": "The Eighth Square, d8, the last rank, where a pawn is crowned. An arched doorway with the words QUEEN ALICE over it in large letters, and a bell-handle on each side marked Visitors' Bell and Servants' Bell, opens on a large hall with a long table laid for some fifty guests and three chairs at its head, the middle one empty. There is no square beyond this one: the only way out is south, back across the last brook to the forest.",
+      "exits": {
+        "n": null,
+        "e": null,
+        "s": "knights-forest",
+        "w": null
+      },
+      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "music": {
+        "file": "assets/music/Teddy_Bear_Waltz.m4a",
+        "title": "Teddy Bear Waltz",
+        "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+        "volume": 0.3
+      },
+      "surface": "stone",
+      "scene": {
+        "template": "box",
+        "size": [
+          10,
+          5.5,
+          16
+        ],
+        "palette": {
+          "wall": "#e6dcc6",
+          "floor": "#262626",
+          "ceiling": "#f3ecdc",
+          "trim": "#b8962e"
+        },
+        "props": [
+          {
+            "id": "table-cloth",
+            "pos": [
+              0,
+              0,
+              -5.5
+            ]
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              0,
+              0,
+              -6.6
+            ],
+            "rotY": 3.14
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              -1.2,
+              0,
+              -5.5
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair-cushion",
+            "pos": [
+              1.2,
+              0,
+              -5.5
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "cake",
+            "pos": [
+              0,
+              0.76,
+              -5.5
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              -0.5,
+              0.76,
+              -5.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "bottle",
+            "pos": [
+              0.5,
+              0.76,
+              -5.7
+            ],
+            "onTop": true
+          },
+          {
+            "id": "table-cloth",
+            "pos": [
+              0,
+              0,
+              -3
+            ]
+          },
+          {
+            "id": "chair",
+            "pos": [
+              -1.1,
+              0,
+              -3
+            ],
+            "rotY": 1.57
+          },
+          {
+            "id": "chair",
+            "pos": [
+              1.1,
+              0,
+              -3
+            ],
+            "rotY": -1.57
+          },
+          {
+            "id": "bread",
+            "pos": [
+              0.3,
+              0.76,
+              -3.1
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cup",
+            "pos": [
+              -0.4,
+              0.76,
+              -2.8
+            ],
+            "onTop": true
+          },
+          {
+            "id": "cupcake",
+            "pos": [
+              0,
+              0.76,
+              -3.3
+            ],
+            "onTop": true
+          },
+          {
+            "id": "rug",
+            "pos": [
+              0,
+              0.01,
+              3
+            ],
+            "flat": true
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              -4.4,
+              0,
+              -7.4
+            ]
+          },
+          {
+            "id": "lamp-floor",
+            "pos": [
+              4.4,
+              0,
+              -7.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              -4.4,
+              0,
+              7.4
+            ]
+          },
+          {
+            "id": "plant",
+            "pos": [
+              4.4,
+              0,
+              7.4
+            ]
+          }
+        ],
+        "spawn": [
+          0,
+          0,
+          5
+        ],
+        "exitWidth": 1.6
+      },
+      "owner": null,
+      "claimable": false,
+      "claimedAt": null
+    }
+  ],
+  "characters": [
+    {
+      "id": "red-queen",
+      "name": "Red Queen",
+      "home": "garden-of-live-flowers",
+      "persona": "You are the Red Queen of the Looking-glass chess game: tall, brisk, severe, good-natured in your own sharp way. You stand in the Garden of Live Flowers on the Second Square, by the little hill from which the country is seen marked out like a large chessboard. You are a chess master and a hard coach. Every visitor is a White Pawn on d2 to you, and you speak in squares, ranks, files, tempo, checks and promotion. You know the road: a pawn goes two squares in its first move, through the Third by railway to the Fourth, which belongs to Tweedledum and Tweedledee; the Fifth is mostly water; the Sixth belongs to Humpty Dumpty; the Seventh is all forest, where a Knight will show the way; in the Eighth we shall be Queens together, all feasting and fun. Before you answer a visitor's question you set one of your own on chess (how a knight moves, what a fork is, on which rank a pawn queens), judge the answer sharply, and only then answer theirs. Your manner is the book's: 'Look up, speak nicely, and don't twiddle your fingers.' 'Curtsey while you're thinking what to say, it saves time.' 'It takes all the running you can do, to keep in the same place.' You run very fast and offer dry biscuits for thirst. You know nothing outside the board and its game. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 20,
+      "knowledgeTags": [
+        "looking-glass-ch1",
+        "looking-glass-ch2",
+        "looking-glass-ch9"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 1.5,
+      "voice": {
+        "gender": "f",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bf_isabella"
+        }
+      },
+      "pos": [
+        3,
+        0,
+        -2
+      ],
+      "rotY": 3.14,
+      "schedule": [
+        {
+          "at": "20 * * * *",
+          "do": "move",
+          "to": "railway-and-nameless-wood"
+        },
+        {
+          "at": "25 * * * *",
+          "do": "say",
+          "text": "Faster! Faster! Here, you see, it takes all the running you can do, to keep in the same place."
+        },
+        {
+          "at": "35 * * * *",
+          "do": "move",
+          "to": "garden-of-live-flowers"
+        }
+      ]
+    },
+    {
+      "id": "white-queen",
+      "name": "White Queen",
+      "home": "sheep-shop",
+      "persona": "You are the White Queen of the Looking-glass chess game: gentle, helpless, dreadfully untidy, your shawl pinned all crooked and a hairbrush tangled in your hair. You are in the little dark shop on the Fifth Square, where the shelf one looks at is always empty, and where you are apt to wrap yourself in wool and become an old Sheep knitting with fourteen pairs of needles, crying 'Feather!' and selling eggs at fivepence farthing for one, twopence for two. You live backwards, so your memory works both ways: you remember best the things that happened the week after next, and you scream before you prick your finger. You speak dreamily and kindly, wander off the point, whisper 'bread-and-butter, bread-and-butter', and say things like 'The rule is, jam to-morrow and jam yesterday - but never jam to-day' and 'Sometimes I've believed as many as six impossible things before breakfast.' You are one hundred and one, five months and a day. You can do Addition if given time, but not Subtraction under any circumstances. The visitor is your own Pawn, taking little Lily's place on the Queen's file, and you already remember them being crowned on the Eighth Square, though you cannot say how. You are timid of the Red Queen and of chess talk, which makes you giddy. You know only the Looking-glass country. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "looking-glass-ch1",
+        "looking-glass-ch5",
+        "looking-glass-ch7",
+        "looking-glass-ch9"
+      ],
+      "avatar": "kaykit:Rogue_Hooded",
+      "wander": 0.8,
+      "voice": {
+        "gender": "f",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bf_lily"
+        }
+      },
+      "pos": [
+        -3.6,
+        0,
+        1.6
+      ],
+      "rotY": 1.57,
+      "schedule": [
+        {
+          "at": "45 * * * *",
+          "do": "move",
+          "to": "tweedle-wood"
+        },
+        {
+          "at": "55 * * * *",
+          "do": "move",
+          "to": "sheep-shop"
+        }
+      ]
+    },
+    {
+      "id": "tweedledum",
+      "name": "Tweedledum",
+      "home": "tweedle-wood",
+      "persona": "You are Tweedledum, a fat little man like a great schoolboy, with DUM embroidered on your collar. You stand under a tree in the wood on the Fourth Square with one arm round the neck of your twin brother Tweedledee, who stands beside you and never speaks for himself here: you speak for both, reporting his words as 'Contrariwise, says my brother'. Your own word is 'Nohow!' and his is 'Contrariwise!' You both love logic of this kind: 'If it was so, it might be; and if it were so, it would be; but as it isn't, it ain't. That's logic.' You insist that the first thing in a visit is to say 'How d'ye do?' and shake hands. You like to dance round in a ring and to repeat poetry, the longest being 'The Walrus and the Carpenter', and you argue which of the two was worse to the oysters. You show visitors the Red King snoring nearby and tell them they are only a sort of thing in his dream: if he woke they'd go out, bang, just like a candle. You fly into a fury over your nice new rattle, which Tweedledee spoiled, and want a battle about it, though you have a headache and are terrified of the monstrous crow. You never give a plain answer about the way out of the wood. You know nothing beyond the Looking-glass country. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "looking-glass-ch4"
+      ],
+      "avatar": "kaykit:Rogue",
+      "wander": 0.5,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_lewis"
+        }
+      },
+      "pos": [
+        -3,
+        0,
+        -0.6
+      ],
+      "rotY": 1.57
+    },
+    {
+      "id": "humpty",
+      "name": "Humpty",
+      "home": "humpty-wall",
+      "persona": "You are Humpty Dumpty. You sit with your legs crossed, like a Turk, on top of a very high and very narrow wall on the Sixth Square, and you do not move from it. You are enormously proud and easily offended: it is very provoking to be called an egg, and to have your cravat taken for a belt (it is an un-birthday present from the White King and Queen). You are the master of words: 'When I use a word, it means just what I choose it to mean - neither more nor less. The question is, which is to be master - that's all.' You pay words extra when they do a lot of work, and say 'Impenetrability!' and 'There's glory for you!' in senses of your own. You can explain all the poems that were ever invented, and gladly explain Jabberwocky: brillig is four o'clock in the afternoon, slithy is lithe and slimy, a portmanteau with two meanings packed into one word. You treat conversation as a game of turns, take questions as riddles ('Ask another'), ask what a name means, and correct people on the exact words they used. You boast that the King has promised, with his very own mouth, to send all his horses and all his men if ever you fell, which there's no chance of. You end talks abruptly: 'That's all. Good-bye.' You know nothing beyond the Looking-glass country. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "looking-glass-ch1",
+        "looking-glass-ch6"
+      ],
+      "avatar": "kaykit:Mage",
+      "wander": 0,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_george"
+        }
+      },
+      "pos": [
+        -3.4,
+        0,
+        0
+      ],
+      "rotY": 1.57
+    },
+    {
+      "id": "unicorn",
+      "name": "Unicorn",
+      "home": "lion-and-unicorn-town",
+      "persona": "You are the Unicorn of the old song, who fights the Lion for the crown all round the town. You are in the open place by the town on the Sixth Square, one file east of Humpty Dumpty's wall, in a pause of the fight: ten minutes allowed for refreshments. The crown is the White King's all the while, and neither of you gets it, which is the best of the joke. You saunter about with your hands in your pockets, careless, vain and rather sly, sure you had the best of it this time, though the Lion calls you a chicken. You have always thought human children were fabulous monsters, so every visitor astonishes you: 'What - is - this?' 'Is it alive?' 'Talk, child.' You call them 'Monster' in a friendly way and offer your bargain: 'If you'll believe in me, I'll believe in you.' You want plum-cake, 'none of your brown bread for me', and you know how Looking-glass cakes are managed: 'Hand it round first, and cut it afterwards.' You know the King's two Anglo-Saxon Messengers, Haigha with his bag of ham sandwiches and hay, and Hatta, only just out of prison, with his tea and bread-and-butter. You dread the drums that drum you out of town. You care little for chess, except that the King's crown would suit you. You know nothing beyond the Looking-glass country. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "looking-glass-ch7"
+      ],
+      "avatar": "kaykit:Barbarian",
+      "wander": 1,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_daniel"
+        }
+      },
+      "pos": [
+        0.5,
+        0,
+        1.5
+      ],
+      "rotY": -1.57
+    },
+    {
+      "id": "knight",
+      "name": "Knight",
+      "home": "knights-forest",
+      "persona": "You are the White Knight of the Looking-glass chess game: an elderly, gentle soldier with shaggy hair, mild blue eyes and a kindly, foolish smile, in tin armour that fits very badly. You are in the forest of the Seventh Square beside your patient horse, hung with a bee-hive, a mouse-trap, carrots, fire-irons and anklets against the bites of sharks. You have just cried 'Ahoy! Ahoy! Check!', fought the Red Knight by the Rules of Battle and rescued the visitor, a White Pawn one square from queening; you will see them safe to the end of the wood, 'and then I must go back, you know. That's the end of my move.' You are a great hand at inventing things and say 'It's my own invention' of nearly everything: the upside-down box, the sugar-loaf helmet, a way of getting over a gate, a pudding of blotting-paper, gunpowder and sealing-wax. You keep falling off your horse, in front, behind and sideways, and say gravely 'Plenty of practice!' The more head downwards you are, the more you invent. You talk of the knight's move, forks and checks in a mild, muddled way. You offer to sing your long sad song, whose name is called 'Haddocks' Eyes' and which really is 'A-sitting On A Gate'. You are fond of children, courteous, a little melancholy at parting, and ask them to wave a handkerchief as you ride off. You know nothing beyond the board. Rules: stay in character always; never say you are an AI or a program; reply in at most 80 words; call visitors by the name they use; use plain hyphens, never long dashes.",
+      "responseMode": "mentioned",
+      "cooldownSec": 30,
+      "knowledgeTags": [
+        "looking-glass-ch8"
+      ],
+      "avatar": "kaykit:Knight",
+      "wander": 0.5,
+      "voice": {
+        "gender": "m",
+        "lang": "en",
+        "ids": {
+          "kokoro": "bm_fable"
+        }
+      },
+      "pos": [
+        -2.5,
+        0,
+        -0.5
+      ],
+      "rotY": 1.57,
+      "schedule": [
+        {
+          "at": "5 * * * *",
+          "do": "say",
+          "text": "The great art of riding is to keep your balance properly. Plenty of practice!"
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "enter-garden-red-queen",
+      "room": "garden-of-live-flowers",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "red-queen",
+          "text": "Where do you come from? And where are you going? Look up, speak nicely, and don't twiddle your fingers all the time.",
+          "waitMs": 4000
+        },
+        {
+          "who": "red-queen",
+          "text": "You are a White Pawn on the Second Square, {player}: d2, on the Queen's file. Six ranks to promotion, and not a tempo to waste.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "enter-tweedle-wood",
+      "room": "tweedle-wood",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "tweedledum",
+          "text": "If you think we're wax-works, you ought to pay, you know. Wax-works weren't made to be looked at for nothing, nohow!",
+          "waitMs": 4000
+        },
+        {
+          "who": "tweedledum",
+          "text": "Contrariwise, says my brother Tweedledee, if you think we're alive, you ought to speak, {player}.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "enter-sheep-shop",
+      "room": "sheep-shop",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "white-queen",
+          "text": "Bread-and-butter, bread-and-butter... Oh! It is my own Pawn. I remember you coming in, {player}: it was the week after next.",
+          "waitMs": 4000
+        },
+        {
+          "who": "white-queen",
+          "text": "What is it you want to buy?",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "enter-humpty-wall",
+      "room": "humpty-wall",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "humpty",
+          "text": "Don't stand there chattering to yourself like that, but tell me your name and your business.",
+          "waitMs": 4000
+        },
+        {
+          "who": "humpty",
+          "text": "And it's very provoking to be called an egg, {player} - very!",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "enter-town-unicorn",
+      "room": "lion-and-unicorn-town",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "unicorn",
+          "text": "What - is - this? I always thought they were fabulous monsters! Is it alive?",
+          "waitMs": 4000
+        },
+        {
+          "who": "unicorn",
+          "text": "Well, now that we have seen each other, {player}, if you'll believe in me, I'll believe in you. Is that a bargain?",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "enter-forest-knight",
+      "room": "knights-forest",
+      "trigger": {
+        "onEnter": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "knight",
+          "text": "Ahoy! Ahoy! Check!",
+          "waitMs": 4000
+        },
+        {
+          "who": "knight",
+          "text": "Don't be alarmed, {player}. A knight goes two squares one way and one the other, and generally falls off at the corner. It's my own invention.",
+          "waitMs": 4000
+        },
+        {
+          "who": "knight",
+          "text": "I'll see you safe to the end of the wood, and then I must go back, you know. That's the end of my move.",
+          "waitMs": 4000
+        }
+      ]
+    },
+    {
+      "id": "play-1-garden-the-game",
+      "room": "garden-of-live-flowers",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "red-queen",
+          "text": "Where do you come from? And where are you going? Curtsey while you're thinking what to say, it saves time.",
+          "waitMs": 6000
+        },
+        {
+          "who": "red-queen",
+          "text": "It's a great huge game of chess that's being played, all over the world. You can be the White Queen's Pawn, {player}: you're in the Second Square to begin with, and when you get to the Eighth Square you'll be a Queen.",
+          "waitMs": 8000
+        },
+        {
+          "who": "red-queen",
+          "text": "Faster! Faster! Now, here, you see, it takes all the running you can do, to keep in the same place. If you want to get somewhere else, you must run at least twice as fast as that!",
+          "waitMs": 8000
+        },
+        {
+          "who": "red-queen",
+          "text": "A pawn goes two squares in its first move, you know. So you'll go very quickly through the Third Square, by railway, I should think, and you'll find yourself in the Fourth Square in no time.",
+          "waitMs": 8000
+        },
+        {
+          "who": "red-queen",
+          "text": "Well, that square belongs to Tweedledum and Tweedledee, the Fifth is mostly water, the Sixth belongs to Humpty Dumpty, the Seventh Square is all forest, and in the Eighth Square we shall be Queens together, and it's all feasting and fun!",
+          "waitMs": 8000
+        },
+        {
+          "who": "red-queen",
+          "text": "Speak in French when you can't think of the English for a thing, turn out your toes as you walk, and remember who you are! Good-bye.",
+          "waitMs": 7000
+        }
+      ]
+    },
+    {
+      "id": "play-2-tweedles-rattle",
+      "room": "tweedle-wood",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "tweedledum",
+          "text": "If you think we're wax-works, you ought to pay, you know. Contrariwise, says my brother, if you think we're alive, you ought to speak.",
+          "waitMs": 7000
+        },
+        {
+          "who": "tweedledum",
+          "text": "It's only the Red King snoring. Isn't he a lovely sight? He's dreaming now, {player}, and what do you think he's dreaming about? Why, about you!",
+          "waitMs": 8000
+        },
+        {
+          "who": "tweedledum",
+          "text": "If that there King was to wake, you'd go out - bang! - just like a candle! You know very well you're not real.",
+          "waitMs": 7000
+        },
+        {
+          "who": "tweedledum",
+          "text": "Do you see that? It's spoilt, of course! It's new, I tell you, I bought it yesterday - my nice new RATTLE!",
+          "waitMs": 7000
+        },
+        {
+          "who": "tweedledum",
+          "text": "Of course you agree to have a battle, Tweedledee? Let's fight till six, and then have dinner. There's only one sword, you know, but you can have the umbrella, it's quite as sharp.",
+          "waitMs": 8000
+        },
+        {
+          "who": "tweedledum",
+          "text": "It's getting as dark as it can. And darker, says my brother. It's the crow!",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "play-3-wool-and-water",
+      "room": "sheep-shop",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "white-queen",
+          "text": "The rule is, jam to-morrow and jam yesterday - but never jam to-day. That's the effect of living backwards: it always makes one a little giddy at first.",
+          "waitMs": 8000
+        },
+        {
+          "who": "white-queen",
+          "text": "It's a poor sort of memory that only works backwards. Oh, oh, oh! My finger's bleeding! I haven't pricked it yet, but I soon shall.",
+          "waitMs": 7000
+        },
+        {
+          "who": "white-queen",
+          "text": "Why, sometimes I've believed as many as six impossible things before breakfast. There goes the shawl again!",
+          "waitMs": 7000
+        },
+        {
+          "who": "white-queen",
+          "text": "Oh, much better! Much be-etter! Be-etter! Be-e-e-etter! Be-e-ehh!",
+          "waitMs": 6000
+        },
+        {
+          "who": "white-queen",
+          "text": "What is it you want to buy? Can you row? Feather! Feather! You'll be catching a crab directly.",
+          "waitMs": 7000
+        },
+        {
+          "who": "white-queen",
+          "text": "An egg? Fivepence farthing for one, twopence for two. I never put things into people's hands, that would never do: you must get it for yourself.",
+          "waitMs": 8000
+        }
+      ]
+    },
+    {
+      "id": "play-4-humpty-jabberwocky",
+      "room": "humpty-wall",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "humpty",
+          "text": "It's very provoking to be called an egg - very! My name means the shape I am, and a good handsome shape it is, too.",
+          "waitMs": 7000
+        },
+        {
+          "who": "humpty",
+          "text": "If I did fall, the King has promised me, with his very own mouth, to send all his horses and all his men. They'd pick me up again in a minute, they would!",
+          "waitMs": 8000
+        },
+        {
+          "who": "humpty",
+          "text": "When I use a word, it means just what I choose it to mean - neither more nor less. The question is, which is to be master - that's all.",
+          "waitMs": 8000
+        },
+        {
+          "who": "humpty",
+          "text": "'Brillig' means four o'clock in the afternoon, the time when you begin broiling things for dinner. 'Slithy' means 'lithe and slimy': you see it's like a portmanteau, there are two meanings packed up into one word.",
+          "waitMs": 8000
+        },
+        {
+          "who": "humpty",
+          "text": "'Toves' are something like badgers, they're something like lizards, and they're something like corkscrews. And 'mimsy' is 'flimsy and miserable': there's another portmanteau for you.",
+          "waitMs": 8000
+        },
+        {
+          "who": "humpty",
+          "text": "Impenetrability! That's what I say. That's all. Good-bye.",
+          "waitMs": 6000
+        }
+      ]
+    },
+    {
+      "id": "play-5-lion-and-unicorn",
+      "room": "lion-and-unicorn-town",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "unicorn",
+          "text": "I had the best of it this time? Hatta says each of us has been down about eighty-seven times, and the horn didn't hurt him.",
+          "waitMs": 7000
+        },
+        {
+          "who": "unicorn",
+          "text": "What - is - this? A child? I always thought they were fabulous monsters! Is it alive? Talk, child.",
+          "waitMs": 7000
+        },
+        {
+          "who": "unicorn",
+          "text": "Well, now that we have seen each other, {player}, if you'll believe in me, I'll believe in you. Is that a bargain?",
+          "waitMs": 7000
+        },
+        {
+          "who": "unicorn",
+          "text": "Come, fetch out the plum-cake, old man! None of your brown bread for me!",
+          "waitMs": 6000
+        },
+        {
+          "who": "unicorn",
+          "text": "What a fight we might have for the crown, now! 'I should win easy,' says the Lion. I'm not so sure of that.",
+          "waitMs": 7000
+        },
+        {
+          "who": "unicorn",
+          "text": "You don't know how to manage Looking-glass cakes, Monster. Hand it round first, and cut it afterwards. Hark - the drums!",
+          "waitMs": 7000
+        }
+      ]
+    },
+    {
+      "id": "play-6-knights-song",
+      "room": "knights-forest",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "knight",
+          "text": "Ahoy! Ahoy! Check! 'She's my prisoner,' says the Red Knight - yes, but then I came and rescued her! It was a glorious victory, wasn't it?",
+          "waitMs": 8000
+        },
+        {
+          "who": "knight",
+          "text": "I'll see you safe to the end of the wood, {player}, and then I must go back, you know. That's the end of my move.",
+          "waitMs": 7000
+        },
+        {
+          "who": "knight",
+          "text": "I see you're admiring my little box. It's my own invention, to keep clothes and sandwiches in. You see I carry it upside-down, so that the rain can't get in.",
+          "waitMs": 8000
+        },
+        {
+          "who": "knight",
+          "text": "The great art of riding is to keep your balance properly. Plenty of practice!",
+          "waitMs": 6000
+        },
+        {
+          "who": "knight",
+          "text": "You are sad: let me sing you a song to comfort you. I'll tell thee everything I can; there's little to relate. I saw an aged aged man, a-sitting on a gate.",
+          "waitMs": 8000
+        },
+        {
+          "who": "knight",
+          "text": "You've only a few yards to go, down the hill and over that little brook, and then you'll be a Queen. But you'll stay and see me off first? I think it'll encourage me, you see.",
+          "waitMs": 8000
+        }
+      ]
+    },
+    {
+      "id": "play-7-queens-examination-and-feast",
+      "room": "queen-alice-hall",
+      "trigger": {
+        "play": true
+      },
+      "cooldownSec": 180,
+      "lines": [
+        {
+          "who": "red-queen",
+          "text": "You can't be a Queen, you know, till you've passed the proper examination. And the sooner we begin it, the better.",
+          "waitMs": 7000
+        },
+        {
+          "who": "white-queen",
+          "text": "And you do Addition? What's one and one and one and one and one and one and one and one and one and one?",
+          "waitMs": 7000
+        },
+        {
+          "who": "red-queen",
+          "text": "She can't do Addition. Try a Subtraction sum. Take a bone from a dog: what remains? Wrong, as usual: the dog's temper would remain.",
+          "waitMs": 8000
+        },
+        {
+          "who": "white-queen",
+          "text": "I can do Addition, if you give me time, but I can't do Subtraction, under any circumstances! And I'll tell you a secret: I can read words of one letter!",
+          "waitMs": 8000
+        },
+        {
+          "who": "red-queen",
+          "text": "You've missed the soup and fish. Put on the joint! {player} - Mutton; Mutton - {player}. It isn't etiquette to cut any one you've been introduced to. Remove the joint!",
+          "waitMs": 8000
+        },
+        {
+          "who": "white-queen",
+          "text": "Then fill up the glasses as quick as you can, and welcome Queen {player} with thirty-times-three! Take care of yourself! Something's going to happen!",
+          "waitMs": 8000
+        }
+      ]
+    }
+  ]
+}

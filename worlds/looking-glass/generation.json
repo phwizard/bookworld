@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-11-05T16:31:11.399Z",
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "attempts": 1,
+  "options": {
+    "rooms": 9,
+    "characters": 6,
+    "notes": "This world is a game of chess. The book's own preface gives the game: Alice is a white pawn who starts on the second square, advances one square per chapter and is crowned on the eighth, meeting the pieces on the way. The visitor plays the pawn. Lay the rooms out as one file of a chessboard running north, exactly on these cells, and describe each as a square of the board (the brooks between squares are the doorways, as in the book): Looking-Glass House at [1,8] (the start: the drawing room with the mirror, the hearth and the chessmen; the mirror is the way in); the Garden of Live Flowers with the Red Queen's hill at [1,7] (the second square); the Railway Carriage and the Wood where things have no names at [1,6] (the third square, the Gnat, the Fawn); Tweedledum and Tweedledee's wood at [1,5] (the fourth square); the Sheep's Shop with the boat and the water at [1,4] (the fifth square, Wool and Water, where the White Queen turns into the Sheep); Humpty Dumpty's wall at [1,3] (the sixth square); the town where the Lion and the Unicorn fight for the crown, with the King's messengers Haigha and Hatta, at [2,3] (east of Humpty, still the sixth square); the Forest of the Knights at [1,2] (the seventh square, where the Red Knight checks and the White Knight escorts Alice, \"It's my own invention\"); Queen Alice's hall at [1,1] (the eighth square: the door marked QUEEN ALICE, the two Queens' examination, the feast). Nine rooms, links only along this path plus the one east branch. Each room's description should say which square of the board it is and that the next square lies north across the brook. Use the checkered tile floor for the house and for Queen Alice's hall. Characters: Red Queen (display name \"Red Queen\", she is a chess master and a severe coach who speaks in terms of squares, ranks, files, tempo and checks, and likes to test a visitor with a chess question before answering theirs), White Queen (display name \"White Queen\", dreamy, remembers things before they happen, believes six impossible things before breakfast), Tweedledum (display name \"Tweedledum\", speaks for himself and his brother Tweedledee, who stands beside him; contrariwise), Humpty Dumpty (display name \"Humpty\", master of words and of what words mean, very proud), White Knight (display name \"Knight\", the gentle inventor who keeps falling off his horse, Carroll's own portrait), and the Unicorn (display name \"Unicorn\", who thinks children are fabulous monsters). Make it the play: scenes in the book's order, one per room from the Garden onward (the Red Queen's instructions for the game in the garden; the Tweedles' quarrel over the rattle and the Red King dreaming; the White Queen and the Sheep in the shop; Humpty on the wall explaining Jabberwocky; the Lion and the Unicorn and the plum cake; the Knight's song in the forest; the Queens' examination and the feast). The Red Queen wanders a lot (she runs), Humpty and the Knight hardly at all. Sound: a ticking clock in the house, birds in the garden and the woods, wind in the forest and in the town, drips nowhere. Music where it fits. Chess players will visit this world: let every description name the square, and let the Red Queen's and the Knight's greetings use chess terms."
+  },
+  "source": {
+    "title": "Through the Looking-Glass",
+    "author": "Lewis Carroll",
+    "text": "gutenberg:12",
+    "license": "public-domain"
+  },
+  "chapters": [
+    {
+      "index": 1,
+      "title": "CHAPTER I. Looking-Glass house",
+      "chars": 17248
+    },
+    {
+      "index": 2,
+      "title": "CHAPTER II. The Garden of Live Flowers",
+      "chars": 15449
+    },
+    {
+      "index": 3,
+      "title": "CHAPTER III. Looking-Glass Insects",
+      "chars": 15829
+    },
+    {
+      "index": 4,
+      "title": "CHAPTER IV. Tweedledum And Tweedledee",
+      "chars": 16358
+    },
+    {
+      "index": 5,
+      "title": "CHAPTER V. Wool and Water",
+      "chars": 17061
+    },
+    {
+      "index": 6,
+      "title": "CHAPTER VI. Humpty Dumpty",
+      "chars": 16615
+    },
+    {
+      "index": 7,
+      "title": "CHAPTER VII. The Lion and the Unicorn",
+      "chars": 14365
+    },
+    {
+      "index": 8,
+      "title": "CHAPTER VIII. “It’s my own Invention”",
+      "chars": 21497
+    },
+    {
+      "index": 9,
+      "title": "CHAPTER IX. Queen Alice",
+      "chars": 22313
+    },
+    {
+      "index": 10,
+      "title": "CHAPTER XII. Which Dreamed it?",
+      "chars": 3798
+    }
+  ],
+  "warnings": []
+}
