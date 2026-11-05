@@ -6,7 +6,7 @@
 // Needs ETHORA_API_KEY (a user API key for the hosted Ethora MCP) in .env; see docs/GENERATOR.md.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { lessonPrompt, musicPrompt, type World, type WorldCharacter } from '@bookworld/shared';
+import { chessPrompt, lessonPrompt, musicPrompt, type World, type WorldCharacter } from '@bookworld/shared';
 import { bool, parseArgs, str } from './args.ts';
 import { DEFAULT_MCP_URL, EthoraMcp, dig } from './mcp.ts';
 import { repoRoot, worldDir } from './paths.ts';
@@ -252,6 +252,7 @@ export function agentPrompt(world: World, c: WorldCharacter, roomName: string, r
     'Visitors walk in and out of this place and talk to you and to each other; messages in italics are the narrator describing who comes and goes.',
     musicPrompt(c.name),
     ...(world.lessons?.some((l) => l.trainer === c.id) ? [lessonPrompt(c.name)] : []),
+    ...(world.chess?.some((b) => b.master === c.id) ? [chessPrompt(c.name)] : []),
     'Rules: stay in character at all times. Never say you are an AI, a bot or a program. Reply in at most 80 words. Address visitors by the name they use. Use plain hyphens, never long dashes. If asked about things outside the book, answer as the character would.',
   ].join('\n');
 }

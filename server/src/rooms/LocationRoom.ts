@@ -7,6 +7,7 @@ import {
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
   type ChatSeenMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
+  type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, PUZZLE_LEVELS, movesText,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -21,6 +22,7 @@ import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
 import { Band } from '../world/band.ts';
 import { canSing, prerenderSung, sungUrl, voicedCharacters } from '../voice.ts';
 import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
+import { ChessGame, PuzzleRun, loadChessProgress, loadPuzzles, pickPuzzle, puzzleMemoryNote, saveChessProgress } from '../world/chess.ts';
 
 export const Player = schema({
   id: t.string(),
@@ -78,6 +80,9 @@ interface UserData {
   phraseTimer: NodeJS.Timeout | null;
   /** the drill under way with this room's trainer, if any */
   lesson: Lesson | null;
+  /** the puzzle under way with this room's master, if any, and the tally of this visit's puzzles for the master's note */
+  puzzle: PuzzleRun | null;
+  puzzles: { solved: number; failed: number; missed: string[]; today: { solved: number; failed: number } } | null;
 }
 
 /** how far (metres) a player may stand from an item to pick it up */
@@ -106,6 +111,9 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private lessonDef: WorldLesson | null = null;
   /** the room's bass and drums playing along, when switched on */
   private band!: Band;
+  /** the board, in a room listed under the world's `chess` */
+  private chessDef: WorldChess | null = null;
+  private game: ChessGame | null = null;
   /** reconnection windows of dropped seats, by session id */
   private ghosts = new Map<string, { reject: Function }>();
   private unsubscribe: (() => void) | null = null;
@@ -137,6 +145,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
     this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
     this.lessonDef = loaded.world.lessons?.find((l) => l.room === room.id) ?? null;
+    this.chessDef = loaded.world.chess?.find((c) => c.room === room.id) ?? null;
+    if (this.chessDef) this.game = new ChessGame();
     this.budget = budgetFor(options.world);
     this.unsubscribeBudget = this.budget.subscribe(() => {
       for (const c of this.clients) c.send(MSG.ai, this.budget.snapshot((c.userData as UserData | undefined)?.session.visitor) satisfies AiMessage);
@@ -249,6 +259,105 @@ export class LocationRoom extends Room<{ state: LocationState }> {
         }
       }
     });
+    // The client wires its handlers after the join resolves, so whatever onJoin sent may be lost: it asks again.
+    this.onMessage(MSG.ready, (client) => {
+      const data = client.userData as UserData | undefined;
+      if (!data) return;
+      client.send(MSG.ai, this.budget.snapshot(data.session.visitor) satisfies AiMessage);
+      client.send(MSG.bandState, this.band.state());
+      if (this.lessonDef) this.sendLesson(client, data, data.lesson && !data.lesson.finished ? data.lesson.active() : null);
+      if (this.game) this.sendChess(client, data);
+    });
+    // The board: chairs, moves, the result; and the puzzles the master sets one player at a time.
+    this.onMessage(MSG.chess, (client, msg: ChessCommand) => {
+      const data = client.userData as UserData | undefined;
+      const game = this.game;
+      if (!data || !game || !msg || typeof msg.do !== 'string') return;
+      this.log('chess', data, { cmd: msg });
+      const { name, uid } = data.session;
+      const sq = (x: unknown) => (typeof x === 'string' && /^[a-h][1-8]$/.test(x) ? x : null);
+      switch (msg.do) {
+        case 'sit': {
+          if (msg.color !== 'w' && msg.color !== 'b') return;
+          const err = game.sit(msg.color, { name, uid, seat: client.sessionId });
+          if (err) return client.send(MSG.denied, { reason: err });
+          const v = game.view();
+          void tryEthora('chess sit', () => this.ethora.narrate(this.room.id, v.status === 'playing' && !v.moves.length
+            ? `Chess: ${v.white!.name} (White) and ${v.black!.name} (Black) sit down at the board`
+            : `Chess: ${name} takes the ${COLOR_NAME[msg.color as 'w' | 'b'].toLowerCase()} chair${v.moves.length ? ` (${game.summary()})` : ''}`));
+          this.sendChessAll();
+          break;
+        }
+        case 'stand': {
+          const color = game.stand(client.sessionId);
+          if (color) { void tryEthora('chess stand', () => this.ethora.narrate(this.room.id, `Chess: ${name} leaves the ${COLOR_NAME[color].toLowerCase()} chair`)); this.sendChessAll(); }
+          break;
+        }
+        case 'move': {
+          const from = sq(msg.from); const to = sq(msg.to);
+          if (!from || !to) return;
+          const r = game.move(client.sessionId, from, to, typeof msg.promotion === 'string' ? msg.promotion : undefined);
+          if ('error' in r) return client.send(MSG.denied, { reason: r.error });
+          presence.message(this.world.slug);
+          const v = game.view();
+          const n = v.moves.length;
+          // the record goes into the chat a full move at a time, and the whole game when it ends
+          if (v.status === 'over') {
+            const winner = v.result === '1-0' ? v.white!.name : v.result === '0-1' ? v.black!.name : null;
+            void tryEthora('chess end', () => this.ethora.narrate(this.room.id, `Chess: ${winner ? `${winner} wins by ${v.reason}` : `drawn, ${v.reason}`}, ${v.result}: ${movesText(v.moves)}`));
+            record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: v.result, moves: n });
+          } else if (n % 2 === 0) {
+            void tryEthora('chess move', () => this.ethora.narrate(this.room.id, `Chess: ${movesText(v.moves.slice(n - 2))}${v.check ? ', check' : ''}`));
+          }
+          this.sendChessAll();
+          break;
+        }
+        case 'resign': {
+          const result = game.resign(client.sessionId);
+          if (!result) return;
+          const v = game.view();
+          void tryEthora('chess resign', () => this.ethora.narrate(this.room.id, `Chess: ${name} resigns, ${result}: ${movesText(v.moves)}`));
+          record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result, moves: v.moves.length });
+          this.sendChessAll();
+          break;
+        }
+        case 'draw': {
+          const what = game.draw(client.sessionId);
+          if (!what) return;
+          const v = game.view();
+          void tryEthora('chess draw', () => this.ethora.narrate(this.room.id, what === 'agreed' ? `Chess: a draw is agreed, 1/2-1/2: ${movesText(v.moves)}` : `Chess: ${name} offers a draw`));
+          if (what === 'agreed') record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: '1/2-1/2', moves: v.moves.length });
+          this.sendChessAll();
+          break;
+        }
+        case 'new': {
+          if (!game.seatOf(client.sessionId)) return client.send(MSG.denied, { reason: 'take a chair first' });
+          if (!game.reset()) return client.send(MSG.denied, { reason: 'the game is still on; resign or agree a draw first' });
+          void tryEthora('chess new', () => this.ethora.narrate(this.room.id, `Chess: ${name} sets the pieces up again`));
+          this.sendChessAll();
+          break;
+        }
+        case 'puzzle': {
+          if (!this.master()) return client.send(MSG.denied, { reason: 'nobody here sets puzzles' });
+          if (!PUZZLE_LEVELS.includes(msg.level)) return;
+          this.startPuzzle(client, data, msg.level);
+          break;
+        }
+        case 'puzzle-move': {
+          const from = sq(msg.from); const to = sq(msg.to);
+          if (from && to) data.puzzle?.onMove(from, to, typeof msg.promotion === 'string' ? msg.promotion : undefined);
+          break;
+        }
+        case 'puzzle-hint': data.puzzle?.askHint(); break;
+        case 'puzzle-solution': data.puzzle?.showSolution(); break;
+        case 'puzzle-stop': {
+          data.puzzle?.stop();
+          data.puzzle = null;
+          this.sendChess(client, data);
+          break;
+        }
+      }
+    });
     // The band: the room's unheld bass and drums play along with whoever is playing (B), on the room's clock.
     this.onMessage(MSG.band, (client, msg: BandCommand) => {
       const data = client.userData as UserData | undefined;
@@ -283,6 +392,65 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     if (!this.lessonDef) return null;
     const c = this.world.characters.find((ch) => ch.id === this.lessonDef!.trainer);
     return c ? { id: c.id, name: c.name } : null;
+  }
+
+  private master(): { id: string; name: string } | null {
+    if (!this.chessDef?.master) return null;
+    const c = this.world.characters.find((ch) => ch.id === this.chessDef!.master);
+    return c ? { id: c.id, name: c.name } : null;
+  }
+
+  /** The board as this player sees it, with their own puzzle and their puzzle record. */
+  private sendChess(client: Client, data: UserData) {
+    if (!this.game) return;
+    const p = loadChessProgress(data.session.uid);
+    const today = data.puzzles?.today ?? { solved: 0, failed: 0 };
+    client.send(MSG.chessState, {
+      master: this.master()?.name ?? null, game: this.game.view(), puzzle: data.puzzle?.view() ?? null,
+      progress: { rating: p.rating, solved: p.solved, failed: p.failed, today },
+    } satisfies ChessStateMessage);
+  }
+
+  private sendChessAll() {
+    for (const c of this.clients) { const d = c.userData as UserData | undefined; if (d) this.sendChess(c, d); }
+  }
+
+  private startPuzzle(client: Client, data: UserData, level: 'easy' | 'level' | 'hard') {
+    const master = this.master();
+    if (!master) return;
+    if (data.puzzle && !data.puzzle.finished) data.puzzle.stop();
+    const uid = data.session.uid;
+    const progress = loadChessProgress(uid);
+    const puzzle = pickPuzzle(loadPuzzles(), progress, level);
+    if (!puzzle) return client.send(MSG.denied, { reason: 'no puzzles on the shelf' });
+    data.puzzles ??= { solved: 0, failed: 0, missed: [], today: { solved: 0, failed: 0 } };
+    const tally = data.puzzles;
+    const run = new PuzzleRun(puzzle, data.session.name, progress, {
+      state: () => { if (data.puzzle === run) this.sendChess(client, data); },
+      say: (text) => void tryEthora('master line', () => this.ethora.post(this.room.id, characterLine(master.name, text))),
+      narrate: (text) => void tryEthora('puzzle record', () => this.ethora.narrate(this.room.id, text)),
+      save: (p, solved) => {
+        saveChessProgress(uid, p);
+        if (solved) { tally.solved++; tally.today.solved++; } else { tally.failed++; tally.today.failed++; tally.missed.push(`${run.view().themes[0] ?? 'a puzzle'} (${puzzle.rating})`); }
+        record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, puzzle: puzzle.rating, solved });
+      },
+    });
+    data.puzzle = run;
+    presence.message(this.world.slug);
+    this.log('puzzle', data, { id: puzzle.id, rating: puzzle.rating, level });
+    run.start();
+  }
+
+  /** The visit's puzzles are over (the player left or stopped): a note for the master's Memory. */
+  private endPuzzles(data: UserData) {
+    data.puzzle?.stop();
+    data.puzzle = null;
+    const tally = data.puzzles;
+    const master = this.master();
+    if (!tally || !master || (!tally.solved && !tally.failed)) return;
+    data.puzzles = null;
+    const note = puzzleMemoryNote(data.session.name, loadChessProgress(data.session.uid), tally);
+    void tryEthora('master memory', () => this.ethora.remember(master.id, note));
   }
 
   /** The shelf of songs with this player's progress, the lesson under way, and the plan the trainer keeps for them. */
@@ -384,7 +552,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
 
   onJoin(client: Client, options: JoinOptions, auth: Session) {
     const session = auth ?? (client.auth as Session);
-    client.userData = { session, moving: false, gone: false, phrase: [], phraseTimer: null, lesson: null } satisfies UserData;
+    client.userData = { session, moving: false, gone: false, phrase: [], phraseTimer: null, lesson: null, puzzle: null, puzzles: null } satisfies UserData;
     const enterFrom = options.enterFrom && DIRECTIONS.includes(options.enterFrom) ? options.enterFrom : undefined;
     const [w, , d] = roomSize(this.room);
     const at = options.at;
@@ -416,6 +584,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     client.send(MSG.ai, this.budget.snapshot(session.visitor) satisfies AiMessage);
     client.send(MSG.bandState, this.band.state());
     if (this.lessonDef) this.sendLesson(client, client.userData as UserData, null);
+    if (this.game) { this.game.reseat(session.uid, client.sessionId, session.name); this.sendChessAll(); }
     const line = enterFrom ? `${session.name} has joined (${DIRECTION_LABEL[enterFrom]})` : at ? `${session.name} is back` : `${session.name} has arrived`;
     void tryEthora('narrate join', () => this.ethora.narrate(this.room.id, line));
     // a returning player hears the trainer pick up their plan instead of the room's greeting (not after a reload)
@@ -456,6 +625,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.flushPhrase(client);
     data.lesson?.stop();
     data.lesson = null;
+    this.endPuzzles(data);
     record({ ev: 'leave', world: this.world.slug, pid: data.session.pid, location: this.room.id, moving: data.moving });
     this.log('leave', data, { moving: data.moving, gone: data.gone, code: code ?? null });
     // The same person on another seat in this room (a reload, a second tab) keeps the chat membership and the narration quiet;
@@ -468,6 +638,9 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       // an instrument does not leave the world with its player: it stays where they stood (a door takes it along)
       const dropped = this.sim.drop(data.session.pid, this.room.id, last?.x ?? 0, last?.z ?? 0);
       if (dropped) void tryEthora('narrate drop', () => this.ethora.narrate(this.room.id, `${data.session.name} left ${dropped.name} behind`));
+      // the chair is free again; the position stays on the board for whoever sits next
+      const chair = this.game?.stand(client.sessionId);
+      if (chair) { void tryEthora('chess leave', () => this.ethora.narrate(this.room.id, `Chess: the ${COLOR_NAME[chair].toLowerCase()} chair is free`)); this.sendChessAll(); }
     } else {
       // the seat is gone but the player is not: the item sync must stop pointing at this session
       this.syncItems(this.sim.itemsIn(this.room.id));

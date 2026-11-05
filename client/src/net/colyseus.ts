@@ -3,9 +3,9 @@
 import { Client, Room, getStateCallbacks } from '@colyseus/sdk';
 import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
-  type PosMessage, type SaidMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
+  type PosMessage, type SaidMessage, type MoveMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type ChatSeenMessage,
-  type BandCommand, type BandState, type BarMessage, type ClockMessage,
+  type BandCommand, type BandState, type BarMessage, type ClockMessage, type ChessCommand, type ChessStateMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
@@ -134,6 +134,7 @@ function wire(room: Room<LocationStateView>) {
     useStore.getState().setBubble(msg.name, `♪ ${msg.tokens.join(' ')}`);
   });
   room.onMessage<LessonStateMessage>(MSG.lessonState, (msg) => useStore.getState().setLesson(msg));
+  room.onMessage<ChessStateMessage>(MSG.chessState, (msg) => useStore.getState().setChess(msg));
   room.onMessage<BandState>(MSG.bandState, (msg) => useStore.getState().setBand(msg));
   // the band: every hit of the bar scheduled against the server's time, from where the instrument lies
   room.onMessage<BarMessage>(MSG.bar, (msg) => {
@@ -171,7 +172,12 @@ function wire(room: Room<LocationStateView>) {
     void recover(room, code);
   });
   room.onError((code, message) => console.error('[colyseus]', code, message));
+  // the handlers are in place: the state the server sent on join may have come before them
+  room.send(MSG.ready);
 }
+
+/** dev hook: walk through a door from the console (`__go('n')`) */
+if (import.meta.env.DEV) (window as unknown as { __go: (dir: Direction) => void }).__go = (dir) => current?.send(MSG.move, { dir } satisfies MoveMessage);
 
 /** Tries to get back into the same room with the same seat for a minute, then rejoins at the same spot. */
 async function recover(room: Room<LocationStateView>, code: number) {
@@ -279,6 +285,10 @@ export function dropItem() {
 /** A lesson command for the practice room: start a song, answer with words, hint, skip, stop. */
 export function sendLesson(cmd: LessonCommand) {
   current?.send(MSG.lesson, cmd);
+}
+
+export function sendChess(cmd: ChessCommand) {
+  current?.send(MSG.chess, cmd);
 }
 
 /** Chords or hits just played on the carried instrument (already heard locally). */

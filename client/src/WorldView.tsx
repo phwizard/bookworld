@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { roomById } from '@bookworld/shared';
 import { useStore } from './store.ts';
 import { dropItem, joinLocation, takeItem } from './net/colyseus.ts';
 import { selectHolding } from './store.ts';
 import { ChordBar, toggleBand } from './ui/ChordBar.tsx';
 import { LessonPanel } from './ui/LessonPanel.tsx';
+// the board and its rules (chess.js) load only in a room with a board
+const ChessPanel = lazy(() => import('./ui/ChessPanel.tsx').then((m) => ({ default: m.ChessPanel })));
 import { loadSession } from './session.ts';
 import { Menu } from './ui/Menu.tsx';
 import { Scene } from './scene/Scene.tsx';
@@ -20,6 +22,7 @@ export function WorldView() {
   const location = useStore((s) => s.location);
   const enterFrom = useStore((s) => s.enterFrom);
   const chatOpen = useStore((s) => s.chatOpen);
+  const chessHere = useStore((s) => s.chess !== null);
   const room = roomById(session.world, location);
 
   useEffect(() => {
@@ -45,6 +48,8 @@ export function WorldView() {
       }
       // L: the practice room's lessons
       if (e.code === 'KeyL' && !e.repeat && s.lesson) { e.preventDefault(); s.setLessonOpen(!s.lessonOpen); if (!s.lessonOpen) document.exitPointerLock?.(); return; }
+      // C: the room's chess board
+      if (e.code === 'KeyC' && !e.repeat && s.chess) { e.preventDefault(); s.setChessOpen(!s.chessOpen); if (!s.chessOpen) document.exitPointerLock?.(); return; }
       // B: the band (the room's bass and drums play along)
       if (e.code === 'KeyB' && !e.repeat) { e.preventDefault(); toggleBand(); return; }
       if (e.code === 'KeyT' || e.code === 'Enter') { e.preventDefault(); s.setChatOpen(true); document.exitPointerLock?.(); focusComposer(); }
@@ -60,6 +65,7 @@ export function WorldView() {
       <Hud room={room} />
       <ChordBar />
       <LessonPanel />
+      {chessHere && <Suspense fallback={null}><ChessPanel /></Suspense>}
       <ChatPanel />
       <Music />
       <SoundFx room={room} />

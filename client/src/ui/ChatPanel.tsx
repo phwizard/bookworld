@@ -5,7 +5,7 @@ import { Chat, XmppProvider, type IConfig } from '@ethora/chat-component';
 import { useStore } from '../store.ts';
 import { ChatMessages } from './ChatMessages.tsx';
 import { reportSaid } from '../net/colyseus.ts';
-import type { LessonStateMessage } from '@bookworld/shared';
+import { movesText, COLOR_NAME, type ChessStateMessage, type LessonStateMessage } from '@bookworld/shared';
 
 let panelEl: HTMLElement | null = null;
 /** an unnamed line this soon after a character's line is a reply to that character */
@@ -60,6 +60,15 @@ function scoreboard(l: LessonStateMessage): string {
   return `Lesson: "${a.song.title}" (${a.mode}), round ${a.round?.n ?? a.score.tries}, ${a.score.hits} of ${a.score.tries} right, ${learned}${weak}${goal}`;
 }
 
+/** The board or the puzzle as one line, for a question to the master (the agent does not see the room's record lines). */
+function chessboard(c: ChessStateMessage): string | null {
+  if (c.puzzle && c.puzzle.status === 'playing') return `Puzzle: rated ${c.puzzle.rating}, ${COLOR_NAME[c.puzzle.color]} to move, ${c.puzzle.steps} ${c.puzzle.steps === 1 ? 'move' : 'moves'} to find, ${c.puzzle.misses} wrong so far; my puzzle rating ${c.progress.rating}`;
+  const g = c.game;
+  if (!g.moves.length) return null;
+  const who = `${g.white ? `${g.white.name} is White` : 'White is empty'}, ${g.black ? `${g.black.name} is Black` : 'Black is empty'}`;
+  return `Chess: ${movesText(g.moves)}, ${g.status === 'over' ? `${g.result} (${g.reason})` : `${COLOR_NAME[g.turn]} to move${g.check ? ', check' : ''}`}; ${who}`;
+}
+
 export function ChatPanel() {
   const session = useStore((s) => s.session)!;
   const location = useStore((s) => s.location);
@@ -98,10 +107,12 @@ export function ChatPanel() {
       // evidently for: the trainer in a practice room, the only character in the room, or the character who spoke
       // last here a moment ago (a reply to them). Their name goes in front, so the agent hears it and all can see.
       const lesson = s.lesson;
+      const chess = s.chess;
       const chars = Object.values(s.characters);
       if (!/^[♪_*(]/.test(text) && !chars.some((c) => text.toLowerCase().includes(c.name.toLowerCase()))) {
         const last = s.lastLine;
         const addressee = lesson ? lesson.trainer
+          : chess?.master && s.chessOpen && chars.some((c) => c.name === chess.master) ? chess.master
           : chars.length === 1 ? chars[0]!.name
           : last?.character && Date.now() - last.at < REPLY_WINDOW_MS && chars.some((c) => c.name === last.from) ? last.from
           : null;
@@ -112,6 +123,9 @@ export function ChatPanel() {
       if (lesson?.active && !lesson.active.finished && text.toLowerCase().includes(lesson.trainer.toLowerCase()) && !text.includes('(Lesson:')) {
         text += `\n(${scoreboard(lesson)})`;
       }
+      // The same for the master of a board: the moves so far, or the puzzle's rating, travel with a question to them.
+      const board = chess?.master && text.toLowerCase().includes(chess.master.toLowerCase()) && !/\((Chess|Puzzle):/.test(text) ? chessboard(chess) : null;
+      if (board) text += `\n(${board})`;
       if (text === area.value) return;
       Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(area, text);
       area.dispatchEvent(new Event('input', { bubbles: true }));

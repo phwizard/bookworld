@@ -161,3 +161,44 @@ button, input { font: inherit; }
 .chordbar .who .level { display: inline-block; width: 50px; height: 6px; margin-left: 6px; vertical-align: middle; border-radius: 3px; background: rgba(255, 255, 255, .15); overflow: hidden; }
 .chordbar .who .level span { display: block; height: 100%; background: #c9a961; transition: width .05s; }
 @media (max-width: 700px) { .lesson { bottom: 110px; max-height: 50vh; } .lessontab { bottom: 110px; } }
+
+/* the chess board (C) */
+.chesstab { position: absolute; left: 20px; bottom: 44px; padding: 7px 12px; border-radius: 6px; border: 1px solid #c9a961; background: rgba(40, 28, 14, .8); color: #f3e6c4; font: 13px Georgia, serif; cursor: pointer; z-index: 6; }
+.chesstab:hover { background: rgba(58, 45, 28, .95); }
+.chesstab.shifted { bottom: 84px; }
+.chesspanel { position: absolute; left: 20px; bottom: 44px; width: min(360px, calc(100vw - 40px)); max-height: 80vh; overflow: auto; padding: 12px 14px; border-radius: 10px; border: 1px solid #c9a961; background: rgba(40, 28, 14, .92); color: #f3e6c4; font: 14px Georgia, serif; z-index: 7; }
+.chesspanel.shifted { left: 420px; }
+.chesspanel .head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; font-size: 16px; }
+.chesspanel .link { background: none; border: none; color: inherit; font: inherit; font-size: 12px; opacity: .8; text-decoration: underline; cursor: pointer; padding: 0; }
+.chesspanel .tabs, .chesspanel .levels, .chesspanel .actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; align-items: center; }
+.chesspanel .tabs button, .chesspanel .levels button, .chesspanel .actions button:not(.link) { padding: 5px 10px; border-radius: 6px; border: 1px solid #c9a961; background: #3a2d1c; color: #f3e6c4; font: 13px Georgia, serif; cursor: pointer; }
+.chesspanel .tabs button.on, .chesspanel .levels button.on { background: #c9a961; color: #1a140f; }
+.chesspanel button:disabled { opacity: .45; cursor: default; }
+.chesspanel .chairs { display: grid; gap: 2px; margin-bottom: 6px; font-size: 13px; }
+.chesspanel .chair .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #c9a961; vertical-align: -1px; }
+.chesspanel .chair .dot.w { background: #f3e6c4; }
+.chesspanel .chair .dot.b { background: #1a140f; }
+.chesspanel .meta, .chesspanel .muted { font-size: 12px; opacity: .75; line-height: 1.4; }
+.chesspanel .meta a { color: inherit; }
+.chesspanel .status { margin-top: 6px; line-height: 1.4; }
+.chesspanel .status .ok { color: #b8e8a0; }
+.chesspanel .status .miss { color: #ffb0a0; }
+.chesspanel .moves { max-height: 64px; overflow: auto; margin-top: 4px; font-size: 13px; opacity: .85; line-height: 1.4; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; aspect-ratio: 1; border: 2px solid #5a4630; border-radius: 4px; overflow: hidden; user-select: none; }
+.board .sq { position: relative; padding: 0; border: none; cursor: default; display: grid; place-items: center; font-size: 0; }
+.board.live .sq { cursor: pointer; }
+.board .sq.light { background: #e9d7b4; }
+.board .sq.dark { background: #a3763f; }
+.board .sq.last { box-shadow: inset 0 0 0 100px rgba(255, 220, 90, .35); }
+.board .sq.from { box-shadow: inset 0 0 0 100px rgba(120, 200, 255, .45); }
+.board .sq.mark { box-shadow: inset 0 0 0 100px rgba(120, 220, 140, .5); }
+.board .sq.check { box-shadow: inset 0 0 0 100px rgba(255, 70, 50, .55); }
+.board .sq.target::after { content: ''; width: 28%; height: 28%; border-radius: 50%; background: rgba(0, 0, 0, .28); position: absolute; }
+.board .sq.capture::after { content: ''; position: absolute; inset: 6%; border-radius: 50%; border: 4px solid rgba(0, 0, 0, .28); box-sizing: border-box; }
+.board .piece { font-size: clamp(18px, 5.2vmin, 32px); line-height: 1; font-family: 'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'DejaVu Sans', serif; font-variant-emoji: text; }
+.board .piece.w { color: #fff; text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 2px #000, 0 1px 2px rgba(0,0,0,.6); }
+.board .piece.b { color: #141414; text-shadow: 0 0 1px #fff, 0 0 2px rgba(255,255,255,.5); }
+.board .sq i { position: absolute; font: 9px system-ui, sans-serif; opacity: .6; color: #2a1d10; }
+.board .sq i.rank { top: 2px; left: 3px; }
+.board .sq i.file { bottom: 1px; right: 3px; }
+@media (max-width: 700px) { .chesspanel.shifted { left: 20px; bottom: 90px; } }

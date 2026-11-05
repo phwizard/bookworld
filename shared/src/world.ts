@@ -1,6 +1,7 @@
 // World file types and helpers shared by the server, the clients and the generator.
 // Schema reference: docs/WORLD-FILE.md
 import { INSTRUMENTS, type Instrument, type WorldItem } from './music.js';
+import type { WorldChess } from './chess.js';
 
 export type Direction = 'n' | 'e' | 's' | 'w';
 export const DIRECTIONS: Direction[] = ['n', 'e', 's', 'w'];
@@ -189,6 +190,8 @@ export interface World {
   items?: WorldItem[];
   /** practice rooms where a character drills songs with visitors, see shared/src/song.ts */
   lessons?: WorldLesson[];
+  /** rooms with a chess board, and the character who sets puzzles there, see shared/src/chess.ts */
+  chess?: WorldChess[];
 }
 
 export const DEFAULT_ROOM_SIZE: [number, number, number] = [12, 4, 12];
@@ -279,6 +282,13 @@ export function validateWorld(input: unknown): string[] {
     if (!byId.has(l.room)) errors.push(`lesson in ${l.room}: not a room id`);
     if (!charIds.has(l.trainer)) errors.push(`lesson in ${l.room}: trainer ${l.trainer} is not a character`);
     if (l.instrument && !INSTRUMENTS.includes(l.instrument)) errors.push(`lesson in ${l.room}: unknown instrument ${l.instrument}`);
+  }
+  const chessRooms = new Set<string>();
+  for (const c of w.chess ?? []) {
+    if (!byId.has(c.room)) errors.push(`chess in ${c.room}: not a room id`);
+    if (chessRooms.has(c.room)) errors.push(`chess in ${c.room}: listed twice`);
+    chessRooms.add(c.room);
+    if (c.master !== undefined && !charIds.has(c.master)) errors.push(`chess in ${c.room}: master ${c.master} is not a character`);
   }
   const grid = layoutGrid(w as World);
   const seen = new Map<string, string>();

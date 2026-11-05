@@ -2,6 +2,7 @@
 import type { Direction, World } from './world.js';
 import type { Instrument } from './music.js';
 import type { LessonCommand, LessonStateMessage } from './song.js';
+import type { ChessCommand, ChessStateMessage } from './chess.js';
 
 export const COLYSEUS_ROOM_NAME = 'location';
 
@@ -189,6 +190,12 @@ export const MSG = {
   bar: 'bar',
   /** client -> server -> client: clock sync for the bars */
   clock: 'clock',
+  /** client -> server: a chess command (sit, move, resign, a puzzle) in a room with a board */
+  chess: 'chess',
+  /** server -> one player: the room's board and this player's puzzle */
+  chessState: 'chessState',
+  /** client -> server: the handlers are wired; the server answers with the room's state (ai, band, lesson, chess) */
+  ready: 'ready',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -204,6 +211,8 @@ export interface PlayMessage { tokens: string[] }
 export interface PlayedMessage { sessionId: string; name: string; instrument: Instrument; tokens: string[] }
 export type LessonMessage = LessonCommand;
 export type LessonStateMsg = LessonStateMessage;
+export type ChessMessage = ChessCommand;
+export type ChessStateMsg = ChessStateMessage;
 /** `sessionId` of a PlayedMessage when a character plays: "c:" plus its id (clients keep character poses under that key) */
 export function characterSeat(characterId: string): string { return `c:${characterId}`; }
 

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AiState, Direction, EnterResponse, PlayerView, CharacterView, ItemView, LessonStateMessage, BandState } from '@bookworld/shared';
+import type { AiState, Direction, EnterResponse, PlayerView, CharacterView, ItemView, LessonStateMessage, BandState, ChessStateMessage } from '@bookworld/shared';
 
 export interface RemotePose { x: number; y: number; z: number; ry: number; anim: string }
 
@@ -25,6 +25,11 @@ interface State {
   setLesson(l: LessonStateMessage | null): void;
   lessonOpen: boolean;
   setLessonOpen(open: boolean): void;
+  /** the room's board and this player's puzzle; null in rooms without a board */
+  chess: ChessStateMessage | null;
+  setChess(c: ChessStateMessage | null): void;
+  chessOpen: boolean;
+  setChessOpen(open: boolean): void;
   /** a real instrument through the microphone feeds the chord bar */
   micOn: boolean;
   /** every phrase played goes to the practice room's trainer, who answers with one of its own */
@@ -95,6 +100,10 @@ export const useStore = create<State>((set) => ({
   setLesson: (lesson) => set({ lesson }),
   lessonOpen: false,
   setLessonOpen: (lessonOpen) => set({ lessonOpen }),
+  chess: null,
+  setChess: (chess) => set({ chess }),
+  chessOpen: false,
+  setChessOpen: (chessOpen) => set({ chessOpen }),
   micOn: false,
   setMicOn: (micOn) => set({ micOn }),
   jamOn: false,
@@ -126,7 +135,7 @@ export const useStore = create<State>((set) => ({
   chatTyping: false,
   setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, band: null, lastLine: null, resume: enterFrom ? null : s.resume })),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, chess: null, band: null, lastLine: null, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),

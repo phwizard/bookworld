@@ -4,7 +4,7 @@
 import { appendFile, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-export type MetricEventKind = 'enter' | 'join' | 'leave' | 'message' | 'item' | 'music' | 'lesson';
+export type MetricEventKind = 'enter' | 'join' | 'leave' | 'message' | 'item' | 'music' | 'lesson' | 'chess';
 
 export interface MetricEvent {
   /** ISO timestamp, filled in by record() */
@@ -35,6 +35,11 @@ export interface MetricEvent {
   mode?: string;
   hits?: number;
   tries?: number;
+  /** on `chess`: a game ended (result and the number of moves) or a puzzle ended (its rating, solved or not) */
+  result?: string;
+  moves?: number;
+  puzzle?: number;
+  solved?: boolean;
 }
 
 const target = process.env.METRICS_FILE ?? join(process.cwd(), 'data', 'events.jsonl');

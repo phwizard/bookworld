@@ -2273,5 +2273,18 @@
         }
       ]
     }
+  ],
+  "chess": [
+    {
+      "room": "looking-glass-house"
+    },
+    {
+      "room": "garden-of-live-flowers",
+      "master": "red-queen"
+    },
+    {
+      "room": "sheep-shop",
+      "master": "white-queen"
+    }
   ]
 }
