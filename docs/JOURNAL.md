@@ -327,3 +327,5 @@ Provisioned by hand over the hosted MCP in two minutes, in the provisioner's ord
 ![The town of the Lion and the Unicorn, e6, with Humpty's wall west and the Borghese panorama for the open square](journal/261105-02-looking-glass-town.jpg)
 
 What a chess player will want next is a board. The JustChess repo was surveyed for anything embeddable: nothing yet (no embed route, no public API, every endpoint behind their login, puzzles taken from the Lichess database, the board their own Flutter widget), so a board module would stand on its own: chess.js for the rules, the Lichess puzzle set (CC0) for puzzles, a panel beside the chat, two visitors playing in a room with the position held by the world service and a character kibitzing, a puzzle lesson on the Songbook's lesson plumbing. That is the first real candidate for the features-as-modules refactor in the plan.
+
+Later the same evening the owner copied the app's App Secret into the env files and ran the push: the Looking-Glass is live at https://bookworld.ethora.com/?world=looking-glass with chat on, nine rooms and seven scenes, the sixth world with working characters on the site.
