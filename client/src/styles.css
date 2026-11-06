@@ -184,8 +184,8 @@ button, input { font: inherit; }
 .chesspanel .status .ok { color: #b8e8a0; }
 .chesspanel .status .miss { color: #ffb0a0; }
 .chesspanel .moves { max-height: 64px; overflow: auto; margin-top: 4px; font-size: 13px; opacity: .85; line-height: 1.4; }
-.board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; aspect-ratio: 1; border: 2px solid #5a4630; border-radius: 4px; overflow: hidden; user-select: none; }
-.board .sq { position: relative; padding: 0; border: none; cursor: default; display: grid; place-items: center; font-size: 0; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; aspect-ratio: 1; border: 2px solid #5a4630; border-radius: 4px; overflow: hidden; user-select: none; }
+.board .sq { position: relative; min-width: 0; min-height: 0; padding: 0; border: none; cursor: default; display: grid; place-items: center; font-size: 0; }
 .board.live .sq { cursor: pointer; }
 .board .sq.light { background: #e9d7b4; }
 .board .sq.dark { background: #a3763f; }
