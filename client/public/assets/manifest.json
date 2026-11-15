@@ -42,6 +42,90 @@
       "use": "floor",
       "look": "grass with scattered leaves: gardens, orchards, wild lawns",
       "surface": "grass"
+    },
+    "pattern-plaster": {
+      "file": "pattern:plaster",
+      "use": "wall",
+      "look": "plain plaster in the wall colour: cottages, cells, kitchens, plain rooms (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-damask": {
+      "file": "pattern:damask",
+      "use": "wall",
+      "look": "damask wallpaper, the ornament toned on the wall colour with trim outlines: drawing rooms, cafes, salons, foyers (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-stripes": {
+      "file": "pattern:stripes",
+      "use": "wall",
+      "look": "regency striped wallpaper with trim pinstripes: bedrooms, hotel rooms, halls, clubs (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-panelling": {
+      "file": "pattern:panelling",
+      "use": "wall",
+      "look": "upright wooden boards in the wall colour: shops, studies, inns, cabins, ships (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "wood"
+    },
+    "pattern-brick": {
+      "file": "pattern:brick",
+      "use": "wall",
+      "look": "brick in the wall colour: cellars, yards, factories, kitchens, prisons (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-velvet": {
+      "file": "pattern:velvet",
+      "use": "wall",
+      "look": "velvet hangings with small gilt figures in the trim colour: theatre boxes, thrones, boudoirs (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "carpet"
+    },
+    "pattern-foliage": {
+      "file": "pattern:foliage",
+      "use": "wall",
+      "look": "a hedge of leaves in the wall colour with flowers in the trim colour: woods, bowers, mazes, gardens with walls (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "grass"
+    },
+    "pattern-slabs": {
+      "file": "pattern:slabs",
+      "use": "floor",
+      "look": "stone slabs in the floor colour: halls, cellars, churches, streets (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-parquet": {
+      "file": "pattern:parquet",
+      "use": "floor",
+      "look": "waxed parquet squares in the floor colour: cafes, ballrooms, salons, museums (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "wood"
+    },
+    "pattern-checker": {
+      "file": "pattern:checker",
+      "use": "floor",
+      "look": "marble checker, the floor colour against a pale partner: halls, palaces, chess rooms, kitchens (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-planks": {
+      "file": "pattern:planks",
+      "use": "floor",
+      "look": "long wooden floorboards in the floor colour: shops, cottages, ships, attics (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "wood"
+    },
+    "pattern-cobbles": {
+      "file": "pattern:cobbles",
+      "use": "floor",
+      "look": "cobblestones in the floor colour: streets, yards, markets, quays (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "stone"
+    },
+    "pattern-carpet": {
+      "file": "pattern:carpet",
+      "use": "floor",
+      "look": "fitted carpet in the floor colour with a trellis and figure in the trim colour: theatres, hotels, bedrooms (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "carpet"
+    },
+    "pattern-grass": {
+      "file": "pattern:grass",
+      "use": "floor",
+      "look": "grass in the floor colour: lawns, woods, meadows (drawn from the room palette, so choose the palette colours with it)",
+      "surface": "grass"
     }
   },
   "panoramas": {

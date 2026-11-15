@@ -359,3 +359,13 @@ Provisioned by hand over the MCP in a few minutes (app, six rooms, five agents w
 ![The Duke of Brunswick's box at the Theatre-Italien, where the play performs the Opera Game on the board](journal/261105-06-brunswick-box.jpg)
 
 The next morning (6 Nov) the owner copied the App Secret for the Regence app into the env files and ran the push: the chess module and the Cafe de la Regence are live, https://bookworld.ethora.com/?world=cafe-de-la-regence with chat on, the seventh world with working characters on the site, and the Looking-Glass boards with it. The secret pasted for this app was the same value as the Looking-Glass one, the per-owner key gap 18 describes; the two worlds still carry their own variables.
+
+## 15 Nov 2026: drawn materials for the rooms
+
+The owner asked for better looking rooms. There is still no image API key, so the answer for now is code: the client draws its wall and floor materials on a canvas from the room's palette, and the old single pattern (faint diagonal lines) is replaced by a small library. Walls: plaster, damask, stripes, panelling, brick, velvet, foliage. Floors: slabs, parquet, marble checker, planks, cobbles, carpet, grass. A world file names one with `pattern:<name>` in `wallpaper` or `floor`; null now gives plaster and slabs. Each pattern tiles, is drawn from a seeded random so every visitor sees the same wall, and carries its own scale in metres.
+
+Two things in the room itself. The wall texture used to be stretched on the wall pieces beside a door and over it (every piece got the whole wall's repeat); each piece now repeats by its own size and starts where its neighbour stopped, so paper runs unbroken past a doorway. And closed rooms have joinery: a cornice, a skirting board, and a dado rail in papered rooms.
+
+The two chess worlds use it: damask and parquet in the front room of the Regence, stripes and marble in the back room, damask and a red carpet in the foyer, velvet with gilt figures in the Duke's box, cobbles in the Rue Saint-Honore; damask and a marble checker in the Looking-Glass House, hedges in the woods, panelling and floorboards in the Sheep's shop. The other worlds keep their image textures and gain the joinery and the correct tiling. The generator can choose the patterns (fourteen new entries in the asset manifest). Generated images per room (panoramas, wallpapers from the room's description) remain the next step once there is a key; `docs/PLAN.md`.
+
+![The front room of the Cafe de la Regence with drawn damask, parquet, dado rail and cornice](journal/261115-01-regence-damask-parquet.jpg)

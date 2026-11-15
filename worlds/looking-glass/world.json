@@ -21,8 +21,8 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -395,7 +395,7 @@
         "s": "garden-of-live-flowers",
         "w": null
       },
-      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "wallpaper": "pattern:foliage",
       "floor": "assets/textures/brown_mud_leaves_01.jpg",
       "music": null,
       "surface": "grass",
@@ -570,8 +570,8 @@
         "s": "railway-and-nameless-wood",
         "w": null
       },
-      "wallpaper": "assets/textures/forest_leaves_02.jpg",
-      "floor": "assets/textures/leafy_grass.jpg",
+      "wallpaper": "pattern:foliage",
+      "floor": "pattern:grass",
       "music": {
         "file": "assets/music/Teddy_Bear_Waltz.m4a",
         "title": "Teddy Bear Waltz",
@@ -740,8 +740,8 @@
         "s": "tweedle-wood",
         "w": null
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:panelling",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -1293,7 +1293,7 @@
         "s": "humpty-wall",
         "w": null
       },
-      "wallpaper": "assets/textures/forest_leaves_02.jpg",
+      "wallpaper": "pattern:foliage",
       "floor": "assets/textures/brown_mud_leaves_01.jpg",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
@@ -1475,8 +1475,8 @@
         "s": "knights-forest",
         "w": null
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Teddy_Bear_Waltz.m4a",
         "title": "Teddy Bear Waltz",

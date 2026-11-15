@@ -21,8 +21,8 @@
         "s": "hotel-breteuil",
         "w": null
       },
-      "wallpaper": null,
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:parquet",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -246,8 +246,8 @@
         "s": null,
         "w": "regence-front"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -460,14 +460,14 @@
         "w": null
       },
       "wallpaper": null,
-      "floor": null,
+      "floor": "pattern:cobbles",
       "music": {
         "file": "assets/music/Fairytale_Waltz.m4a",
         "title": "Fairytale Waltz",
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
-      "surface": "grass",
+      "surface": "stone",
       "ambience": [
         {
           "preset": "wind",
@@ -641,15 +641,15 @@
         "s": null,
         "w": "rue-saint-honore"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": null,
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:carpet",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
-      "surface": "stone",
+      "surface": "carpet",
       "scene": {
         "template": "box",
         "size": [
@@ -857,15 +857,15 @@
         "s": null,
         "w": "theatre-foyer"
       },
-      "wallpaper": null,
-      "floor": null,
+      "wallpaper": "pattern:velvet",
+      "floor": "pattern:carpet",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
-      "surface": "stone",
+      "surface": "carpet",
       "scene": {
         "template": "box",
         "size": [
@@ -1031,10 +1031,10 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": null,
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:carpet",
       "music": null,
-      "surface": "stone",
+      "surface": "carpet",
       "ambience": [
         {
           "preset": "clock",

@@ -16,8 +16,8 @@
       "name": "The Rabbit Hole",
       "description": "A long dark well lined with cupboards and bookshelves...",   // shown on entry ("look")
       "exits": { "n": null, "e": "hall-of-doors", "s": null, "w": null },          // room ids; null = wall
-      "wallpaper": "assets/textures/brown_planks_07.jpg",                          // 2D background / 3D wall texture; null = procedural pattern from the palette
-      "floor": "assets/textures/brown_mud_leaves_01.jpg",                          // 3D floor texture; null = procedural
+      "wallpaper": "assets/textures/brown_planks_07.jpg",                          // 3D wall texture: an image, or "pattern:<name>" (below); null = plain plaster in the palette's wall colour
+      "floor": "assets/textures/brown_mud_leaves_01.jpg",                          // 3D floor texture: an image, or "pattern:<name>"; null = stone slabs (grass in a panorama room)
       "music": { "file": "assets/music/Frost_Waltz.m4a", "title": "Frost Waltz",   // optional, loops, starts after the first click, crossfades on room change
                  "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0", "volume": 0.35 },
       "surface": "wood",                                                             // footstep set: wood | stone | grass | carpet; guessed from the floor texture when absent
@@ -25,7 +25,7 @@
       "scene": {                                                                    // optional 3D block
         "template": "box",                                                          // box: walls + ceiling; panorama: no walls, the 360 image is the sky, invisible boundary + door frames
         "size": [12, 4, 12],                                                        // metres, box template
-        "palette": { "wall": "#6b5a3e", "floor": "#3a2f22", "ceiling": "#2a2218", "trim": "#c9a961" }, // used when no wallpaper image exists yet
+        "palette": { "wall": "#6b5a3e", "floor": "#3a2f22", "ceiling": "#2a2218", "trim": "#c9a961" }, // the colours the patterns are drawn in, and of the ceiling and joinery
         "panorama": "assets/panoramas/borghese_gardens_2k.hdr",                    // equirectangular .hdr or .jpg; required for the panorama template
         "props": [ { "kit": "kenney-furniture", "id": "bookshelf", "pos": [-4, 0, -5], "rotY": 0 } ],
         "spawn": [0, 0, 4],                                                         // where you appear on entry
@@ -89,3 +89,12 @@ Character lines from scripts and schedules are posted by the world service as `*
 Rules: exits are symmetric (if A.e = B then B.w = A); the generator must enforce it and the server validates on load. Room ids are slugs. All asset paths are relative to the world folder. Rooms form a grid by construction, which gives the mini-map for free.
 
 Generated worlds: `pnpm generate` writes this file from a book (docs/GENERATOR.md). It also writes `knowledge/<slug>-chN.txt` (one file per chapter, gitignored, rebuilt from `source.text` when missing), `draft.json` (the model's raw answer) and `generation.json` (model, options, warnings). Asset ids the generator may use are listed in `client/public/assets/manifest.json` and `client/public/assets/props/catalog.json`.
+
+## Drawn materials (`pattern:<name>`)
+
+`wallpaper` and `floor` take either an image path or `pattern:<name>`. A pattern is drawn by the client from the room's `scene.palette` (the wall or floor colour as the ground, `trim` for the figure), tiles at a fixed scale in metres on every wall piece, and is the same for every visitor. No image files, no licence line, and a room's whole look changes with four colours.
+
+- Walls: `plaster`, `damask`, `stripes`, `panelling`, `brick`, `velvet`, `foliage`.
+- Floors: `slabs`, `parquet`, `checker`, `planks`, `cobbles`, `carpet`, `grass`.
+
+Closed rooms also get a cornice in the ceiling colour and a skirting board in the trim colour; papered and plastered rooms (`plaster`, `damask`, `stripes`, `velvet`) a dado rail; hedges (`foliage`) none of it. The generator knows the patterns as textures `pattern-<name>` in `client/public/assets/manifest.json`. The code is `client/src/scene/textures.ts`; a new pattern is one function there and one manifest line.
