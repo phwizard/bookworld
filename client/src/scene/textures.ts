@@ -13,6 +13,8 @@ export interface PatternTexture {
   texture: THREE.CanvasTexture;
   /** metres covered by one tile */
   tile: number;
+  /** depth of the relief for materials with grooves and joints (the picture doubles as its own height map), 0 for flat ones */
+  relief: number;
 }
 
 const S = 512;
@@ -416,6 +418,9 @@ const FLOORS: Record<FloorPattern, Painter> = {
   },
 };
 
+/** Materials whose dark lines are hollows: mortar, grooves between boards, the gaps between stones. */
+const RELIEF: Record<string, number> = { brick: 3, panelling: 1.5, planks: 1.5, parquet: 1, cobbles: 4, slabs: 2 };
+
 function paint(kind: 'wall' | 'floor', name: string, base: string, trim: string): PatternTexture {
   const key = `${kind}|${name}|${base}|${trim}`;
   const hit = cache.get(key);
@@ -429,7 +434,7 @@ function paint(kind: 'wall' | 'floor', name: string, base: string, trim: string)
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
-  const out = { texture, tile };
+  const out = { texture, tile, relief: RELIEF[name] ?? 0 };
   cache.set(key, out);
   return out;
 }

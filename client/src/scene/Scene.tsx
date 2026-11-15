@@ -78,6 +78,8 @@ export function Scene({ room, enterFrom }: { room: WorldRoom; enterFrom: Directi
 function ListenerSync() {
   const forward = useMemo(() => new THREE.Vector3(), []);
   useFrame(({ camera }) => {
+    // dev hook: `__look(0)` faces north, `__look(Math.PI / 2)` west, and so on (turning needs the mouse otherwise)
+    if (import.meta.env.DEV) (window as unknown as { __look: (ry: number) => void }).__look = (ry) => camera.rotation.set(0, ry, 0, 'YXZ');
     camera.getWorldDirection(forward);
     setListenerPose(camera.position, forward, camera.up);
   });

@@ -42,6 +42,19 @@ export interface Prop {
   onTop?: boolean;
 }
 
+/** A thing on a wall, drawn by the client: a window (a lit pane of sky), a picture (a small painting), a mirror. */
+export interface Decor {
+  kind: 'window' | 'picture' | 'mirror';
+  /** the wall it hangs on */
+  wall: Direction;
+  /** metres along the wall from its middle, to the right as you face the wall; keep clear of a door */
+  x?: number;
+  /** window: "day" (default) or "night"; picture: "landscape" or "portrait" (default: by the seed) */
+  subject?: 'day' | 'night' | 'landscape' | 'portrait';
+  /** multiplier on the kind's size */
+  size?: number;
+}
+
 export interface RoomScene {
   template: 'box' | 'panorama' | 'custom-gltf';
   /** metres: width (x), height (y), depth (z) */
@@ -49,6 +62,8 @@ export interface RoomScene {
   palette?: Palette;
   panorama?: string | null;
   props?: Prop[];
+  /** windows, pictures and mirrors on the walls (box rooms) */
+  decor?: Decor[];
   spawn?: [number, number, number];
   exitWidth?: number;
 }
@@ -235,6 +250,10 @@ export function validateWorld(input: unknown): string[] {
     if (r.scene) {
       if (!['box', 'panorama', 'custom-gltf'].includes(r.scene.template)) errors.push(`room ${r.id}: unknown scene.template`);
       if (!Array.isArray(r.scene.size) || r.scene.size.length !== 3) errors.push(`room ${r.id}: scene.size must be [w,h,d]`);
+      for (const dc of r.scene.decor ?? []) {
+        if (!['window', 'picture', 'mirror'].includes(dc.kind)) errors.push(`room ${r.id}: unknown decor kind ${String(dc.kind)}`);
+        if (!DIRECTIONS.includes(dc.wall)) errors.push(`room ${r.id}: decor needs a wall (n, e, s, w)`);
+      }
     }
   }
   if (!w.start || !byId.has(w.start)) errors.push(`start ${JSON.stringify(w.start)} is not a room id`);

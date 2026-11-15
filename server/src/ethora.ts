@@ -133,8 +133,22 @@ export class EthoraWorldService {
     return this.post(roomId, narrationBody(text), 'narration');
   }
 
+  private lineListeners = new Map<string, Set<(body: string) => void>>();
+
+  /**
+   * The room's own wire: whoever holds the room's clients hears every line posted to it and passes it on, so a line
+   * shows and is spoken even when the broadcast is accepted and not delivered (ETHORA-GAPS 25) or chat is off.
+   */
+  onLine(roomId: string, fn: (body: string) => void): () => void {
+    let set = this.lineListeners.get(roomId);
+    if (!set) this.lineListeners.set(roomId, (set = new Set()));
+    set.add(fn);
+    return () => { set!.delete(fn); };
+  }
+
   /** Posts a raw body (a character's scripted line, already formatted) into the room. */
   async post(roomId: string, body: string, kind: 'narration' | 'line' = 'line'): Promise<void> {
+    for (const fn of this.lineListeners.get(roomId) ?? []) fn(body);
     const r = this.ids?.rooms[roomId];
     debug(this.slug ?? '-', 'post', { room: roomId, kind, text: body, sent: Boolean(this.sdk && r) });
     if (!this.sdk || !r || !this.appId) {

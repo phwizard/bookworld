@@ -6,7 +6,7 @@ import {
   MSG, OPPOSITE, DIRECTIONS, DIRECTION_LABEL, entryPose, roomById, roomSize, roomSpawn, clamp, musicLine, validToken,
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
-  type ChatSeenMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
+  type ChatSeenMessage, type LineMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
   type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, PUZZLE_LEVELS, movesText, recordLine,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
@@ -120,6 +120,8 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private unsubscribeItems: (() => void) | null = null;
   private unsubscribeBudget: (() => void) | null = null;
   private unsubscribeBoard: (() => void) | null = null;
+  private unsubscribeLines: (() => void) | null = null;
+  private lineSeq = 0;
 
   onCreate(options: CreateOptions) {
     const loaded = getWorld(options.world);
@@ -143,6 +145,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
       state: (s) => this.broadcast(MSG.bandState, s),
       narrate: (text) => void tryEthora('band', () => this.ethora.narrate(room.id, text)),
     });
+    this.unsubscribeLines = this.ethora.onLine(room.id, (body) => this.broadcast(MSG.line, { id: `${this.roomId}-${++this.lineSeq}`, body, at: Date.now() } satisfies LineMessage));
     this.unsubscribe = this.sim.subscribe(room.id, (chars) => this.syncCharacters(chars));
     this.unsubscribeItems = this.sim.subscribeItems(room.id, (items) => this.syncItems(items));
     this.lessonDef = loaded.world.lessons?.find((l) => l.room === room.id) ?? null;
@@ -651,6 +654,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.unsubscribeItems?.();
     this.unsubscribeBudget?.();
     this.unsubscribeBoard?.();
+    this.unsubscribeLines?.();
   }
 
   /** Mirrors the sim's items of this location; carried ones are tagged with the carrier's seat in this room. */

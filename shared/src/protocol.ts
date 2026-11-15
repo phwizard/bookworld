@@ -196,6 +196,8 @@ export const MSG = {
   chessState: 'chessState',
   /** client -> server: the handlers are wired; the server answers with the room's state (ai, band, lesson, chess) */
   ready: 'ready',
+  /** a line the world posted into the room's chat, sent to the room's clients directly as well (ETHORA-GAPS 25) */
+  line: 'line',
 } as const;
 
 export interface PosMessage { x: number; y: number; z: number; ry: number; anim: Anim }
@@ -203,6 +205,8 @@ export interface MoveMessage { dir: Direction }
 export interface MovedMessage { to: string; enterFrom: Direction }
 export interface DeniedMessage { reason: string }
 export interface SaidMessage { characters: string[]; /** the text, only while the debug log is on */ text?: string }
+/** A line of the world itself (narration or a character's scripted line), in the chat's own body format. */
+export interface LineMessage { id: string; body: string; at: number }
 export interface ChatSeenMessage { id: string; from: string; text: string; at?: number }
 export type AiMessage = AiState;
 export interface AwayMessage { away: boolean; gone?: boolean }

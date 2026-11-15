@@ -98,3 +98,17 @@ Generated worlds: `pnpm generate` writes this file from a book (docs/GENERATOR.m
 - Floors: `slabs`, `parquet`, `checker`, `planks`, `cobbles`, `carpet`, `grass`.
 
 Closed rooms also get a cornice in the ceiling colour and a skirting board in the trim colour; papered and plastered rooms (`plaster`, `damask`, `stripes`, `velvet`) a dado rail; hedges (`foliage`) none of it. The generator knows the patterns as textures `pattern-<name>` in `client/public/assets/manifest.json`. The code is `client/src/scene/textures.ts`; a new pattern is one function there and one manifest line.
+
+## Things on the walls (`scene.decor`)
+
+```jsonc
+"decor": [
+  { "kind": "window", "wall": "n", "x": -5 },                       // a lit pane of sky; "subject": "night" for stars
+  { "kind": "picture", "wall": "s", "x": 5, "subject": "portrait" }, // or "landscape"; without a subject the seed decides
+  { "kind": "mirror", "wall": "w", "x": 0, "size": 1.2 }
+]
+```
+
+Box rooms only. `x` is metres along the wall from its middle, to the right as you face the wall; keep it 2 m or more from the middle of a wall with a door. The client draws them (`client/src/scene/Decor.tsx`): each picture is painted from a seed made of the world, the room, the wall and its place in the list, so it is the same picture for everyone and stays the same between visits.
+
+Props are placed by the middle of their footprint and stand on the floor (`pos` y 0), whatever the model's own origin is.

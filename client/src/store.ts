@@ -48,6 +48,9 @@ interface State {
   pointerLocked: boolean;
   toast: string | null;
   bubbles: Record<string, { text: string; at: number }>;
+  /** the world's own lines in this room as they came over the world's connection (the chat may not deliver them) */
+  wireLines: { id: string; body: string; at: number }[];
+  addWireLine(line: { id: string; body: string; at: number }): void;
   /** the last chat line seen in this room: who sent it and whether that was a character (an unnamed reply goes to them) */
   lastLine: { from: string; character: boolean; at: number } | null;
   setLastLine(from: string, character: boolean): void;
@@ -118,6 +121,8 @@ export const useStore = create<State>((set) => ({
   pointerLocked: false,
   toast: null,
   bubbles: {},
+  wireLines: [],
+  addWireLine: (line) => set((s) => ({ wireLines: [...s.wireLines.slice(-199), line] })),
   lastLine: null,
   setLastLine: (from, character) => set({ lastLine: { from, character, at: Date.now() } }),
   musicOn: (() => { try { return localStorage.getItem('bookworld.music') !== 'off'; } catch { return true; } })(),
@@ -135,7 +140,7 @@ export const useStore = create<State>((set) => ({
   chatTyping: false,
   setChatTyping: (chatTyping) => set({ chatTyping }),
   setSession: (session) => set({ session, ai: session.ai ?? null, location: session.world.start, enterFrom: null }),
-  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, nearItem: null, lesson: null, chess: null, band: null, lastLine: null, resume: enterFrom ? null : s.resume })),
+  setLocation: (location, enterFrom) => set((s) => ({ location, enterFrom, players: {}, characters: {}, items: {}, wireLines: [], nearItem: null, lesson: null, chess: null, band: null, lastLine: null, resume: enterFrom ? null : s.resume })),
   setPlayers: (players) => set({ players }),
   setCharacters: (characters) => set({ characters }),
   setMySessionId: (mySessionId) => set({ mySessionId }),

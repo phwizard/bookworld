@@ -19,7 +19,7 @@ Press C in a room with a board. The panel shows the two chairs, the board and th
 
 A chair is yours again after a reload; when you leave the room the chair is free and the position stays, so someone else can sit down and finish the game, or you can come back to it. The board is cleared only by a player pressing New game.
 
-The record goes into the room's chat as narration, a full move at a time (`Chess: 3. Qh5 Nf6`), with who sat down, draw offers, resignations and the whole game at the end (`Chess: Taras wins by checkmate, 1-0: 1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6 4. Qxf7#`). "ask Red Queen" in the panel sends a question to the master in your name with the moves so far in brackets; any message that names the master during a game gets the same bracket, because the agent does not see the room's own narration (`docs/ETHORA-GAPS.md`, 22). The master is asked only when you talk to it; moves cost nothing.
+The record goes into the room's chat as narration, a full move at a time (`Chess: 3. Qh5 Nf6`), with who sat down, draw offers, resignations and the whole game at the end (`Chess: Taras wins by checkmate, 1-0: 1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6 4. Qxf7#`). "ask Red Queen" in the panel sends a question to the master in your name with the moves so far in brackets; any message that names the master during a game gets the same bracket, because the agent does not see the room's own narration (`docs/ETHORA-GAPS.md`, 22). The master is asked only when you talk to it; moves cost nothing. The record and the master's lines also reach the room over the world's own connection, so they show in the panel's chat list and are spoken even when Ethora does not deliver the broadcast (gap 25).
 
 ## Puzzles
 

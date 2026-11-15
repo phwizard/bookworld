@@ -5,12 +5,13 @@ import {
   COLYSEUS_ROOM_NAME, MSG, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MovedMessage, type DeniedMessage,
   type PosMessage, type SaidMessage, type MoveMessage, type PlayerView, type CharacterView, type ItemView, type LocationStateView,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type ChatSeenMessage,
-  type BandCommand, type BandState, type BarMessage, type ClockMessage, type ChessCommand, type ChessStateMessage,
+  type BandCommand, type BandState, type BarMessage, type ClockMessage, type ChessCommand, type ChessStateMessage, type LineMessage,
 } from '@bookworld/shared';
 import { SERVER_URL } from '../api.ts';
 import { poses, useStore } from '../store.ts';
 import { clearSession, updateSession } from '../session.ts';
 import { playHitAt, playTokens } from '../audio/instruments.ts';
+import { performLine } from '../roomLines.ts';
 
 const client = new Client(SERVER_URL);
 let current: Room<LocationStateView> | null = null;
@@ -157,6 +158,11 @@ function wire(room: Room<LocationStateView>) {
   setTimeout(() => syncClock(room), 1500);
   if (clockTimer) clearInterval(clockTimer);
   clockTimer = setInterval(() => { if (current === room) syncClock(room); else if (clockTimer) { clearInterval(clockTimer); clockTimer = null; } }, 30000);
+  room.onMessage<LineMessage>(MSG.line, (msg) => {
+    if (typeof msg?.body !== 'string') return;
+    useStore.getState().addWireLine({ id: msg.id, body: msg.body, at: Date.now() });
+    performLine(msg.body);
+  });
   room.onMessage<DeniedMessage>(MSG.denied, (msg) => useStore.getState().setToast(msg.reason));
   room.onMessage<AiMessage>(MSG.ai, (msg) => {
     const before = useStore.getState().ai;

@@ -6,6 +6,7 @@ import { isNarration, narrationText, parseCharacterLine, parseMusicLine } from '
 import { poses, useStore } from '../store.ts';
 import { playSound } from '../audio/engine.ts';
 import { speak } from '../audio/voice.ts';
+import { performLine } from '../roomLines.ts';
 import { playTokens } from '../audio/instruments.ts';
 import { reportChatSeen } from '../net/colyseus.ts';
 
@@ -35,6 +36,7 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
   const { decoratedMessages, renderMessage, roomJID, loadMoreMessages, isLoading } = props;
   const box = useRef<HTMLDivElement>(null);
   const stickToBottom = useRef(true);
+  const wireCount = useStore((st) => st.wireLines.length);
 
   // New messages become bubbles over the speaker's avatar. The component mutates its message arrays in place,
   // so this runs after every render and relies on the `seen` set to stay cheap.
@@ -48,14 +50,9 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
       if (!m.body) continue;
       // the operator's debug log, when on, gets every message of the room from the clients (the server cannot read the history)
       if (useStore.getState().session?.debug && now - messageTime(m) <= 120000) reportChatSeen({ id: m.id, from: speakerName(m) || 'app', text: m.body, at: messageTime(m) || undefined });
-      const line = parseCharacterLine(narrationText(m.body));
-      if (line) {
-        if (import.meta.env.DEV) console.log('[bubbles] line', { who: line.name, age: now - messageTime(m), date: m.date, ts: m.timestamp, tsMs: m.messageTimestampMs });
-        if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) {
-          useStore.getState().setBubble(line.name, line.text);
-          useStore.getState().setLastLine(line.name, isCharacter(line.name));
-          if (isCharacter(line.name)) speak(line.name, line.text);
-        }
+      if (parseCharacterLine(narrationText(m.body))) {
+        // spoken once, whether it came here first or over the world's connection
+        if (now - messageTime(m) <= BUBBLE_MAX_AGE_MS) performLine(m.body);
         continue;
       }
       // A player's phrase comes back from the server as narration (everyone heard it live); a character's or a
@@ -86,7 +83,7 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
   useEffect(() => {
     const el = box.current;
     if (el && stickToBottom.current) el.scrollTop = el.scrollHeight;
-  }, [decoratedMessages.length]);
+  }, [decoratedMessages.length, wireCount]);
 
   function onScroll() {
     const el = box.current;
@@ -95,19 +92,32 @@ export function ChatMessages(props: CustomScrollableAreaProps) {
     if (el.scrollTop < 30 && !isLoading) void loadMoreMessages(roomJID, 30);
   }
 
+  // The world's lines that came over its own connection and are not in the chat (the broadcast was not delivered)
+  // take their place in the list by time.
+  const wire = useStore((st) => st.wireLines);
+  const inChat = new Map<string, number[]>();
+  for (const d of decoratedMessages) if (d.message.body) inChat.set(d.message.body, [...(inChat.get(d.message.body) ?? []), messageTime(d.message)]);
+  const missing = wire.filter((l) => !(inChat.get(l.body) ?? []).some((t) => Math.abs(t - l.at) < 5 * 60_000));
+  const rows: { key: string; body: string; at: number; chat?: (typeof decoratedMessages)[number] }[] = [
+    ...decoratedMessages.map((d) => ({ key: d.message.id, body: d.message.body ?? '', at: messageTime(d.message), chat: d })),
+    ...missing.map((l) => ({ key: `wire-${l.id}`, body: l.body, at: l.at })),
+  ];
+  if (missing.length) rows.sort((x, y) => x.at - y.at);
+
   return (
     <div className="bw-messages" ref={box} onScroll={onScroll}>
-      {decoratedMessages.map((d) =>
-        parseCharacterLine(narrationText(d.message.body)) ? (
-          <div key={d.message.id} className="bw-line">
-            <b>{parseCharacterLine(narrationText(d.message.body))!.name}</b> {parseCharacterLine(narrationText(d.message.body))!.text}
-          </div>
-        ) : isNarration(d.message.body) ? (
-          <div key={d.message.id} className="bw-narration">{narrationText(d.message.body)}</div>
+      {rows.map((r) => {
+        const line = parseCharacterLine(narrationText(r.body));
+        return line ? (
+          <div key={r.key} className="bw-line"><b>{line.name}</b> {line.text}</div>
+        ) : isNarration(r.body) ? (
+          <div key={r.key} className="bw-narration">{narrationText(r.body)}</div>
+        ) : r.chat ? (
+          <div key={r.key}>{renderMessage(r.chat)}</div>
         ) : (
-          <div key={d.message.id}>{renderMessage(d)}</div>
-        ),
-      )}
+          <div key={r.key} className="bw-narration">{r.body}</div>
+        );
+      })}
     </div>
   );
 }

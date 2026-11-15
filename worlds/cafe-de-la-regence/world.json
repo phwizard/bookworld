@@ -230,7 +230,43 @@
           0,
           1
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "mirror",
+            "wall": "w",
+            "x": -3,
+            "size": 1.2
+          },
+          {
+            "kind": "mirror",
+            "wall": "w",
+            "x": 3,
+            "size": 1.2
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": -5
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 5
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": -5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 5,
+            "subject": "portrait"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -443,7 +479,45 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": -3.6,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 0,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 3.6,
+            "subject": "portrait"
+          },
+          {
+            "kind": "mirror",
+            "wall": "e",
+            "x": 0,
+            "size": 1.2
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": -3,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 3,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -841,7 +915,46 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "mirror",
+            "wall": "n",
+            "x": -4.5,
+            "size": 1.3
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 0,
+            "subject": "portrait",
+            "size": 1.2
+          },
+          {
+            "kind": "mirror",
+            "wall": "n",
+            "x": 4.5,
+            "size": 1.3
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": -4.5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 4.5,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -1015,7 +1128,20 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "portrait"
+          },
+          {
+            "kind": "mirror",
+            "wall": "n",
+            "x": 0
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -1235,7 +1361,31 @@
           0,
           -1.5
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": -2.5
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": 2.5
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": 0,
+            "subject": "landscape",
+            "size": 1.2
+          },
+          {
+            "kind": "mirror",
+            "wall": "w",
+            "x": 0
+          }
+        ]
       },
       "owner": null,
       "claimable": false,

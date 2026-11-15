@@ -5,10 +5,11 @@ import { Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   DIRECTIONS, DEFAULT_EXIT_WIDTH, DOOR_HEIGHT, WALL_THICKNESS, doorPose, roomById, roomSize,
-  type Direction, type World, type WorldRoom,
+  type Decor, type Direction, type World, type WorldRoom,
 } from '@bookworld/shared';
 import { floorPattern, patternName, repeated, wallPattern, type PatternTexture } from './textures.ts';
 import { assetUrl } from '../assets.ts';
+import { WallDecor } from './Decor.tsx';
 
 const DEFAULT_PALETTE = { wall: '#6b5a3e', floor: '#3a2f22', ceiling: '#2a2218', trim: '#c9a961' };
 
@@ -36,7 +37,9 @@ function Surface({ source, width, height, startX = 0, startY = 0, roughness }: {
     () => repeated(source.pattern.texture, width / tile, height / tile, startX / tile, startY / tile),
     [source.pattern, width, height, startX, startY, tile],
   );
-  const plain = <meshStandardMaterial map={drawn} roughness={roughness} />;
+  const plain = source.pattern.relief
+    ? <meshStandardMaterial map={drawn} bumpMap={drawn} bumpScale={source.pattern.relief} roughness={roughness} />
+    : <meshStandardMaterial map={drawn} roughness={roughness} />;
   if (!source.url) return plain;
   return (
     <Suspense fallback={plain}>
@@ -83,16 +86,16 @@ export function BoxRoom({ world, room }: { world: World; room: WorldRoom }) {
       )}
 
       {DIRECTIONS.map((dir) => (
-        <Wall key={dir} dir={dir} w={w} h={h} d={d} exitWidth={exitWidth} open={open} target={room.exits[dir] ? roomById(world, room.exits[dir]!) ?? null : null} wall={wall} trim={palette.trim} ceiling={palette.ceiling} railed={railed} joinery={joinery} />
+        <Wall key={dir} dir={dir} w={w} h={h} d={d} exitWidth={exitWidth} open={open} target={room.exits[dir] ? roomById(world, room.exits[dir]!) ?? null : null} wall={wall} trim={palette.trim} ceiling={palette.ceiling} railed={railed} joinery={joinery} decor={(room.scene?.decor ?? []).filter((x) => x.wall === dir)} seed={`${world.slug}|${room.id}|${dir}`} />
       ))}
     </group>
   );
 }
 
-interface WallProps { dir: Direction; w: number; h: number; d: number; exitWidth: number; target: WorldRoom | null; wall: SurfaceSource; trim: string; ceiling: string; railed: boolean; joinery: boolean; open: boolean }
+interface WallProps { dir: Direction; w: number; h: number; d: number; exitWidth: number; target: WorldRoom | null; wall: SurfaceSource; trim: string; ceiling: string; railed: boolean; joinery: boolean; decor: Decor[]; seed: string; open: boolean }
 
 /** One wall, split around the doorway when there is an exit. Built in a local frame then rotated into place. */
-function Wall({ dir, w, h, d, exitWidth, target, wall, trim, ceiling, railed, joinery, open }: WallProps) {
+function Wall({ dir, w, h, d, exitWidth, target, wall, trim, ceiling, railed, joinery, decor, seed, open }: WallProps) {
   const length = dir === 'n' || dir === 's' ? w : d;
   const pose = doorPose({ id: '', name: '', description: '', exits: { n: null, e: null, s: null, w: null }, scene: { template: 'box', size: [w, h, d] } }, dir);
   // Local frame: the wall runs along local x, its inner face looks along local +z. Rotate so +z points into the room.
@@ -142,6 +145,7 @@ function Wall({ dir, w, h, d, exitWidth, target, wall, trim, ceiling, railed, jo
           </group>
         ))}
       </RigidBody>
+      {!open && decor.map((item, i) => <WallDecor key={i} item={item} seed={`${seed}|${i}`} trim={trim} wallHeight={h} />)}
       {target && (
         <group>
           {/* door frame */}

@@ -57,7 +57,14 @@ function PropModel({ url, scale, prop }: { url: string; scale: number; prop: Pro
       const m = n as THREE.Mesh;
       if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; }
     });
-    return o;
+    // The kits anchor their models at a corner, and some below their base: stand each on the floor, centred on its
+    // footprint, so `pos` in the world file is where the middle of the thing is.
+    const box = new THREE.Box3().setFromObject(o);
+    const centre = box.getCenter(new THREE.Vector3());
+    o.position.set(o.position.x - centre.x, o.position.y - box.min.y, o.position.z - centre.z);
+    const wrap = new THREE.Group();
+    wrap.add(o);
+    return wrap;
   }, [gltf.scene]);
   // Flat things (rugs) and tabletop items do not need to block the player.
   const solid = !prop.flat && !prop.onTop;
