@@ -7,7 +7,7 @@ import {
   type SaidMessage, type AiMessage, type AwayMessage, type Direction, type JoinOptions, type MoveMessage, type MovedMessage, type PosMessage, type World, type WorldRoom,
   type TakeMessage, type PlayMessage, type PlayedMessage, type LessonCommand, type LessonStateMessage, type LessonActive, type WorldLesson, type Song, type LessonMode,
   type ChatSeenMessage, type LineMessage, type BandCommand, type ClockMessage, characterLine, characterSeat, LESSON_MODES,
-  type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, PUZZLE_LEVELS, movesText, recordLine,
+  type ChessCommand, type ChessStateMessage, type WorldChess, COLOR_NAME, ENGINE_LEVELS, PUZZLE_LEVELS, movesText, recordLine, type ChessGameView,
 } from '@bookworld/shared';
 import { verifySession, type Session } from '../auth.ts';
 import { getWorld } from '../world/load.ts';
@@ -22,6 +22,8 @@ import { Lesson, daysAgo, songCard } from '../world/lesson.ts';
 import { Band } from '../world/band.ts';
 import { canSing, prerenderSung, sungUrl, voicedCharacters } from '../voice.ts';
 import { loadPlan, progressOn, savePlan, saveProgress, songById, songsFor } from '../world/songs.ts';
+import { chooseMove, evaluate } from '../world/engine.ts';
+import { Chess } from 'chess.js';
 import { type ChessGame, PuzzleRun, loadChessProgress, loadPuzzles, pickPuzzle, puzzleMemoryNote, saveChessProgress } from '../world/chess.ts';
 
 export const Player = schema({
@@ -122,6 +124,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
   private unsubscribeBoard: (() => void) | null = null;
   private unsubscribeLines: (() => void) | null = null;
   private lineSeq = 0;
+  private engineTimer: ReturnType<typeof setTimeout> | null = null;
 
   onCreate(options: CreateOptions) {
     const loaded = getWorld(options.world);
@@ -310,6 +313,20 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           if (rec) void tryEthora('chess record', () => this.ethora.narrate(this.room.id, rec));
           if (v.status === 'over') record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: v.result, moves: v.moves.length });
           this.sim.notifyBoard(this.room.id);
+          if (game.engine) { if (v.status === 'over') this.masterAfterGame(v, name); else this.engineSoon(); }
+          break;
+        }
+        case 'invite': {
+          const master = this.master();
+          if (!master) return client.send(MSG.denied, { reason: 'nobody here plays' });
+          const level = ENGINE_LEVELS.includes(msg.level) ? msg.level : 'club';
+          const err = game.invite(client.sessionId, { name: master.name, uid: `character:${master.id}`, seat: `character:${master.id}` }, level);
+          if (err) return client.send(MSG.denied, { reason: err });
+          const mine = game.seatOf(client.sessionId)!;
+          void tryEthora('chess invite', () => this.ethora.narrate(this.room.id, `Chess: ${master.name} sits down to play ${name}; ${mine === 'w' ? name : master.name} has White`));
+          this.masterSay(mine === 'w' ? `Very well, ${name}. You have White; begin.` : `Very well, ${name}. I have White.`);
+          this.sim.notifyBoard(this.room.id);
+          this.engineSoon();
           break;
         }
         case 'resign': {
@@ -319,11 +336,23 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           void tryEthora('chess resign', () => this.ethora.narrate(this.room.id, `Chess: ${name} resigns, ${result}: ${movesText(v.moves)}`));
           record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result, moves: v.moves.length });
           this.sim.notifyBoard(this.room.id);
+          if (game.engine) this.masterSay(`You resign, ${name}. Set the pieces up again when you are ready.`);
           break;
         }
         case 'draw': {
           const what = game.draw(client.sessionId);
           if (!what) return;
+          if (what === 'offered' && game.engine) {
+            // the master agrees when it is not better and the game has gone on a while
+            const score = evaluate(new Chess(game.fen)) * (game.turn === game.engine.color ? 1 : -1);
+            const accept = game.moves.length >= 40 && score <= 30;
+            game.answerDraw(accept);
+            void tryEthora('chess draw', () => this.ethora.narrate(this.room.id, accept ? `Chess: ${name} offers a draw and ${this.master()?.name} agrees, 1/2-1/2: ${movesText(game.moves)}` : `Chess: ${name} offers a draw; ${this.master()?.name} plays on`));
+            this.masterSay(accept ? `A draw, then, ${name}. Well held.` : 'No draw yet. Let us play on.');
+            if (accept) record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: '1/2-1/2', moves: game.moves.length });
+            this.sim.notifyBoard(this.room.id);
+            break;
+          }
           const v = game.view();
           void tryEthora('chess draw', () => this.ethora.narrate(this.room.id, what === 'agreed' ? `Chess: a draw is agreed, 1/2-1/2: ${movesText(v.moves)}` : `Chess: ${name} offers a draw`));
           if (what === 'agreed') record({ ev: 'chess', world: this.world.slug, pid: data.session.pid, location: this.room.id, result: '1/2-1/2', moves: v.moves.length });
@@ -335,6 +364,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
           if (!game.reset()) return client.send(MSG.denied, { reason: game.show ? 'a game is being shown; wait for the end' : 'the game is still on; resign or agree a draw first' });
           void tryEthora('chess new', () => this.ethora.narrate(this.room.id, `Chess: ${name} sets the pieces up again`));
           this.sim.notifyBoard(this.room.id);
+          this.engineSoon();
           break;
         }
         case 'puzzle': {
@@ -398,6 +428,46 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     if (!this.chessDef?.master) return null;
     const c = this.world.characters.find((ch) => ch.id === this.chessDef!.master);
     return c ? { id: c.id, name: c.name } : null;
+  }
+
+  /** A scripted line in the master's name (no model call). */
+  private masterSay(text: string) {
+    const master = this.master();
+    if (master) void tryEthora('master line', () => this.ethora.post(this.room.id, characterLine(master.name, text)));
+  }
+
+  /** The master's move, after a moment's thought, when it is the master's turn. */
+  private engineSoon() {
+    const game = this.game;
+    if (!game?.engineToMove || this.engineTimer) return;
+    this.engineTimer = setTimeout(() => {
+      this.engineTimer = null;
+      if (!game.engineToMove || !game.engine) return;
+      const choice = chooseMove(game.fen, game.engine.level, Math.random, game.moves);
+      const san = choice && game.playEngine(choice.san);
+      if (!san) return;
+      const v = game.view();
+      const rec = recordLine(v);
+      if (rec) void tryEthora('chess record', () => this.ethora.narrate(this.room.id, rec));
+      this.sim.notifyBoard(this.room.id);
+      if (v.status === 'over') {
+        const chair = game.engine.color === 'w' ? v.black : v.white;
+        const human = chair?.name ?? 'my friend';
+        const pid = (this.clients.find((c) => c.sessionId === chair?.seat)?.userData as UserData | undefined)?.session.pid ?? '';
+        record({ ev: 'chess', world: this.world.slug, pid, location: this.room.id, result: v.result, moves: v.moves.length, engine: game.engine.level });
+        this.masterAfterGame(v, human);
+      }
+    }, 900 + Math.random() * 1600);
+  }
+
+  /** What the master says when a game against it ends. */
+  private masterAfterGame(v: ChessGameView, human: string) {
+    const engine = this.game?.engine;
+    if (!engine) return;
+    const masterWon = v.result === (engine.color === 'w' ? '1-0' : '0-1');
+    this.masterSay(v.result === '1/2-1/2' ? `A draw, ${human}: ${v.reason}. An honourable result.`
+      : masterWon ? `${v.reason === 'checkmate' ? 'Mate' : 'The game is mine'}, ${human}. Set the pieces up again and try me once more.`
+      : `You have beaten me, ${human}. Well played; ask me for a harder game next time.`);
   }
 
   /** The board as this player sees it, with their own puzzle and their puzzle record. */
@@ -655,6 +725,7 @@ export class LocationRoom extends Room<{ state: LocationState }> {
     this.unsubscribeBudget?.();
     this.unsubscribeBoard?.();
     this.unsubscribeLines?.();
+    if (this.engineTimer) clearTimeout(this.engineTimer);
   }
 
   /** Mirrors the sim's items of this location; carried ones are tagged with the carrier's seat in this room. */

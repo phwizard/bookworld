@@ -2,7 +2,7 @@
 // them, the puzzles. The rules run in the world service; chess.js here only shows where a piece may go.
 import { useEffect, useMemo, useState } from 'react';
 import { Chess, type Square } from 'chess.js';
-import { COLOR_NAME, movesText, type ChessColor, type PuzzleLevel } from '@bookworld/shared';
+import { COLOR_NAME, movesText, type ChessColor, type EngineLevel, type PuzzleLevel } from '@bookworld/shared';
 import { useStore } from '../store.ts';
 import { sendChess } from '../net/colyseus.ts';
 import { sayInChat } from './ChatPanel.tsx';
@@ -11,6 +11,7 @@ const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 /** the filled glyphs for both sides; the colour comes from CSS (outlined glyphs vanish on light squares) */
 const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
 const LEVEL_LABEL: Record<PuzzleLevel, string> = { easy: 'Easier', level: 'At my level', hard: 'Harder' };
+const ENGINE_LABEL: Record<EngineLevel, string> = { easy: 'an easy game', club: 'a club game', strong: 'a hard game' };
 
 interface BoardProps {
   fen: string;
@@ -123,16 +124,24 @@ export function ChessPanel() {
               return (
                 <div key={c} className="chair">
                   <span className={`dot ${c}`} /> {COLOR_NAME[c]}:{' '}
-                  {chair ? <b>{chair.name}</b> : <span className="muted">empty</span>}{' '}
+                  {chair ? <b>{chair.name}</b> : <span className="muted">empty</span>}{chair?.character ? <span className="muted"> (the master)</span> : null}{' '}
                   {chair?.seat === me ? <button className="link" onClick={() => sendChess({ do: 'stand' })}>stand up</button>
                     : !chair && !g.show && (!mine || !g.moves.length || g.status === 'over') ? <button className="link" onClick={() => sendChess({ do: 'sit', color: c })}>sit here</button> : null}
                 </div>
               );
             })}
           </div>
+          {chess.master && mine && !g.show && !(mine === 'w' ? g.black : g.white) && (!g.moves.length || g.status === 'over') && (
+            <div className="invite">
+              Play {chess.master}:{' '}
+              {(['easy', 'club', 'strong'] as EngineLevel[]).map((l) => (
+                <button key={l} className="link" onClick={() => sendChess({ do: 'invite', level: l })}>{ENGINE_LABEL[l]}</button>
+              ))}
+            </div>
+          )}
           <Board fen={g.fen} orientation={mine ?? 'w'} canMove={g.status === 'playing' ? mine : null} lastMove={g.lastMove} onMove={(from, to, promotion) => sendChess({ do: 'move', from, to, promotion })} />
           <div className="status">{status}{g.drawOffer && g.status === 'playing' ? ` · ${COLOR_NAME[g.drawOffer]} offers a draw` : ''}</div>
-          <div className="moves">{movesText(g.moves) || (g.show ? 'A game is about to be shown.' : g.status === 'playing' ? `White begins${mine === 'w' ? ': click a piece, then a square' : ''}.` : mine ? 'Your opponent needs the other chair. Then White begins.' : 'Take a chair to play; anyone in the room can watch.')}</div>
+          <div className="moves">{movesText(g.moves) || (g.show ? 'A game is about to be shown.' : g.status === 'playing' ? `White begins${mine === 'w' ? ': click a piece, then a square' : ''}.` : mine ? (chess.master ? `Wait for an opponent to take the other chair, or ask ${chess.master} for a game.` : 'Your opponent needs the other chair. Then White begins.') : 'Take a chair to play; anyone in the room can watch.')}</div>
           <div className="actions">
             {mine && g.status === 'playing' && g.moves.length > 0 && <button onClick={() => sendChess({ do: 'resign' })}>Resign</button>}
             {mine && g.status === 'playing' && g.moves.length > 0 && <button onClick={() => sendChess({ do: 'draw' })}>{g.drawOffer && g.drawOffer !== mine ? 'Accept the draw' : g.drawOffer === mine ? 'Draw offered' : 'Offer a draw'}</button>}

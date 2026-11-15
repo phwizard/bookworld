@@ -35,6 +35,8 @@ export interface MetricEvent {
   mode?: string;
   hits?: number;
   tries?: number;
+  /** on `chess`: the game was against the master at this strength */
+  engine?: string;
   /** on `chess`: a game ended (result and the number of moves) or a puzzle ended (its rating, solved or not) */
   result?: string;
   moves?: number;

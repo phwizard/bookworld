@@ -202,3 +202,5 @@ button, input { font: inherit; }
 .board .sq i.rank { top: 2px; left: 3px; }
 .board .sq i.file { bottom: 1px; right: 3px; }
 @media (max-width: 700px) { .chesspanel.shifted { left: 20px; bottom: 90px; } }
+
+.chesspanel .invite { font-size: 13px; margin: 2px 0 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }

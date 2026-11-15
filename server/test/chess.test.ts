@@ -215,3 +215,27 @@ test('every scripted game in the worlds plays through', () => {
   }
   assert.ok(scenes >= 0);
 });
+
+test('the master takes the empty chair, plays by engine, and gets up with the visitor', async () => {
+  const { chooseMove } = await import('../src/world/engine.ts');
+  const g = new ChessGame();
+  const master = { name: 'Red Queen', uid: 'character:red-queen', seat: 'character:red-queen' };
+  assert.equal(g.invite('s1', master, 'club'), 'take a chair first');
+  g.sit('b', { name: 'Taras', uid: 'u1', seat: 's1' });
+  assert.equal(g.invite('s1', master, 'club'), null);
+  assert.equal(g.view().white?.character, true);
+  assert.equal(g.view().status, 'playing');
+  assert.ok(g.engineToMove, 'the master has White and moves first');
+  const first = chooseMove(g.fen, 'club', Math.random, g.moves)!;
+  assert.ok(g.playEngine(first.san));
+  assert.equal(g.engineToMove, false);
+  assert.equal(g.playEngine('e5'), null, 'the master does not move for the visitor');
+  assert.ok('san' in g.move('s1', 'e7', 'e5'));
+  assert.ok(g.engineToMove);
+  // nobody else can take the master's chair; when the visitor gets up the master does too and the position stays
+  assert.match(g.sit('w', { name: 'Ann', uid: 'u2', seat: 's2' }) ?? '', /taken by Red Queen/);
+  g.stand('s1');
+  assert.equal(g.engine, null);
+  assert.equal(g.view().white, null);
+  assert.equal(g.view().moves.length, 2);
+});

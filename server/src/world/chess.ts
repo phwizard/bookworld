@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Chess, type Square } from 'chess.js';
 import {
   COLOR_NAME, PUZZLE_START_RATING, movesText, themeWords,
-  type ChessColor, type ChessGameView, type ChessProgress, type ChessSeatView, type PuzzleLevel, type PuzzleView,
+  type ChessColor, type ChessGameView, type EngineLevel, type ChessProgress, type ChessSeatView, type PuzzleLevel, type PuzzleView,
 } from '@bookworld/shared';
 
 /** One row of the puzzle file: the position before the setup move, the line in UCI (the first move is the opponent's). */
@@ -55,6 +55,8 @@ export class ChessGame {
   private drawOffer: ChessColor | undefined;
   /** a scene is showing a game on this board */
   show = false;
+  /** the master is in one chair and plays by engine */
+  engine: { color: ChessColor; level: EngineLevel } | null = null;
 
   get over() { return this.result !== null; }
   get moves(): string[] { return this.chess.history(); }
@@ -82,8 +84,52 @@ export class ChessGame {
     const color = this.seatOf(seat);
     if (color === 'w') this.white = null;
     if (color === 'b') this.black = null;
+    // the master plays for the visitor's sake: when the visitor gets up, so does the master
+    if (color && this.engine) this.dismiss();
     return color;
   }
+
+  /** The master takes the empty chair opposite a seated visitor. The reason it cannot, or null. */
+  invite(seat: string, master: Seat, level: EngineLevel): string | null {
+    if (this.show) return 'a game is being shown on this board; watch';
+    const color = this.seatOf(seat);
+    if (!color) return 'take a chair first';
+    const other: ChessColor = color === 'w' ? 'b' : 'w';
+    if (other === 'w' ? this.white : this.black) return 'the other chair is taken';
+    if (this.moves.length && !this.over) return 'a game is under way on this board; finish it or wait for an opponent';
+    if (this.over) this.reset();
+    if (other === 'w') this.white = master; else this.black = master;
+    this.engine = { color: other, level };
+    return null;
+  }
+
+  /** The master leaves its chair. */
+  dismiss() {
+    if (!this.engine) return;
+    if (this.engine.color === 'w') this.white = null; else this.black = null;
+    this.engine = null;
+  }
+
+  /** True when it is the master's move. */
+  get engineToMove(): boolean {
+    return Boolean(this.engine && !this.over && this.white && this.black && this.turn === this.engine.color);
+  }
+
+  /** The master's move in SAN, made by the room after the engine chose it. */
+  playEngine(san: string): string | null {
+    if (!this.engineToMove) return null;
+    try {
+      const made = this.chess.move(san);
+      this.lastMove = { from: made.from, to: made.to };
+      this.drawOffer = undefined;
+      this.settle();
+      return made.san;
+    } catch {
+      return null;
+    }
+  }
+
+  get fen(): string { return this.chess.fen(); }
 
   /** A returning visitor (reload, a second tab) takes their chair back on the new seat. */
   reseat(uid: string, seat: string, name: string) {
@@ -134,6 +180,13 @@ export class ChessGame {
     return 'offered';
   }
 
+  /** The master answers a draw offer: agreed, or the offer is taken off the table. */
+  answerDraw(accept: boolean) {
+    if (!this.drawOffer || this.over) return;
+    this.drawOffer = undefined;
+    if (accept) this.result = { result: '1/2-1/2', reason: 'draw agreed' };
+  }
+
   /** Clears the board (chairs stay). Allowed once the game is over, or before it began. */
   reset(): boolean {
     if (this.show || (!this.over && this.moves.length)) return false;
@@ -150,6 +203,7 @@ export class ChessGame {
     this.lastMove = undefined;
     this.result = null;
     this.drawOffer = undefined;
+    this.engine = null;
     this.white = white;
     this.black = black;
     this.show = true;
@@ -178,8 +232,8 @@ export class ChessGame {
   view(): ChessGameView {
     const v: ChessGameView = {
       fen: this.chess.fen(), moves: this.moves, turn: this.turn,
-      white: this.white ? { name: this.white.name, seat: this.white.seat } : null,
-      black: this.black ? { name: this.black.name, seat: this.black.seat } : null,
+      white: this.white ? { name: this.white.name, seat: this.white.seat, ...(this.engine?.color === 'w' ? { character: true } : {}) } : null,
+      black: this.black ? { name: this.black.name, seat: this.black.seat, ...(this.engine?.color === 'b' ? { character: true } : {}) } : null,
       status: this.result ? 'over' : this.white && this.black ? 'playing' : 'waiting',
       check: this.chess.inCheck(), show: this.show,
     };

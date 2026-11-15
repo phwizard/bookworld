@@ -16,7 +16,13 @@ export interface ChessSeatView {
   name: string;
   /** Colyseus session id of the sitter in this room, so a client knows which chair is its own */
   seat: string;
+  /** the chair is taken by the room's master, who plays by engine */
+  character?: boolean;
 }
+
+/** How strongly the master plays when asked for a game. */
+export type EngineLevel = 'easy' | 'club' | 'strong';
+export const ENGINE_LEVELS: EngineLevel[] = ['easy', 'club', 'strong'];
 
 /** The board of the room as everyone in it sees it. */
 export interface ChessGameView {
@@ -47,7 +53,7 @@ export function recordLine(v: ChessGameView): string | null {
     const winner = v.result === '1-0' ? v.white?.name ?? 'White' : v.result === '0-1' ? v.black?.name ?? 'Black' : null;
     return `Chess: ${winner ? `${winner} wins by ${v.reason}` : `drawn, ${v.reason}`}, ${v.result}: ${movesText(v.moves)}`;
   }
-  if (n && n % 2 === 0) return `Chess: ${movesText(v.moves.slice(n - 2))}${v.check ? ', check' : ''}`;
+  if (n && n % 2 === 0) return `Chess: ${n / 2}. ${v.moves[n - 2]} ${v.moves[n - 1]}${v.check ? ', check' : ''}`;
   return null;
 }
 
@@ -113,6 +119,8 @@ export type ChessCommand =
   | { do: 'draw' }
   /** clear the board for a new game (when it is over, or before the first move) */
   | { do: 'new' }
+  /** ask the master to take the empty chair and play (the asker must be seated) */
+  | { do: 'invite'; level: EngineLevel }
   | { do: 'puzzle'; level: PuzzleLevel }
   | { do: 'puzzle-move'; from: string; to: string; promotion?: string }
   | { do: 'puzzle-hint' }
@@ -148,7 +156,7 @@ export function themeWords(themes: string[]): string[] {
 /** The paragraph the provisioner adds to a master's prompt. The board and the puzzles run in the world service. */
 export function chessPrompt(name: string): string {
   return (
-    `Chess: this room has a board. Visitors play each other on it, and the room sets puzzles in your name (the puzzles come from real games; the room judges the moves itself). ` +
+    `Chess: this room has a board. Visitors play each other on it, a visitor may ask you for a game (the room then makes your moves for you, and says a line in your name at the start and the end), and the room sets puzzles in your name (the puzzles come from real games; the room judges the moves itself). ` +
     `Lines in italics that start with "Chess:" or "Puzzle:" are the room's record, not a visitor speaking; trust them as fact. A visitor who names you during a game sends the moves so far in brackets; one who names you during a puzzle sends its rating and how it stands. ` +
     `When asked about the game, read the moves given, name the opening if you know it, say what each side is after in two or three sentences, and do not invent moves that are not in the list. When asked about a puzzle, say what to look for in general (checks, captures, threats, the loose piece) without naming a move; the room shows the solution when the visitor asks it to. ` +
     `Your Memory holds notes on each visitor's puzzle rating and what they keep missing. Encourage without flattery; a wrong move is normal. Sign nothing; speak as ${name}.`

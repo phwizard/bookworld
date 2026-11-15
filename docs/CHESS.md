@@ -21,6 +21,10 @@ A chair is yours again after a reload; when you leave the room the chair is free
 
 The record goes into the room's chat as narration, a full move at a time (`Chess: 3. Qh5 Nf6`), with who sat down, draw offers, resignations and the whole game at the end (`Chess: Taras wins by checkmate, 1-0: 1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6 4. Qxf7#`). "ask Red Queen" in the panel sends a question to the master in your name with the moves so far in brackets; any message that names the master during a game gets the same bracket, because the agent does not see the room's own narration (`docs/ETHORA-GAPS.md`, 22). The master is asked only when you talk to it; moves cost nothing. The record and the master's lines also reach the room over the world's own connection, so they show in the panel's chat list and are spoken even when Ethora does not deliver the broadcast (gap 25).
 
+## A game against the master
+
+In a room whose board has a master, a seated visitor with the other chair empty can ask the master for a game: an easy game, a club game or a hard game. The master takes the other chair (the 3D character stays where it stands; the chair is the panel's) and the room plays its moves with a small engine of its own (`server/src/world/engine.ts`: alpha-beta over chess.js, material and piece-square evaluation, captures searched to quiet, at most 0.2, 0.5 or 0.9 seconds a move, a little randomness so games differ, and at the easy level an occasional careless move). The master says a line when it sits down and when the game ends, answers a draw offer (it agrees after move twenty when it is not better), and gets up when the visitor does; the position stays. These lines are the room's, in the master's name, and cost nothing; "ask Harrwitz" still goes to the agent with the moves so far.
+
 ## Puzzles
 
 On the Puzzles tab the master sets a puzzle at your level, easier or harder. The puzzles are a sample of the Lichess puzzle database (CC0; `server/puzzles/lichess.csv`, 2400 puzzles rated 600 to 2500, popular ones with lines of one to four moves, with the game each comes from). The master speaks the puzzle (`A puzzle for you, Taras: White to move, rated 1450. Find the best line, 2 moves.`), the room makes the opponent's setup move, and you find the line move by move; the room plays the opponent's replies. A move that is not the line is a miss and you try again; any move that mates counts when the line ends in mate. Hint marks the piece to move. Show the solution gives up the puzzle.
@@ -48,7 +52,8 @@ When the scene begins the board is cleared and the two characters sit down (a vi
 - `shared/src/chess.ts`: the world-file entry, the views the panel renders, the commands, the record line, the master's prompt paragraph. `ScriptLine.move` and `WorldScript.board` are in `shared/src/world.ts`.
 - `server/src/world/chess.ts`: `ChessGame` (chairs, moves, result), `PuzzleRun` (one puzzle with one player), the puzzle file, the rating, the progress file. Tests in `server/test/chess.test.ts`, which also plays every puzzle in the file through.
 - `server/src/world/sim.ts`: the boards, one per room listed under `chess`, which outlive an empty room, and the scenes that play a game on them.
+- `server/src/world/engine.ts`: the engine the masters play with. Tests in `server/test/engine.test.ts`.
 - `server/src/rooms/LocationRoom.ts`: the `chess` message, the chat lines, the chairs on join and leave, the Memory note.
 - `client/src/ui/ChessPanel.tsx`: the panel and the board, loaded only in rooms with a board. Pieces are the Unicode chess glyphs coloured by CSS.
 
-Not yet: playing against a character (an engine), a board on a table in the 3D room, time controls, takebacks.
+Not yet: a board on a table in the 3D room, time controls, takebacks, the engine's strength set per master in the world file.
