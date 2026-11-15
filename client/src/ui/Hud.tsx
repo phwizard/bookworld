@@ -3,6 +3,7 @@ import type { WorldRoom } from '@bookworld/shared';
 import { useStore } from '../store.ts';
 import { MiniMap } from './MiniMap.tsx';
 import { leaveWorld } from '../net/colyseus.ts';
+import { isTouchDevice } from '../touch.ts';
 
 function resetLabel(iso: string): string {
   const d = new Date(iso);
@@ -24,6 +25,10 @@ export function Hud({ room }: { room: WorldRoom }) {
   const bandHere = useStore((s) => Object.values(s.items).some((it) => it.instrument === 'bass' || it.instrument === 'drums'));
   const setMenuOpen = useStore((s) => s.setMenuOpen);
   const [faded, setFaded] = useState(false);
+  const touch = isTouchDevice();
+  // the prompt to click is large until the mouse has been taken once, then a quiet line: the arrows turn the view too
+  const [everLocked, setEverLocked] = useState(false);
+  useEffect(() => { if (locked) setEverLocked(true); }, [locked]);
 
   useEffect(() => {
     setFaded(false);
@@ -51,7 +56,9 @@ export function Hud({ room }: { room: WorldRoom }) {
       {ai && !ai.asleep && ai.limited && <div className="notice">You have had your share of the characters' attention for today. They are back for you after {resetLabel(ai.resetAt)}.</div>}
       {locked && !typing && <div className="crosshair" />}
       <div className="hint">
-        {count} here{away === 'away' ? ' (you are away)' : ''} · WASD walk · Shift run · Space jump · T talk · E pick up · {lesson ? 'L lessons · ' : ''}{chessHere ? 'C chess · ' : ''}{bandHere ? 'B band · ' : ''}M menu · Esc release mouse ·{' '}
+        {count} here{away === 'away' ? ' (you are away)' : ''} · {touch
+          ? 'Stick to walk · drag to look · tap a room on the map to go there · '
+          : <>WASD walk · arrows turn · Shift run · Space jump · T talk · E pick up · {lesson ? 'L lessons · ' : ''}{chessHere ? 'C chess · ' : ''}{bandHere ? 'B band · ' : ''}M menu · click a room on the map to go there ·{' '}</>}
         <button className="leave" onClick={() => void leaveWorld()}>Leave</button>
       </div>
       {room.music && (
@@ -59,9 +66,9 @@ export function Hud({ room }: { room: WorldRoom }) {
           {musicOn ? '\u266a' : '\u266a off'} {room.music.title}{room.music.credit ? `, ${room.music.credit}` : ''}
         </div>
       )}
-      {!locked && !typing && !menuOpen && away !== 'gone' && (
-        <div className="click">
-          <div>Click to look around</div>
+      {!touch && !locked && !typing && !menuOpen && away !== 'gone' && (
+        <div className={`click${everLocked ? ' quiet' : ''}`}>
+          <div>{everLocked ? 'Click to look around with the mouse' : 'Click to look around, or turn with the arrow keys'}</div>
         </div>
       )}
     </div>

@@ -3,13 +3,14 @@
 // the compass letters ride on the rim. Dots in a room are who is there: warm for people, teal for the book's
 // characters. In your own room they move as the people and characters move (the live poses); in the other rooms the
 // characters stand where GET /api/worlds/:slug/where last saw them, polled every few seconds, and people are counted.
-// You are the arrow in the middle.
+// You are the arrow in the middle. Clicking another room walks you there through the doors (travel.ts).
 import { useEffect, useMemo, useState } from 'react';
 import { layoutGrid, roomSize, DIRECTIONS, GRID_STEP, type Direction } from '@bookworld/shared';
 import type { WhereResponse } from '@bookworld/shared';
 import { poses, useStore } from '../store.ts';
 import { myPose } from '../scene/PlayerController.tsx';
 import { whereIsEveryone } from '../api.ts';
+import { travelTo } from '../travel.ts';
 
 const SIZE = 224;
 const R = SIZE / 2;
@@ -126,8 +127,8 @@ export function MiniMap() {
               : charsIn(r.id).map((c) => { const [ox, oz] = inCell(r, c.x, c.z); return [ox, oz, CHARACTER] as [number, number, string]; });
             const counted = here ? [] : Array(Math.min(6, humansIn(r.id))).fill(HUMAN) as string[];
             return (
-              <g key={r.id}>
-                <title>{r.name}{charsIn(r.id).length || humansIn(r.id) ? `: ${humansIn(r.id)} visitor${humansIn(r.id) === 1 ? '' : 's'}${charsIn(r.id).length ? ', ' + charsIn(r.id).map((ch) => ch.name).join(', ') : ''}` : ''}</title>
+              <g key={r.id} className={here ? undefined : 'go'} onClick={here ? undefined : (e) => { e.stopPropagation(); travelTo(r.id); }}>
+                <title>{here ? '' : 'Go to '}{r.name}{charsIn(r.id).length || humansIn(r.id) ? `: ${humansIn(r.id)} visitor${humansIn(r.id) === 1 ? '' : 's'}${charsIn(r.id).length ? ', ' + charsIn(r.id).map((ch) => ch.name).join(', ') : ''}` : ''}</title>
                 <rect x={x - CELL / 2} y={y - CELL / 2} width={CELL} height={CELL} rx={5} fill={here ? 'rgba(201,169,97,.85)' : 'rgba(58,45,28,.92)'} stroke="#c9a961" strokeWidth={here ? 1.5 : 1} />
                 {/* the name stays upright while the map turns */}
                 <g transform={`rotate(${-deg} ${x} ${y})`}>

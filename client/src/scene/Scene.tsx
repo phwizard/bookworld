@@ -17,8 +17,11 @@ import { Items } from './Items.tsx';
 const keyboardMap: { name: Controls; keys: string[] }[] = [
   { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
   { name: 'backward', keys: ['ArrowDown', 'KeyS'] },
-  { name: 'leftward', keys: ['ArrowLeft', 'KeyA'] },
-  { name: 'rightward', keys: ['ArrowRight', 'KeyD'] },
+  { name: 'leftward', keys: ['KeyA'] },
+  { name: 'rightward', keys: ['KeyD'] },
+  // the arrows turn the view, so the world can be walked with the keyboard alone
+  { name: 'turnLeft', keys: ['ArrowLeft'] },
+  { name: 'turnRight', keys: ['ArrowRight'] },
   { name: 'run', keys: ['ShiftLeft', 'ShiftRight'] },
   { name: 'jump', keys: ['Space'] },
 ];

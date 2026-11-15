@@ -11,6 +11,8 @@ import { loadSession } from './session.ts';
 import { Menu } from './ui/Menu.tsx';
 import { Scene } from './scene/Scene.tsx';
 import { Hud } from './ui/Hud.tsx';
+import { TouchControls } from './ui/TouchControls.tsx';
+import { isTouchDevice } from './touch.ts';
 import { ChatPanel } from './ui/ChatPanel.tsx';
 import { Music } from './ui/Music.tsx';
 import { SoundFx } from './audio/SoundFx.tsx';
@@ -62,6 +64,7 @@ export function WorldView() {
   return (
     <div className="world">
       <Scene room={room} enterFrom={enterFrom} />
+      {isTouchDevice() && <TouchControls />}
       <Hud room={room} />
       <ChordBar />
       <LessonPanel />

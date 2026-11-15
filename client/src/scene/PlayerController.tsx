@@ -9,8 +9,14 @@ import { DIRECTIONS, DEFAULT_EXIT_WIDTH, entryPose, roomSize, roomSpawn, type An
 import { rememberPosition, requestMove, sendPos } from '../net/colyseus.ts';
 import { useStore } from '../store.ts';
 import { Stepper, surfaceFor } from '../audio/footsteps.ts';
+import { touchInput } from '../touch.ts';
 
-export type Controls = 'forward' | 'backward' | 'leftward' | 'rightward' | 'run' | 'jump';
+export type Controls = 'forward' | 'backward' | 'leftward' | 'rightward' | 'turnLeft' | 'turnRight' | 'run' | 'jump';
+
+/** radians a second the arrow keys turn the view */
+const TURN_SPEED = 2.2;
+/** radians per pixel a finger dragged over the view turns it */
+const TOUCH_LOOK = 0.005;
 
 const CAPSULE_HALF = 0.5;
 const CAPSULE_RADIUS = 0.3;
@@ -45,14 +51,24 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
     if (!h) return;
     // Walking is allowed while the chat panel is open; only typing in the composer takes the keys.
     const keys = useStore.getState().chatTyping ? null : getKeys();
+    const t = touchInput;
     h.setMovement({
-      forward: !!keys?.forward,
-      backward: !!keys?.backward,
-      leftward: !!keys?.leftward,
-      rightward: !!keys?.rightward,
-      run: !!keys?.run,
+      forward: !!keys?.forward || t.y > 0.3,
+      backward: !!keys?.backward || t.y < -0.3,
+      leftward: !!keys?.leftward || t.x < -0.45,
+      rightward: !!keys?.rightward || t.x > 0.45,
+      run: !!keys?.run || Math.hypot(t.x, t.y) > 0.92,
       jump: !!keys?.jump,
     });
+    // Turning without the mouse: the arrow keys, and a finger dragged over the view on a touch screen.
+    const turn = (keys?.turnLeft ? 1 : 0) - (keys?.turnRight ? 1 : 0);
+    if (turn || t.dx || t.dy) {
+      const e = euler.current.setFromQuaternion(camera.quaternion, 'YXZ');
+      e.y += turn * TURN_SPEED * Math.min(dt, 0.05) - t.dx * TOUCH_LOOK;
+      e.x = Math.max(-1.3, Math.min(1.3, e.x - t.dy * TOUCH_LOOK));
+      camera.quaternion.setFromEuler(e);
+      t.dx = 0; t.dy = 0;
+    }
 
     const p = h.currPos;
     camera.position.set(p.x, p.y + EYE_ABOVE_CENTER, p.z);
@@ -60,7 +76,7 @@ export function PlayerController({ room, enterFrom, at }: { room: WorldRoom; ent
     if (import.meta.env.DEV) (window as unknown as { __bw: unknown }).__bw = { x: p.x, y: p.y, z: p.z, ry: euler.current.y, keys, moving: h.isMoving, speed: h.moveSpeed, ground: h.isOnGround };
     euler.current.setFromQuaternion(camera.quaternion, 'YXZ');
     const moving = h.isMoving && h.moveSpeed > 0.3;
-    const anim: Anim = !moving ? 'idle' : keys?.run ? 'run' : 'walk';
+    const anim: Anim = !moving ? 'idle' : keys?.run || Math.hypot(t.x, t.y) > 0.92 ? 'run' : 'walk';
     steps.current.tick(dt, anim, surface, [p.x, p.y, p.z]);
     sendPos({ x: p.x, y: p.y - (CAPSULE_HALF + CAPSULE_RADIUS + FLOAT), z: p.z, ry: euler.current.y, anim });
     rememberPosition(p.x, p.z, euler.current.y);

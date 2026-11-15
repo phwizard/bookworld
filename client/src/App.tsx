@@ -73,7 +73,7 @@ function Join() {
       <div className="picker">
         <h1>bookworld</h1>
         <p>A book you can walk into. Pick a name and a world, step through the door, meet the characters and whoever else is in the room.</p>
-        <p className="keys">WASD to walk, mouse to look, Shift to run, Space to jump, T to talk, N music, F effects, V voices.</p>
+        <p className="keys">WASD to walk, mouse or arrow keys to look, click a room on the map to go there, Shift to run, Space to jump, T to talk, N music, F effects, V voices.</p>
         <form onSubmit={(e) => { e.preventDefault(); if (shown?.length === 1) void enter(shown[0]!.slug); }}>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={24} autoComplete="off" data-1p-ignore data-lpignore="true" />
         </form>

@@ -20,7 +20,9 @@ button, input { font: inherit; }
 .hud .hint { position: absolute; left: 20px; bottom: 16px; font-size: 13px; opacity: .7; text-shadow: 0 1px 3px #000; }
 .hud .toast { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); padding: 8px 14px; background: rgba(0,0,0,.55); border: 1px solid #5a4630; border-radius: 6px; font-size: 14px; }
 .hud .crosshair { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: rgba(255,255,255,.7); }
-.hud .click { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; background: rgba(0,0,0,.35); }
+.hud .click { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.hud .click.quiet { place-items: end center; padding-bottom: 46px; }
+.hud .click.quiet div { padding: 5px 12px; font-size: 12px; opacity: .75; border-color: #5a4630; }
 .world canvas { cursor: pointer; }
 .hud .click div { padding: 14px 22px; background: rgba(0,0,0,.6); border: 1px solid #c9a961; border-radius: 8px; }
 .minimap { position: absolute; right: 12px; top: 52px; pointer-events: auto; }
@@ -204,3 +206,19 @@ button, input { font: inherit; }
 @media (max-width: 700px) { .chesspanel.shifted { left: 20px; bottom: 90px; } }
 
 .chesspanel .invite { font-size: 13px; margin: 2px 0 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+
+/* touch controls: the look layer over the canvas, the stick bottom left, Talk bottom right */
+.touch { position: absolute; inset: 0; pointer-events: none; }
+.touch-look { position: absolute; inset: 0; pointer-events: auto; touch-action: none; }
+.touch-stick { position: absolute; left: 22px; bottom: 54px; width: 132px; height: 132px; border-radius: 50%; border: 1px solid rgba(201,169,97,.7); background: rgba(20,14,8,.35); pointer-events: auto; touch-action: none; display: grid; place-items: center; }
+.touch-stick .knob { width: 54px; height: 54px; border-radius: 50%; background: rgba(243,230,196,.75); border: 1px solid #5a4630; }
+.touch-talk { position: absolute; right: 20px; bottom: 64px; pointer-events: auto; padding: 14px 20px; border-radius: 28px; border: 1px solid #c9a961; background: rgba(40,28,14,.8); color: #f3e6c4; font: 16px Georgia, serif; }
+.minimap .go { cursor: pointer; }
+.minimap .go:hover rect { stroke-width: 2.5; }
+@media (max-width: 700px) {
+  .hud .room { max-width: 58vw; }
+  .hud .room h2 { font-size: 17px; }
+  .hud .room p { font-size: 12px; }
+  .hud .hint { font-size: 11px; right: 12px; }
+  .hud .music { display: none; }
+}
