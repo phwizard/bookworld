@@ -221,8 +221,8 @@
         "s": null,
         "w": "verona-square"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Teddy_Bear_Waltz.m4a",
         "title": "Teddy Bear Waltz",
@@ -393,7 +393,38 @@
           0,
           1.5
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": -5,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 0,
+            "subject": "portrait",
+            "size": 1.2
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 5,
+            "subject": "portrait"
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": -5
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": 5
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -582,8 +613,8 @@
         "s": "capulet-orchard",
         "w": null
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:parquet",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -729,7 +760,27 @@
           0,
           1.5
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0,
+            "subject": "night",
+            "size": 1.2
+          },
+          {
+            "kind": "mirror",
+            "wall": "e",
+            "x": 0
+          },
+          {
+            "kind": "picture",
+            "wall": "w",
+            "x": 0,
+            "subject": "portrait"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -746,7 +797,7 @@
         "w": null
       },
       "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": null,
+      "floor": "pattern:slabs",
       "music": null,
       "surface": "stone",
       "ambience": [
@@ -899,7 +950,14 @@
           0,
           1.5
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "e",
+            "x": 0
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -915,7 +973,7 @@
         "s": null,
         "w": null
       },
-      "wallpaper": null,
+      "wallpaper": "pattern:brick",
       "floor": "assets/textures/brown_mud_leaves_01.jpg",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
@@ -1079,8 +1137,8 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:panelling",
+      "floor": "pattern:planks",
       "music": null,
       "surface": "wood",
       "ambience": [
@@ -1221,7 +1279,20 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,

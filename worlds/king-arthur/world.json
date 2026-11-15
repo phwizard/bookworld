@@ -189,7 +189,7 @@
         "s": null,
         "w": "tournament-field"
       },
-      "wallpaper": null,
+      "wallpaper": "pattern:brick",
       "floor": "assets/textures/grass_ground.jpg",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
@@ -824,8 +824,8 @@
         "s": null,
         "w": "cameliard-garden"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -989,7 +989,38 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": -5
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": 5
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": -3.5,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": 3.5,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "portrait",
+            "size": 1.3
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -1005,8 +1036,8 @@
         "s": "great-hall",
         "w": null
       },
-      "wallpaper": null,
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:brick",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -1158,7 +1189,25 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0
+          },
+          {
+            "kind": "mirror",
+            "wall": "w",
+            "x": 0
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": 0,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,

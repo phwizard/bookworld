@@ -22,8 +22,8 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:panelling",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -190,7 +190,25 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": -3
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 3
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -495,8 +513,8 @@
         "s": null,
         "w": "castle-tower"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:damask",
+      "floor": "pattern:parquet",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -657,7 +675,28 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": -4,
+            "subject": "night"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "portrait",
+            "size": 1.2
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": 4,
+            "subject": "night"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -673,8 +712,8 @@
         "s": "ruined-chapel",
         "w": "castle-library"
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -812,7 +851,26 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0,
+            "subject": "night"
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": 0,
+            "subject": "portrait"
+          },
+          {
+            "kind": "mirror",
+            "wall": "e",
+            "x": -3
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -828,15 +886,15 @@
         "s": null,
         "w": null
       },
-      "wallpaper": null,
-      "floor": "assets/textures/brown_mud_leaves_01.jpg",
+      "wallpaper": "pattern:brick",
+      "floor": "pattern:slabs",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
         "credit": "Kevin MacLeod (incompetech.com), CC BY 4.0",
         "volume": 0.3
       },
-      "surface": "grass",
+      "surface": "stone",
       "ambience": [
         {
           "preset": "drips",
@@ -982,7 +1040,21 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "e",
+            "x": -3,
+            "subject": "night"
+          },
+          {
+            "kind": "window",
+            "wall": "e",
+            "x": 3,
+            "subject": "night"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -998,8 +1070,8 @@
         "s": null,
         "w": null
       },
-      "wallpaper": null,
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:brick",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -1127,7 +1199,22 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "w",
+            "x": 0,
+            "subject": "night",
+            "size": 1.3
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0,
+            "subject": "night"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,

@@ -21,8 +21,8 @@
         "s": null,
         "w": null
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:stripes",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -188,7 +188,25 @@
           0,
           -0.5
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": -2.5
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 2.5
+          },
+          {
+            "kind": "picture",
+            "wall": "w",
+            "x": 0,
+            "subject": "portrait"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -204,8 +222,8 @@
         "s": null,
         "w": "counting-house"
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:panelling",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
@@ -383,7 +401,21 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": -2.5,
+            "subject": "night"
+          },
+          {
+            "kind": "window",
+            "wall": "s",
+            "x": 2.5,
+            "subject": "night"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -399,8 +431,8 @@
         "s": "scrooge-chambers",
         "w": null
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/brown_planks_07.jpg",
+      "wallpaper": "pattern:brick",
+      "floor": "pattern:planks",
       "music": {
         "file": "assets/music/Fairytale_Waltz.m4a",
         "title": "Fairytale Waltz",
@@ -610,7 +642,27 @@
           0,
           3
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": -5,
+            "subject": "night"
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0,
+            "subject": "night"
+          },
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 5,
+            "subject": "night"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -626,8 +678,8 @@
         "s": "churchyard",
         "w": "scrooge-chambers"
       },
-      "wallpaper": "assets/textures/brown_planks_07.jpg",
-      "floor": "assets/textures/checkered_pavement_tiles.jpg",
+      "wallpaper": "pattern:plaster",
+      "floor": "pattern:checker",
       "music": {
         "file": "assets/music/Teddy_Bear_Waltz.m4a",
         "title": "Teddy Bear Waltz",
@@ -827,7 +879,20 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "window",
+            "wall": "n",
+            "x": 0
+          },
+          {
+            "kind": "picture",
+            "wall": "e",
+            "x": 0,
+            "subject": "landscape"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -843,7 +908,7 @@
         "s": null,
         "w": null
       },
-      "wallpaper": null,
+      "wallpaper": "pattern:brick",
       "floor": "assets/textures/leafy_grass.jpg",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",

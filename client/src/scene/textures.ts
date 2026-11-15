@@ -418,8 +418,8 @@ const FLOORS: Record<FloorPattern, Painter> = {
   },
 };
 
-/** Materials whose dark lines are hollows: mortar, grooves between boards, the gaps between stones. */
-const RELIEF: Record<string, number> = { brick: 3, panelling: 1.5, planks: 1.5, parquet: 1, cobbles: 4, slabs: 2 };
+/** Materials whose dark lines are hollows: mortar, the gaps between stones (wood grain makes a noisy height map, so boards stay flat). */
+const RELIEF: Record<string, number> = { brick: 3, cobbles: 4, slabs: 2 };
 
 function paint(kind: 'wall' | 'floor', name: string, base: string, trim: string): PatternTexture {
   const key = `${kind}|${name}|${base}|${trim}`;

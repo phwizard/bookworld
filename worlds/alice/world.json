@@ -169,7 +169,27 @@
           0,
           2
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": -2.5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 2.5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 0,
+            "subject": "portrait"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
@@ -186,7 +206,7 @@
         "s": null,
         "w": "rabbit-hole"
       },
-      "wallpaper": "assets/textures/patterned_plaster_wall.jpg",
+      "wallpaper": "pattern:damask",
       "music": {
         "file": "assets/music/Wallpaper.m4a",
         "title": "Wallpaper",
@@ -354,12 +374,38 @@
           0,
           0
         ],
-        "exitWidth": 1.6
+        "exitWidth": 1.6,
+        "decor": [
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": -5,
+            "subject": "portrait"
+          },
+          {
+            "kind": "picture",
+            "wall": "n",
+            "x": 5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": -5,
+            "subject": "landscape"
+          },
+          {
+            "kind": "picture",
+            "wall": "s",
+            "x": 5,
+            "subject": "portrait"
+          }
+        ]
       },
       "owner": null,
       "claimable": false,
       "claimedAt": null,
-      "floor": "assets/textures/checkered_pavement_tiles.jpg"
+      "floor": "pattern:checker"
     },
     {
       "id": "garden",

@@ -290,8 +290,8 @@
         "s": "rock",
         "w": "sands"
       },
-      "wallpaper": null,
-      "floor": null,
+      "wallpaper": "pattern:brick",
+      "floor": "pattern:slabs",
       "music": {
         "file": "assets/music/Frost_Waltz.m4a",
         "title": "Frost Waltz",
