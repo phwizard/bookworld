@@ -64,7 +64,7 @@ An image for any page, no JavaScript: `<img src="https://<world service>/api/bad
 
 ## Other endpoints
 
-- `GET /api/health`: `{ ok, worlds }`.
+- `GET /api/health`: `{ ok, worlds, ethoraCalls }`. `ethoraCalls` counts the requests the service has sent to the Ethora API since it started: `{ since, total, perHour, byKind }` (invite-to-chat, broadcast, membership, user). With nobody in any world it stays at zero.
 - `GET /api/worlds/:slug`: the full world file plus the public Ethora info (app id, room JIDs).
 - `GET /api/worlds/:slug/where`: `{ humans: { roomId: count }, characters: [{ id, name, at, x, z }] }`, who is in which room right now (active humans from presence, each character's current room from the simulation). The client's mini-map polls it every four seconds; cacheable for two.
 - `POST /api/worlds/:slug/enter` `{ name, visitor? }`, `POST /api/worlds/:slug/resume` `{ token }`: how the client gets in; see `shared/src/protocol.ts`.

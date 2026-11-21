@@ -12,6 +12,18 @@ const apiBaseUrl = process.env.ETHORA_API_BASE_URL ?? 'https://api.chat.ethora.c
 const xmppDomain = process.env.ETHORA_XMPP_DOMAIN ?? 'xmpp.chat.ethora.com';
 // The chat component talks to `/v1`; the backend SDK builds `/v2/...` paths itself from the host root.
 const sdkApiUrl = apiBaseUrl.replace(/\/v1\/?$/, '');
+/** Names this service in the Ethora logs. */
+export const USER_AGENT = process.env.ETHORA_USER_AGENT ?? 'bookworld/1.0';
+/** An assistant is asked into the same room again only after this long (Ethora removes it from a quiet room by itself). */
+const INVITE_TTL_MS = Number(process.env.AGENT_INVITE_TTL_MIN ?? 10) * 60_000;
+
+// Every request this service sends to the Ethora API, counted by kind since the process started (shown in /api/health).
+const calls = { since: Date.now(), total: 0, byKind: {} as Record<string, number> };
+function countCall(kind: string) { calls.total++; calls.byKind[kind] = (calls.byKind[kind] ?? 0) + 1; }
+export function ethoraCalls() {
+  const hours = Math.max((Date.now() - calls.since) / 3600_000, 1 / 60);
+  return { since: new Date(calls.since).toISOString(), total: calls.total, perHour: Math.round((calls.total / hours) * 10) / 10, byKind: { ...calls.byKind } };
+}
 
 export class EthoraWorldService {
   readonly enabled: boolean;
@@ -33,6 +45,13 @@ export class EthoraWorldService {
       process.env.ETHORA_CHAT_API_URL = sdkApiUrl;
       process.env.ETHORA_CHAT_APP_ID = this.appId!;
       this.sdk = new EthoraSDKService({ chatAppId: this.appId!, chatAppSecret: appSecret! });
+      // The SDK's own HTTP client: name the service and count each request.
+      const http = (this.sdk as unknown as { httpClient?: { interceptors: { request: { use(fn: (c: { url?: string; headers: Record<string, unknown> }) => unknown): void } } } }).httpClient;
+      http?.interceptors.request.use((c) => {
+        c.headers['User-Agent'] = USER_AGENT;
+        countCall(/broadcast/.test(c.url ?? '') ? 'broadcast' : /users-access|chats\/users/.test(c.url ?? '') ? 'membership' : /users/.test(c.url ?? '') ? 'user' : 'other');
+        return c;
+      });
     } else {
       console.warn(`[ethora] disabled for app ${this.appId ?? '(none)'}: ${ids ? `no App Secret (${secretVar(slug)} or ETHORA_CHAT_APP_SECRET)` : 'no ethora.json for this world'}`);
     }
@@ -94,22 +113,38 @@ export class EthoraWorldService {
     }
   }
 
-  /** Moves a character's agent from one room's chat to another (invite-to-chat / leave-chat). */
-  async moveAgent(characterId: string, fromRoomId: string, toRoomId: string): Promise<void> {
+  /** When each assistant was last invited into each room (`agentId|jid` -> ms). */
+  private invitedAt = new Map<string, number>();
+
+  /**
+   * Makes sure a character's assistant is in a room's chat. Called only for a room with a visitor in it, and at most
+   * once per assistant and room in INVITE_TTL_MS: Ethora takes an assistant out of a room that has been quiet for a
+   * while, so a later visit asks again. Nothing ever asks an assistant to leave (the leave-chat route is for a
+   * signed-in user only; ETHORA-GAPS 14).
+   */
+  async inviteAgent(characterId: string, roomId: string): Promise<boolean> {
     const agent = this.ids?.agents?.[characterId];
-    const from = this.ids?.rooms[fromRoomId];
-    const to = this.ids?.rooms[toRoomId];
-    if (!this.sdk || !agent || !to || !this.appId) return;
+    const to = this.ids?.rooms[roomId];
+    if (!this.sdk || !agent || !to || !this.appId) return false;
+    const key = `${agent.agentId}|${to.jid}`;
+    const now = Date.now();
+    if (now - (this.invitedAt.get(key) ?? 0) < INVITE_TTL_MS) return false;
+    this.invitedAt.set(key, now);
     const token = createServerToken({ chatApiUrl: sdkApiUrl, chatAppId: this.appId, chatAppSecret: appSecretFor(this.slug)! });
-    const headers = { 'content-type': 'application/json', authorization: `Bearer ${token}`, 'x-custom-token': token };
-    const post = async (url: string, body: unknown) => {
-      const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+    const url = `${sdkApiUrl}/v2/apps/${this.appId}/agents/${agent.agentId}/invite-to-chat`;
+    countCall('invite-to-chat');
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'user-agent': USER_AGENT, authorization: `Bearer ${token}`, 'x-custom-token': token },
+        body: JSON.stringify({ chatJid: to.jid }),
+      });
       if (!res.ok) throw Object.assign(new Error(`${res.status} ${url}`), { response: { status: res.status, data: await res.text() } });
-    };
-    await post(`${sdkApiUrl}/v2/apps/${this.appId}/agents/${agent.agentId}/invite-to-chat`, { chatJid: to.jid });
-    if (agent.botInstanceId && from) {
-      await post(`${sdkApiUrl}/v2/agents/${agent.agentId}/bot-instances/${agent.botInstanceId}/leave-chat`, { chatJid: from.jid });
+    } catch (e) {
+      this.invitedAt.delete(key);
+      throw e;
     }
+    return true;
   }
 
   /**

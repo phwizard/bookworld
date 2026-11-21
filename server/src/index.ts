@@ -13,7 +13,7 @@ import { loadWorlds, listWorlds, getWorld } from './world/load.ts';
 import { LocationRoom } from './rooms/LocationRoom.ts';
 import { cleanName, ethoraUserId, newPlayerId, signSession, verifySession } from './auth.ts';
 import { budgetFor, ethoraFor, simFor } from './services.ts';
-import { tryEthora } from './ethora.ts';
+import { ethoraCalls, tryEthora } from './ethora.ts';
 import { cleanVisitor, record, readEvents } from './metrics.ts';
 import { buildReport } from './metrics-report.ts';
 import { budgetConfigFromEnv } from './budget.ts';
@@ -53,7 +53,7 @@ const server = new Server({
     app.use(cors({ origin: ORIGIN === '*' ? true : ORIGIN.split(',') }));
     app.use(express.json({ limit: '16kb' }));
 
-    app.get('/api/health', (_req, res) => res.json({ ok: true, worlds: [...worlds.keys()] }));
+    app.get('/api/health', (_req, res) => res.json({ ok: true, worlds: [...worlds.keys()], ethoraCalls: ethoraCalls() }));
 
     // Usage report (players per day, rooms per session, messages to characters, meetings, day-7 return).
     // Only served when METRICS_TOKEN is set; pass it as `Authorization: Bearer <token>`.

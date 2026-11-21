@@ -221,7 +221,17 @@ export class WorldSim {
     set.add(cb);
     if (set.size === 1) this.occupiedSince.set(location, Date.now());
     cb(this.inLocation(location));
+    this.inviteAssistants(location);
     return () => { set!.delete(cb); if (set!.size === 0) this.occupiedSince.delete(location); };
+  }
+
+  /**
+   * The characters standing in a room with a visitor in it get their assistants asked into its chat (the Ethora side
+   * skips one asked in recently). This and a character walking into an occupied room are the only invites.
+   */
+  private inviteAssistants(location: string) {
+    if (!this.occupied(location)) return;
+    for (const c of this.inLocation(location)) void tryEthora('agent invite', () => this.ethora.inviteAgent(c.id, location));
   }
 
   inLocation(location: string): CharState[] {
@@ -382,6 +392,7 @@ export class WorldSim {
 
   /** Called when a player enters a room: runs that room's on-enter scripts if their cooldown has passed. */
   playerEntered(location: string, playerName: string) {
+    this.inviteAssistants(location);
     for (const sc of this.world.scripts ?? []) {
       if (sc.room !== location || !sc.trigger.onEnter) continue;
       void this.runScript(sc, playerName);
@@ -425,9 +436,9 @@ export class WorldSim {
     this.notify(to);
     console.log(`[sim ${this.world.slug}] ${c.name}: ${from} -> ${to}`);
 
-    // The chat side always follows the move; the narration lines only where someone is there to read them.
+    // The chat side follows only where someone is there: no call to Ethora for a walk between two empty rooms.
     if (this.occupied(from)) await tryEthora('narrate character left', () => this.ethora.narrate(from, leftLine));
-    await tryEthora('agent move', () => this.ethora.moveAgent(characterId, from, to));
+    if (this.occupied(to)) await tryEthora('agent invite', () => this.ethora.inviteAgent(characterId, to));
     if (this.occupied(to)) await tryEthora('narrate character joined', () => this.ethora.narrate(to, joinLine));
   }
 }

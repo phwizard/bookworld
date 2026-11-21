@@ -383,3 +383,12 @@ Rooms. Props now stand on the floor, centred where the world file puts them: the
 Controls. The arrow keys turn the view, so a visitor can walk the world without giving the mouse to the page. Clicking a room on the mini-map walks there through the doors, one room at a time; any movement key stops it. The prompt to click no longer darkens the room, and shrinks to a line once the mouse has been taken once. On a phone or tablet: a thumb stick to walk (pushed far, to run), a finger dragged over the view to look, a Talk button. The stick and the drag were tested through their inputs in a desktop browser, not yet on a phone.
 
 ![The back room of the Regence: striped paper, marble checker, three portraits, tables standing where they should](journal/261115-02-regence-back-room-portraits.jpg)
+
+## 21 Nov 2026: the service stops calling Ethora when nobody is there
+
+Ethora's logs showed the droplet sending about 2,550 requests a day, half of them refused. The cause was the character schedules. Every world file gives its characters hourly walks (Prospero to the rock at 18 past, Romeo to the orchard at 4 past), 1,276 walks a day over the seven worlds with chat. The simulation performed each walk on the chat side too, visitors or not: one `invite-to-chat` into the new room (accepted) and one `leave-chat` from the old one, which Ethora refuses for an App's credential and always has (gap 14, first seen 17 Oct). The narration lines were already held back for empty rooms; the assistant's move was not.
+
+Now a walk between two empty rooms is only a change in the world service. An assistant is invited when a visitor's room opens with the character in it, when a visitor enters, and when a character walks into a room with a visitor; never on a timer, and at most once per assistant and room in ten minutes. The leave call is gone. Ethora removes an assistant from a quiet room by itself; the one thing lost is told in gap 26 (for a while a character can answer in a room it has walked out of). Every request to Ethora carries `User-Agent: bookworld/1.0`, and `/api/health` shows how many the service has sent since it started and of what kind.
+
+No picture: nothing on screen changed.
+

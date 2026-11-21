@@ -12,7 +12,7 @@ export const ethoraMcpAvailable = Boolean(apiKey);
 /** Runs `fn` with a connected MCP client and closes it afterwards. */
 export async function withEthoraMcp<T>(fn: (call: (name: string, args: Record<string, unknown>) => Promise<unknown>) => Promise<T>): Promise<T> {
   if (!apiKey) throw new Error('ETHORA_API_KEY is not set');
-  const transport = new StreamableHTTPClientTransport(new URL(url), { requestInit: { headers: { Authorization: `Bearer ${apiKey}` } } });
+  const transport = new StreamableHTTPClientTransport(new URL(url), { requestInit: { headers: { Authorization: `Bearer ${apiKey}`, 'User-Agent': process.env.ETHORA_USER_AGENT ?? 'bookworld/1.0' } } });
   const client = new Client({ name: 'bookworld-world-service', version: '0.1.0' });
   await client.connect(transport);
   try {

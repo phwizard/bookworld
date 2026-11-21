@@ -19,6 +19,7 @@ test('a scene plays the Opera Game on the room board: chairs, moves, record line
   const ethora = {
     post: async (room: string, body: string) => { posts.push({ room, body }); },
     narrate: async (room: string, text: string) => { posts.push({ room, body: `_${text}_` }); },
+    inviteAgent: async () => true,
   } as unknown as EthoraWorldService;
   const sim = new WorldSim({ world: world(), dir: '', ethora: null }, ethora);
   const board = sim.board('opera-box')!;
